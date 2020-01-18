@@ -1,0 +1,35 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Template for Master work
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\providecommand{\main}{..} 
+\documentclass[../Master_report.tex]{subfiles} 
+
+\begin{document}
+
+\sub_title{}
+
+This is a subfile, that act exactly like the main file in term of compilation. It means it can be compiled on its own
+
+\section{Adding R code}
+
+As R \citep{RTeam2017} is commonly used in this master, there is the possibily to paste directly R code and input it inside the document. It is important to note that long lines are broken and it is signaled with line numbers on the left part of the script.
+
+\begin{lstlisting}
+# this is a random function taken out from a master project. code won't run
+hudson_lotka <- beepodyna(label = "hudson_lotka", community = hudson, interactions = hudson_int,
+  functions = c(lotka_prey,lotka_pred), verbose = TRUE)
+
+jpeg("figure/lotka.jpg", width = 802, height = 445)
+plot(simulate_n_pop_dynamic(hudson_lotka,10)$community, col = c("tan3","slateblue3"),
+     pch = c(1,2), xlim = c(1910,1930), ylim = c(0,100))
+legend("bottomright", c("hare","lynx"),col = c("tan3","slateblue3"), pch = c(1,2))
+graphics.off()
+\end{lstlisting}
+
+\nocite{RTeam2017}
+
+\biblio
+
+\end{document}
+
+

@@ -1,0 +1,10 @@
+% !Rnw root = ICU_Report_Guerra_Jaunatre.Rnw
+
+% \SweaveOpts{echo = TRUE, eval = TRUE}
+% 
+% \section{Analysis}
+% This is the analysis.
+% 
+% <<analysis, result = tex>>=
+% summary(cars)
+% @
