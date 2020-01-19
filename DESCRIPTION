@@ -1,11 +1,11 @@
-Package: Template
+Package: GameR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: A set of functions to play games in R
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Maxime Jaunatre 
+Maintainer: Maxime Jaunatre <maxime.jaunatre@etu.unvi-grenoble-alpes.fr>
+Description: This package is a set of functions to play games in R. All of this is either coded in R or C++. It's not yet optimised and rely on some packages.
+    Games 1 : Minesweeper. The purpose of this game is to mark all mines in a field and found them by clicking on case. Numbers will indicate how many mines there is around them.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
