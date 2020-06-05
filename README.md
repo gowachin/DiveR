@@ -12,3 +12,5 @@ It's a R package, with sweave files, datas, vignettes for packages and all stuff
 
 
 Feel free to fork this, and use it. Any recommendation is welcome :)
+
+test
