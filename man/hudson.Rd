@@ -4,7 +4,8 @@
 \name{hudson}
 \alias{hudson}
 \title{Lynx and Hare Pelts in Canada}
-\format{A community with 2 populations:
+\format{
+A community with 2 populations:
 \describe{
   \item{hudson}{the label of the community}
   \item{populations}{the list of two populations}
@@ -13,7 +14,8 @@
   \item{lynx : the population of hares, interpolated from the number of pelts}
   }
 
-}}
+}
+}
 \source{
 \url{https://mc-stan.org/users/documentation/case-studies/lotka-volterra-predator-prey.html#data-lynx-and-hare-pelts-in-canada}
 }

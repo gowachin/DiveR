@@ -10,8 +10,10 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: graphics,
-         R.utils
-RoxygenNote: 6.1.1
+         R.utils,
+         plot.matrix,
+         beepr
+RoxygenNote: 7.1.0
 Depends: R (>= 2.10)
 Suggests: 
     knitr,
