@@ -1,16 +1,14 @@
-# Template
+# MN90
 
-Compendium template for all projects ever to submit anywhere. 
-
-It's a R package, with sweave files, datas, vignettes for packages and all stuff to write down great work from Rstudio.
+Package and shiny app to compute and represent dive curve, deco time and other parameters.
 
 ## To do : 
 
-- do a brand new Sweave to merge the Master_report.tex file and some good chunks
-- create different styles for sweave
-- expose a correct sweave for saving .RData (see Markov file)
+- add the possibility to use multiple dives
+- plot ndives
+- more informations in plot.dive
+- more attributes
+- make a beautiful doc for every functions
 
 
 Feel free to fork this, and use it. Any recommendation is welcome :)
-
-test
