@@ -8,15 +8,18 @@
 An object of class \code{data.frame} with 16 rows and 13 columns.
 }
 \source{
-table beuchat
+Trucco, Jean-Noël; Biard, Jef; Redureau, Jean-Yves; Fauvel, Yvon (3 May 1999). 
+pdf in french :
+\href{http://renaud.helstroffer.free.fr/sub_technique/fiche_initiation/mn90.pdf}{"Table Marine National 90 (MN90): Version du 03/05/1999"}
 }
 \usage{
 azote
 }
 \description{
-A dataset containing an array with the palier time depending on depth and time and a data.frame with the group.
+A dataset containing an array with the palier time depending on depth 
+and time and a data.frame with the group.
 }
 \author{
-Jaunatre Maxime <maxime.jaunatre@gowachin974.fr>
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }
 \keyword{datasets}

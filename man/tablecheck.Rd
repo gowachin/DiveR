@@ -4,17 +4,25 @@
 \alias{tablecheck}
 \title{tablecheck}
 \usage{
-tablecheck(depth, time)
+tablecheck(depth, time, force = FALSE)
 }
 \arguments{
 \item{depth}{in meter. Max is 65m see Detail !}
 
 \item{time}{in minute. Max is 180' see Detail !}
+
+\item{force}{FALSE by default, if return don't stop but 
+return a TRUE/FALSE value}
 }
 \description{
 tablecheck
 }
 \details{
-This function will stop if the depth > 65 or time > 180 because the table are limited to this extent.
-However for lower values the table can return NA values.
+This function will stop if the depth > 65 or time > 180 because the table 
+are limited to this extent.
+However for lower values the table can return NA values. 
+This NA return is avoided in the shinyapp.
+}
+\author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

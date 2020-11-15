@@ -2,23 +2,65 @@
 #' 
 #' @param depth in meter. Max is 65m see Detail !
 #' @param time in minute. Max is 180' see Detail !
+#' @param force FALSE by default, if return don't stop but 
+#' return a TRUE/FALSE value
 #' 
 #' @details 
-#' This function will stop if the depth > 65 or time > 180 because the table are limited to this extent.
+#' This function will stop if the depth > 65 or time > 180 because the table 
+#' are limited to this extent.
 #' However for lower values the table can return NA values. 
+#' This NA return is avoided in the shinyapp.
+#' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
 #' @export
-tablecheck <- function(depth, time){
+tablecheck <- function(depth, time, force = FALSE){
   table <- mn90::table
+  
+  check_val(depth)
+  check_val(time)
   
   depths <- as.numeric(rownames(table))
   times <- as.numeric(colnames(table))
+  
+  res <- TRUE
   # checks for max
   if(depth > max(depths) | time > max(times)){
-    stop("Time or depth values are outside the mn90 table\n
-         depth must be not exceed 65 and time 3h (180 minutes)\n
+    if(force){res<- FALSE} else {
+      stop("Time or depth values are outside the mn90 table 
+         depth must be not exceed 65 and time 3h (180 minutes)
          please read doc with ?tablecheck or help(tablecheck)", call. = F)
+    }
   }
+  
+  return(res)
+}
+
+#' max_depth_t
+#' 
+#' Max time present in the table for a given depth.
+#' 
+#' @param depth in meter. Max is 65m see Detail !
+#' 
+#' @return a single numeric value, the max time possible to dive at the given 
+#' depth is the MN90 table.
+#'  
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
+#' @export
+max_depth_t <- function(depth){
+  table <- mn90::table[,,1]
+  
+  check_val(depth)
+  
+  depths <- as.numeric(rownames(table))
+  # round to upper depths and times !
+  rdepth <- min(depths[depths>= depth])
+  
+  d <- as.character(rdepth)
+  t <- names(which(!is.na(table[d,])))
+  m <- max(as.numeric(t))
+  return(m)
 }
 
 #' palier
@@ -29,16 +71,22 @@ tablecheck <- function(depth, time){
 #' @param secu true by default, add a secu deco 3 min at 3 meter
 #' 
 #' @details 
-#' This function will stop if the depth > 65 or time > 180 because the table are limited to this extent.
+#' This function will stop if the depth > 65 or time > 180 because the table 
+#' are limited to this extent.
 #' However for lower values the table can return NA values. 
 #' 
 #' @return palier, a list with a vector of depth and a vector of time. 
 #' Vectors are ordered from deepest deco stage (9m) to the higher (3m).
+#' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
 #' @export
 palier <- function(depth, time, secu = TRUE){
   table <- mn90::table
   grp <- mn90::grp
-  #print(table)
+  # checks
+  check_val(depth)
+  check_val(time)
   # get table values
   depths <- as.numeric(rownames(table))
   times <- as.numeric(colnames(table))
@@ -69,6 +117,59 @@ palier <- function(depth, time, secu = TRUE){
   return(palier)
 }
 
+#' majoration
+#'
+#' compute the time majoration to a second dive at a specific depth.
+#' 
+#' @param depth in meter. Max is 65m see Detail !
+#' @param group byt default "Z", the deco group indicated by a letter. 
+#' This value is indicated in a palier object computed with the palier function.
+#' @param inter 16 by default, interval between dives in minutes 
+#' 
+#' @details 
+#' This function will stop if the depth > 65 or time > 180 because the table 
+#' are limited to this extent.
+#' However for lower values the table can return NA values. 
+#' 
+#' @return palier, a list with a vector of depth and a vector of time. 
+#' Vectors are ordered from deepest deco stage (9m) to the higher (3m).
+#' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
+#' @export
+majoration <- function(depth, group = "Z", inter = 16){
+  n2 <- mn90::azote
+  tmaj <- mn90::maj
+  # add the maj table !!!
+  
+  # checks
+  check_val(depth)
+  check_val(inter)
+  if(! group %in% c(rownames(n2),"Z")) {
+    stop("Group must be a capital letter between A and P or Z")
+  }
+  
+  # get n2 values
+  grps <- rownames(n2)
+  times <- as.numeric(colnames(n2))
+  # get tmaj values
+  azotes <- as.numeric(rownames(tmaj))
+  depths <- as.numeric(colnames(tmaj))
+  
+  # roud the interval to lower interval given in tables and get azote value
+  rinter <- max(times[times<= inter])
+  azote <- n2[grps == group, times == rinter]
+  
+  # round depth and get maj
+  rdepth <- min(depths[depths>= depth])
+  razote <- min(azotes[azotes>= azote])
+  maj <- tmaj[azotes == razote, depths == rdepth]
+
+  class(maj) = "maj"
+  # end
+  return(maj)
+}
+
 #' curve
 #' 
 #' compute the time from end of dive to surface
@@ -81,13 +182,22 @@ palier <- function(depth, time, secu = TRUE){
 #' Speed between deco is fixed to 6
 #' 
 #' @details 
-#' This function will stop if the depth > 65 or time > 180 because the table are limited to this extent.
+#' This function will stop if the depth > 65 or time > 180 because the table 
+#' are limited to this extent.
 #' However for lower values the table can return NA values. 
 #' 
 #' @return a list, with a vector of depths, a vector of time and the dtr value.
 #' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
 #' @export
 curve <- function(time, depth, palier, vup = 10){
+  
+  # checks 
+  check_val(depth)
+  check_val(time)
+  if ( class(palier) != "palier" ) stop('palier must be of class palier')
+  
   # time of deco
   tpal <- sum(palier$time)
   
@@ -108,7 +218,8 @@ curve <- function(time, depth, palier, vup = 10){
              time+up+palier$time["m9"],
              time+up+palier$time["m9"]+0.5 * (palier$time[1] > 0),
              time+up+sum(palier$time[c("m9","m6")])+0.5 * (palier$time[1] > 0),
-             time+up+sum(palier$time[c("m9","m6")])+sum(0.5 * (palier$time[c(1,2)] > 0)),
+             time+up+sum(palier$time[c("m9","m6")])+ # line
+               sum(0.5 * (palier$time[c(1,2)] > 0)),
              time+up+sum(palier$time)+sum(0.5 * (palier$time[c(1,2)] > 0)),
              time + dtr)
   

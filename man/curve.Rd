@@ -24,6 +24,10 @@ a list, with a vector of depths, a vector of time and the dtr value.
 compute the time from end of dive to surface
 }
 \details{
-This function will stop if the depth > 65 or time > 180 because the table are limited to this extent.
+This function will stop if the depth > 65 or time > 180 because the table 
+are limited to this extent.
 However for lower values the table can return NA values.
+}
+\author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

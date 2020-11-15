@@ -3,29 +3,44 @@
 \docType{data}
 \name{table}
 \alias{table}
-\title{MN90 table}
+\title{MN90 Tables}
 \format{
-A community with 2 populations:
-\describe{
-  \item{grp}{deco groupe}
-  \item{table}{palier table at depth of 3, 6 and 9 meters.}
-  \itemize{
-  \item{m3}
-  \item{m6}
-  \item{m9}
-  }
+table is an array of dimension 25, 27 and 3:\cr
+\itemize{
+ \item{[x,,] - depths (meters).}
+ \item{[,y,] - times (minutes).}
+ \item{[,,z] - duration of decompression stop at certain depth. 
+ For values of z from 1 to 0, there is duration at respectively 3, 
+ 6 and 9 meters stop.}
 }
 }
 \source{
-table beuchat
+Trucco, Jean-Noël; Biard, Jef; Redureau, Jean-Yves; Fauvel, Yvon (3 May 1999). 
+pdf in french :
+
+\href{http://renaud.helstroffer.free.fr/sub_technique/fiche_initiation/mn90.pdf}{"Table Marine National 90 (MN90): Version du 03/05/1999"}
 }
 \usage{
 table
 }
 \description{
-A dataset containing an array with the palier time depending on depth and time and a data.frame with the group.
+A dataset containing an array with the palier time depending on depth 
+and time and a data.frame with the group.
+}
+\details{
+As the table is limited in row and column, some values of time and 
+depth can not return values. See \code{\link[mn90]{tablecheck}} for 
+limit values of depth and time.
+Also you can note that part of the table are NA values. 
+This mean that the couple of dive parameters are not included in this model.
+}
+\examples{
+data(table)
+# here an example where there can be times at differents depths or not. 
+table[16:19,1:8,]
+
 }
 \author{
-Jaunatre Maxime <maxime.jaunatre@gowachin974.fr>
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }
 \keyword{datasets}

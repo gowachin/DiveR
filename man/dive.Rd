@@ -25,7 +25,13 @@ dive, a dive class object.
 \description{
 dive
 }
+\details{
+See \code{\link[mn90]{tablecheck}} for limit values of depth and time.
+}
 \examples{
 dive = dive(depth = 39, time = 22, secu = TRUE, vup = 10)
 
+}
+\author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

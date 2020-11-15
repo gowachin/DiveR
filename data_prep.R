@@ -1,6 +1,13 @@
+### examples ####
+library(mn90)
 
-# table preparation
-# file at : https://github.com/stan-dev/example-models/blob/master/knitr/lotka-volterra/hudson-bay-lynx-hare.csv
+pa20 <- dive(depth = 19, time = 43, secu = TRUE, vup = 10)
+plot(pa20)
+usethis::use_data(pa20, overwrite = TRUE)
+
+#### Table preparation ##### 
+# pdf at : http://renaud.helstroffer.free.fr/sub_technique/fiche_initiation/mn90.pdf
+
 # convert hour to minutes
 h <- function(x,m = 0){
   return(x*60+m)
@@ -99,9 +106,15 @@ azote <- read.csv("raw_data/raw_azote.csv")[,-1] ; azote
 colnames(azote) <- as.numeric(sub("X","",x =colnames(azote)))
 rownames(azote) <- LETTERS[1:nrow(azote)]
 
+maj <- read.csv("raw_data/raw_maj.csv", header = TRUE) ; maj
+colnames(maj) <- as.numeric(sub("X","",x =colnames(maj)))
+rownames(maj) <- maj[,1] ; maj <- maj[,-1]
+maj
+
 # save all 
 usethis::use_data(table, overwrite = TRUE)
 usethis::use_data(grp, overwrite = TRUE)
 usethis::use_data(azote, overwrite = TRUE)
+usethis::use_data(maj, overwrite = TRUE)
 
 rm(m3,m6,m9,grp,i, mt, prof, table, time, ut, n2, azote)

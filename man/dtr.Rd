@@ -9,26 +9,30 @@
 dtr(object, ...)
 
 ## S3 method for class 'dive'
-dtr(object = dive)
+# dtr(dive)
 
 ## S3 method for class 'palier'
-dtr(object = palier, depth, vup)
+# dtr(palier, depth, vup = 10)
 }
 \arguments{
-\item{object}{is a mn90 object. There are methods for \code{\link[mn90]{dive}} and \code{\link[mn90]{palier}} objects.}
+\item{object}{is a mn90 object. There are methods for 
+\code{\link[mn90]{dive}} and \code{\link[mn90]{palier}} objects.}
 
-\item{...}{other arguments passed to or from other methods}
-
-\item{vup}{10 meter/minute by default.}
-
-\item{depth}{a numeric in meter}
+\item{...}{other arguments passed to the dtr.palier method.
+\describe{
+  \item{depth}{a numeric in meter}
+  \item{vup}{10 meter/minute by default.}
+}}
 }
 \value{
 It returns a numeric with the duration of the ascent and deco.
 }
 \description{
-\code{dtr} returns the ascent and deco time of a dive.
+\code{dtr} compute the ascent time from a depth and between deco stages 
+of a dive.
+It can be retrieved from a dive object or computed with a depth and 
+a palier object.
 }
 \author{
-Jaunatre Maxime <maxime.jaunatre@etu.univ-grenoble-alpes.fr>
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }
