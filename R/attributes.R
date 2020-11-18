@@ -76,9 +76,15 @@ dtr.palier <- function(object, ..., vup = 10) {
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
 #' @export
-summary.dive <- function(object, ...){
+summary.dive <- function(object, ...){ # TODO
   cat('\n not yet fully implemented \n')
+  # parameters depth and time
+  cat(paste("Dive at",depth(object),"for",dtime(object), "minutes\n"))
+  # dtr
+  # palier & maj
+  summary(object$palier)
   
+  # hour
   
 }
 
@@ -95,14 +101,16 @@ summary.palier <- function(object, ...) {
   pal <- rev(object$time)
   n <- sum(pal > 0)
   t <- ""
-  if( n > 0){
-    for(i in n:1){
-      t <-paste(t,pal[i],"minute at",pal[i],"meter")
+  if (n > 0) {
+    for (i in n:1) {
+      t <- paste(t, pal[i], "minute at", pal[i], "meter\n")
     }
-  } else { t <- "no stop for deco.\nPlease consider a minimal safety 
-                 stop of 3 minute at 3 meter"}
-  
-  cat(n, "stops :",t)
+  } else {
+    t <- "no stop for deco.\nPlease consider a minimal safety 
+                 stop of 3 minute at 3 meter"
+  }
+
+  cat(n, "stops :", t)
 }
 
 
@@ -127,8 +135,8 @@ dtime <- function(object) {
 #' # dtime(dive)
 #' @export
 dtime.dive <- function(object) {
-  t <- object$curve$times
-  dt <- min(t[t>0])
+  t <- object$dtcurve$times
+  dt <- min(t[t > 0])
   return(dt)
 }
 
@@ -153,5 +161,5 @@ depth <- function(object) {
 #' # depth(dive)
 #' @export
 depth.dive <- function(object) {
-  return(max(object$curve$depths))
+  return(max(object$dtcurve$depths))
 }

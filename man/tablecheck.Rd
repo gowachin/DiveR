@@ -19,7 +19,7 @@ tablecheck
 }
 \details{
 This function will stop if the depth > 65 or time > 180 because the table 
-are limited to this extent.
+are limited to this extent (the actual table in dataset can evolve)
 However for lower values the table can return NA values. 
 This NA return is avoided in the shinyapp.
 }

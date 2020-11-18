@@ -10,5 +10,5 @@ check_val(val)
 \item{val}{a single positive numeric value}
 }
 \description{
-check_val
+custom function for checking if values are single positive numeric.
 }

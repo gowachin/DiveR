@@ -5,5 +5,5 @@
 \alias{mn90}
 \title{mn90}
 \description{
-A package to code some basic games on R
+A package to code some basic function about dive profiles.
 }
