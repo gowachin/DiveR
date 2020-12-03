@@ -42,13 +42,13 @@ plot.dive <- function(x,
                       add = FALSE) { # TODO
 
   # x <- dive
-  curve <- x$curve
+  dtcurve <- x$dtcurve
 
-  delta_x <- (max(curve$times) - min(curve$times)) * 0.1
-  delta_y <- (max(curve$depths) - min(curve$depths)) * 0.2
+  delta_x <- (max(dtcurve$times) - min(dtcurve$times)) * 0.1
+  delta_y <- (max(dtcurve$depths) - min(dtcurve$depths)) * 0.2
 
-  # palier ; curve
-  # plot(curve$times, -curve$depths, type = "l")
+  # palier ; dtcurve
+  # plot(dtcurve$times, -dtcurve$depths, type = "l")
   # abline(h = 0, col = "darkblue", lty = 3)
 
   default_par <- list(
@@ -57,8 +57,8 @@ plot.dive <- function(x,
     xlab = "Time",
     ylab = "Depth",
     main = x$label,
-    xlim = c(min(curve$times) - delta_x, max(curve$times) + delta_x),
-    ylim = -c(max(curve$depths) + delta_y, min(curve$depths) - delta_y)
+    xlim = c(min(dtcurve$times) - delta_x, max(dtcurve$times) + delta_x),
+    ylim = -c(max(dtcurve$depths) + delta_y, min(dtcurve$depths) - delta_y)
   )
 
   call_par <- list(...)
@@ -85,7 +85,7 @@ plot.dive <- function(x,
     do.call(plot, empty_par)
   }
 
-  line_par <- c(list(x = curve$times, y = -curve$depths), call_par)
+  line_par <- c(list(x = dtcurve$times, y = -dtcurve$depths), call_par)
   line_par$xlim <- NULL
   line_par$xlim <- NULL
   line_par$ylim <- NULL
@@ -97,13 +97,13 @@ plot.dive <- function(x,
   do.call(lines, line_par)
 
   # if(safe){
-  #   polygon(curve$times[2:4], -curve$depths[2:4], col = "red")
+  #   polygon(dtcurve$times[2:4], -dtcurve$depths[2:4], col = "red")
   # }
 
   if (text_print) {
     text(
-      x = curve$times[2], y = -max(curve$depths),
-      paste("max depth =", -max(curve$depths), "m"),
+      x = dtcurve$times[2], y = -max(dtcurve$depths),
+      paste("max depth =", -max(dtcurve$depths), "m"),
       pos = 1,
       col = call_par$col
     )
