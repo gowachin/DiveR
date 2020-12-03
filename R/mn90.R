@@ -9,6 +9,19 @@ NULL
 #' @name mn90
 NULL
 
+#' mn90 app
+#' 
+#' custom function to run the shiny app
+#' 
+#' @examples 
+#' mn90::shiny_mn90_app()
+#' 
+#' @export
+shiny_mn90_app <- function(){
+  appDir <- system.file("app", package = "mn90")
+  shiny::runApp(appDir, display.mode = "normal")
+}
+
 #' check_val
 #' 
 #' custom function for checking if values are single positive numeric.
