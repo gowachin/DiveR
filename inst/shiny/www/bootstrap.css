@@ -11,6 +11,12 @@
  * Copyright 2011-2020 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+ 
+ #sidebar {
+  background-color: green;
+  border-color: orange;
+}
+ 
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
 :root {
   --blue: #b58900;
@@ -47,6 +53,11 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+#sidebar {
+  background-color: green;
+  border-color: orange;
 }
 
 html {
@@ -10535,3 +10546,4 @@ a.text-dark:hover, a.text-dark:focus {
 .alert-light .alert-link {
   color: #002b36;
 }
+

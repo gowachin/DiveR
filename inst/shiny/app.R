@@ -1,73 +1,87 @@
 # Load packages
 library(shiny)
 library(mn90)
-# Define UI for app that draws a histogram ----
-ui <- fluidPage(
-  
-  tags$head(
-    tags$link(rel = 'stylesheet', type = 'text/css', href = 'bootstrap.css')
-  ),
-  
-  # App title ----
-  titlePanel("MN90"),
-  
-  # Sidebar layout with input and output definitions ----
-  sidebarLayout(position = "right",
+library(shiny.i18n)
 
-    # Sidebar panel for inputs ----
-    sidebarPanel(
-      titlePanel("First dive"),
-      # Input: Slider for the number of bins ----
-      sliderInput(inputId = "depth1",
-                  label = "Depth (meter):",
-                  min = 6,
-                  max = 65,
-                  value = 20),
+i18n <- Translator$new(translation_json_path = "translations/translation.json")
+i18n$set_translation_language("fr")
 
-      # Input: Slider for the number of bins ----
-      sliderInput(inputId = "time1",
-                  label = "Time (minutes):",
-                  min = 1,
-                  max = 180,
-                  value = 40),
-      checkboxInput("secu1", "Security stop", TRUE),
+ui <- # navbarPage("My app",
+  # put css here
+  # tabPanel("truc",
+  fluidPage(
+    class = "R1",
+    #### CSS ####
+    tags$head(tags$link(
+      rel = "stylesheet",
+      type = "text/css",
+      href = "bootstrap.css"
+    )),
+    # ####
+    tabsetPanel(
+      type = "pills",
+      tabPanel(
+        "Controls",
+        sidebarLayout(
+          position = "right",
+          # Sidebar panel for inputs ----
+          sidebarPanel(
+            id = "sidebar",
+            titlePanel(i18n$t("First dive")),
+            # Input: Slider for the number of bins ----
+            sliderInput(
+              inputId = "depth1", label = i18n$t("Depth (meter):"),
+              min = 6, max = 65, value = 20
+            ),
 
-      checkboxInput("sec", "Second Dive"),
+            # Input: Slider for the number of bins ----
+            sliderInput(
+              inputId = "time1", label = i18n$t("Time (minutes):"),
+              min = 1, max = 180, value = 40
+            ),
+            checkboxInput("secu1", i18n$t("Security stop"), TRUE),
+            checkboxInput("sec", i18n$t("Second Dive")),
 
-      conditionalPanel(
-        condition = "input.sec == true",
+            conditionalPanel(
+              condition = "input.sec == true",
 
-        sliderInput(inputId = "depth2",
-                    label = "Depth (meter):",
-                    min = 6,
-                    max = 65,
-                    value = 20),
+              sliderInput(
+                inputId = "depth2", label = i18n$t("Depth (meter):"),
+                min = 6, max = 65, value = 20
+              ),
 
-        sliderInput(inputId = "time2",
-                    label = "Time (minutes):",
-                    min = 1,
-                    max = 180,
-                    value = 40)
+              sliderInput(
+                inputId = "time2", label = i18n$t("Time (minutes):"),
+                min = 1, max = 180, value = 40
+              )
+            )
+          ),
+
+          ############################################################################
+          # Main panel for displaying outputs ----
+          mainPanel(
+            h2("This is a dive with a square profile and stops given from tables (MN90 tables from the FFESSM."),
+
+            textOutput("dive1"),
+            # Output: Histogram ----
+            plotOutput(outputId = "divePlot"),
+
+            conditionalPanel(
+              condition = "input.sec == true",
+
+              textOutput("dive2")
+            )
+          )
+        )
+      ),
+      tabPanel(
+        "Consommation",
+        "this is a test, i repete, it's a test"
       )
-    ),
-
-    # Main panel for displaying outputs ----
-    mainPanel(
-      h2('This is a dive with a square profile and stops given from tables (MN90 tables from the FFESSM.'),
-
-      textOutput("dive1"),
-      # Output: Histogram ----
-      plotOutput(outputId = "divePlot"),
-
-      conditionalPanel(
-        condition = "input.sec == true",
-
-        textOutput("dive2")
-      )
-
     )
   )
-)
+# ) ,
+# tabPanel("Machin"))
 
 # Define server logic required to draw a histogram ----
 server <- function(input, output, session) {
@@ -78,7 +92,8 @@ server <- function(input, output, session) {
   })
 
   output$divePlot <- renderPlot({
-    dive <- dive(depth = input$depth1, time = input$time1, secu = input$secu1, vup = 10)
+    dive <- dive(depth = input$depth1, time = input$time1, 
+                 secu = input$secu1, vup = 10)
     plot(dive)
   })
 

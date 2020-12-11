@@ -1,0 +1,11 @@
+{
+  "languages": ["en", "fr"],
+  "translation": [
+      {"en": "First dive", "fr": "Première plongée"},
+      {"en": "Depth (meter):", "fr": "Profondeur (metre) :"},
+      {"en": "Time (minutes):", "fr": "Temps (minutes):"},
+      {"en": "Security stop", "fr": "Palier de sécurité"},
+      {"en": "Second Dive", "fr": "Seconde plongée"}
+      
+    ]
+}
