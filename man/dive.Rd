@@ -11,7 +11,7 @@ dive(depth = 20, time = 40, secu = TRUE, vup = 10, maj = 0, hour = NULL)
 
 \item{time}{in minute}
 
-\item{secu}{true by default, secu deco 3 min at 3 meter}
+\item{secu}{true by default, secu deco stage 3 min at 3 meter}
 
 \item{vup}{10 m/min by default}
 

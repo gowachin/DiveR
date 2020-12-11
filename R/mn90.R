@@ -11,7 +11,7 @@ NULL
 
 #' mn90 app
 #' 
-#' custom function to run the shiny app
+#' custom function to run the shiny app (thinkR idea, to explore in docker)
 #' 
 #' @examples 
 #' mn90::shiny_mn90_app()
@@ -41,7 +41,7 @@ check_val <- function(val) {
 #' 
 #' @param depth in meter
 #' @param time in minute
-#' @param secu true by default, secu deco 3 min at 3 meter
+#' @param secu true by default, secu deco stage 3 min at 3 meter
 #' @param vup 10 m/min by default
 #' @param maj 0 by default
 #' @param hour NULL not implemented yet
@@ -81,10 +81,10 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   # dive dtcurve
   dtcurve <- dtcurve(time = time, depth = depth, palier = palier, vup = vup)[-3]
   # hour 
-  if (!is.null(hour)) {
-    hour <- c(hour, hour + time + dtr)
-  } else {
+  if (is.null(hour)) {
     hour <- c(0, time + dtr)
+  } else {
+    hour <- c(hour, hour + time + dtr)
   }
 
   dive <- list(
@@ -108,6 +108,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
 #' @examples 
 #' dive1 = dive(depth = 39, time = 22, secu = TRUE, vup = 10)
 #' dive2 = dive(depth = 20, time = 40, secu = TRUE, vup = 10)
+#' divet = ndive(dive1, dive2, inter = 30)
 #' 
 #' @return ndive, a ndive class object.
 #' 
@@ -115,7 +116,6 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
 #' 
 #' @export
 ndive <- function(dive1, dive2, inter = 16) {
-  # depth = 39; time = 22; secu = TRUE; vup = 10
   # checks
   check_val(inter)
   if (class(dive1) != "dive") stop("dive1 must be of class dive")
@@ -125,12 +125,14 @@ ndive <- function(dive1, dive2, inter = 16) {
   depth2 <- depth(dive2)
 
   if (inter <= 15) {
+    # consecutiv dives 
     warning("A minimum of 15 minutes is requiered between dives to consider them
             as different dives.")
-
+    # total time of dive
     time <- dtime(dive1) + dive1$dtr + inter + time2
+    # total depth
     depth <- max(depth(dive1), depth2)
-    if (max_depth_t(depth) > time) {
+    if (max_depth_t(depth) > time) { # check if second dive possible with time
       ndive <- list(
         dive1 = dive1,
         dive2 = dive(
@@ -139,7 +141,7 @@ ndive <- function(dive1, dive2, inter = 16) {
         ),
         inter = inter, type = "consec"
       )
-      
+      # modification of dive2 curve in times for graphics !
       ndive$dive2$dtcurve$times[-c(1,2)] <- ndive$dive2$dtcurve$time[-c(1,2)] - 
         (dtime(dive1) + dive1$dtr + inter)
       ndive$dive2$hour[1] <- (dtime(dive1) + dive1$dtr + inter)
@@ -149,6 +151,7 @@ ndive <- function(dive1, dive2, inter = 16) {
       ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
     }
   } else {
+    # successiv dives
     # compute maj
     maj <- majoration(
       depth = depth2, inter = inter,

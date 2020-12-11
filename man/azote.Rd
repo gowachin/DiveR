@@ -4,9 +4,7 @@
 \name{azote}
 \alias{azote}
 \title{MN90 table}
-\format{
-An object of class \code{data.frame} with 16 rows and 13 columns.
-}
+\format{An object of class \code{data.frame} with 16 rows and 13 columns.}
 \source{
 Trucco, Jean-Noël; Biard, Jef; Redureau, Jean-Yves; Fauvel, Yvon (3 May 1999). 
 pdf in french :
@@ -16,8 +14,7 @@ pdf in french :
 azote
 }
 \description{
-A dataset containing an array with the palier time depending on depth 
-and time and a data.frame with the group.
+A dataset containing an data.frame with the residual azote in blood depending on the interval time and the group.
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>

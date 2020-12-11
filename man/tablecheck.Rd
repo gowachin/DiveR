@@ -11,7 +11,7 @@ tablecheck(depth, time, force = FALSE)
 
 \item{time}{in minute. Max is 180' see Detail !}
 
-\item{force}{FALSE by default, if return don't stop but 
+\item{force}{FALSE by default, if TRUE don't stop the function but 
 return a TRUE/FALSE value}
 }
 \description{

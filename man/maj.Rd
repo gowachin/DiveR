@@ -4,9 +4,7 @@
 \name{maj}
 \alias{maj}
 \title{MN90 table}
-\format{
-An object of class \code{data.frame} with 18 rows and 20 columns.
-}
+\format{An object of class \code{data.frame} with 18 rows and 20 columns.}
 \source{
 Trucco, Jean-Noël; Biard, Jef; Redureau, Jean-Yves; Fauvel, Yvon (3 May 1999). 
 pdf in french :
@@ -16,8 +14,7 @@ pdf in french :
 maj
 }
 \description{
-A dataset containing an array with the palier time depending on depth 
-and time and a data.frame with the group.
+A dataset containing an data.frame with the time majoration depending on depth of second dive and residual azote.
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>

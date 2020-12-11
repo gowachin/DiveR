@@ -4,16 +4,14 @@
 \name{table}
 \alias{table}
 \title{MN90 Tables}
-\format{
-table is an array of dimension 25, 27 and 3:\cr
+\format{table is an array of dimension 25, 27 and 3:\cr
 \itemize{
  \item{[x,,] - depths (meters).}
  \item{[,y,] - times (minutes).}
  \item{[,,z] - duration of decompression stop at certain depth. 
  For values of z from 1 to 0, there is duration at respectively 3, 
  6 and 9 meters stop.}
-}
-}
+}}
 \source{
 Trucco, Jean-Noël; Biard, Jef; Redureau, Jean-Yves; Fauvel, Yvon (3 May 1999). 
 pdf in french :

@@ -7,6 +7,8 @@ NULL
 #' Plot the dive curve depending on time and depth. 
 #' Only represent sqare profile
 #' 
+#' TODO add colors and more info in dive plots.
+#' 
 #' @param x an object of class dive.
 #' @param ... every argument for the \code{\link[graphics]{plot}} function 
 #' such as graphical parameters for lines.
@@ -21,6 +23,7 @@ NULL
 #'   }
 #' @param text_print set to \code{TRUE} by default, whether there is a text 
 #' for depths and duration of deco stops.
+#' @param def_cols FALSE by default, 
 #' @param add set to \code{FALSE} by default, to add another dive plot 
 #' on a precedent one.
 #' 
@@ -38,6 +41,7 @@ NULL
 plot.dive <- function(x,
                       ...,
                       text_print = TRUE,
+                      def_cols = FALSE,
                       # safe = TRUE,
                       add = FALSE) { # TODO
 
@@ -77,6 +81,9 @@ plot.dive <- function(x,
       if (default_par$ylim[1] < 0) call_par$ylim[1] <- 1
     }
   }
+  
+  
+  if (def_cols) par(bg = 'gray')
 
   if (!add) {
     empty_par <- c(list(x = 1, y = 1), call_par)
@@ -84,7 +91,16 @@ plot.dive <- function(x,
 
     do.call(plot, empty_par)
   }
-
+  
+  if (def_cols){
+    # colfunc<-colorRampPalette(c("red","yellow","springgreen","royalblue"))
+    # plot(rep(1,50),col=(colfunc(50)), pch=19,cex=2)
+    # polygon(c(-5, 60,60, -5), c(-60, -60, -20, -20), 
+            # col = 'cyan', border = 'NA')
+    rect(par("usr")[1],0,par("usr")[2],par("usr")[4],col = "cyan")
+    rect(par("usr")[1],-10,par("usr")[2],0,col = "royalblue")
+  }
+  
   line_par <- c(list(x = dtcurve$times, y = -dtcurve$depths), call_par)
   line_par$xlim <- NULL
   line_par$xlim <- NULL

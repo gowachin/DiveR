@@ -2,7 +2,7 @@
 #' 
 #' @param depth in meter. Max is 65m see Detail !
 #' @param time in minute. Max is 180' see Detail !
-#' @param force FALSE by default, if return don't stop but 
+#' @param force FALSE by default, if TRUE don't stop the function but 
 #' return a TRUE/FALSE value
 #' 
 #' @details 

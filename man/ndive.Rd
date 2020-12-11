@@ -27,6 +27,7 @@ of a dive.
 \examples{
 dive1 = dive(depth = 39, time = 22, secu = TRUE, vup = 10)
 dive2 = dive(depth = 20, time = 40, secu = TRUE, vup = 10)
+divet = ndive(dive1, dive2, inter = 30)
 
 }
 \author{

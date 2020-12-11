@@ -61,6 +61,8 @@ dtr.palier <- function(object, ..., vup = 10) {
 }
 
 #' summary
+#' 
+#' TODO summary ndive
 #'
 #' summary of a dive object
 #'
@@ -76,16 +78,14 @@ dtr.palier <- function(object, ..., vup = 10) {
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
 #' @export
-summary.dive <- function(object, ...){ # TODO
-  cat('\n not yet fully implemented \n')
+summary.dive <- function(object, ...){ 
   # parameters depth and time
-  cat(paste("Dive at",depth(object),"for",dtime(object), "minutes\n"))
+  cat(paste("Dive for :",dtime(object), "minutes at",depth(object),"meters\n"))
   # dtr
+  dtr <- dtr(object)
+  cat('Total dive time is',dtime(object)+dtr,'with a dive ascent of',dtr,'minutes\n')
   # palier & maj
   summary(object$palier)
-  
-  # hour
-  
 }
 
 #' @rdname summary.dive
@@ -98,19 +98,20 @@ summary.dive <- function(object, ...){ # TODO
 #' 
 #' @export
 summary.palier <- function(object, ...) {
-  pal <- rev(object$time)
-  n <- sum(pal > 0)
-  t <- ""
-  if (n > 0) {
-    for (i in n:1) {
-      t <- paste(t, pal[i], "minute at", pal[i], "meter\n")
-    }
+  sup <- object$time > 0
+    n <- sum(sup)
+    diz <- sum( object$time[sup] > 9)
+    sp <- c(rep('  ',n-diz), rep(' ', diz))
+    if (n > 0) {
+    t <- paste(sprintf('%s%d minutes at %d meters', sp, object$time[sup], 
+                      object$depth[sup]), collapse = '\n          ')
   } else {
-    t <- "no stop for deco.\nPlease consider a minimal safety 
+    t <- "no stop for deco.\n  Please consider a minimal safety 
                  stop of 3 minute at 3 meter"
   }
 
-  cat(n, "stops :", t)
+  cat(n, "stops :", t,'\n')
+  cat('The dive group is',object$group)
 }
 
 

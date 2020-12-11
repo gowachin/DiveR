@@ -4,9 +4,7 @@
 \name{grp}
 \alias{grp}
 \title{Deco Group}
-\format{
-An object of class \code{data.frame} with 25 rows and 27 columns.
-}
+\format{An object of class \code{data.frame} with 25 rows and 27 columns.}
 \source{
 Trucco, Jean-Noël; Biard, Jef; Redureau, Jean-Yves; Fauvel, Yvon (3 May 1999). 
 pdf in french :
@@ -16,8 +14,8 @@ pdf in french :
 grp
 }
 \description{
-A dataset containing an array with the palier time depending on depth 
-and time and a data.frame with the group.
+A dataset containing an data.frame with the group letter depending on depth 
+and time.
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>

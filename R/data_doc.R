@@ -36,8 +36,8 @@
 
 #' Deco Group
 #' 
-#' A dataset containing an array with the palier time depending on depth 
-#' and time and a data.frame with the group.
+#' A dataset containing an data.frame with the group letter depending on depth 
+#' and time.
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -49,8 +49,7 @@
 
 #' MN90 table
 #'
-#' A dataset containing an array with the palier time depending on depth 
-#' and time and a data.frame with the group.
+#' A dataset containing an data.frame with the residual azote in blood depending on the interval time and the group.
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -63,8 +62,7 @@
 
 #' MN90 table
 #'
-#' A dataset containing an array with the palier time depending on depth 
-#' and time and a data.frame with the group.
+#' A dataset containing an data.frame with the time majoration depending on depth of second dive and residual azote.
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'

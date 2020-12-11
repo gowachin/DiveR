@@ -7,7 +7,7 @@
 shiny_mn90_app()
 }
 \description{
-custom function to run the shiny app
+custom function to run the shiny app (thinkR idea, to explore in docker)
 }
 \examples{
 mn90::shiny_mn90_app()
