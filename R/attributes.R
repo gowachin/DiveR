@@ -83,7 +83,6 @@ speed <- function(object, ...) {
 #' # speed(dive)
 #' @export
 speed.dive <- function(object, ...) {
-  l = length(times)
   times <- object$dtcurve$times
   depths <- object$dtcurve$depths
   l = length(times)

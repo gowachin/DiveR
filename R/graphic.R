@@ -47,7 +47,7 @@ plot.dive <- function(x,
                       # safe = TRUE,
                       add = FALSE) {
   
-  x$dtcurve$times <- x$dtcurve$times + x$hour[1]
+  if (!add) {x$dtcurve$times <- x$dtcurve$times + x$hour[1]}
   
   dtcurve <- x$dtcurve
 
@@ -187,10 +187,10 @@ plot.dive <- function(x,
   }
 
   if (legend) {
-    legend("top", sprintf(
+    legend("bottomright", sprintf(
       "%s speed : %g m/min", c("ascent", "deco stop"),
       unlist(speed(x))
-    ), horiz = T)
+    ), horiz = T, cex = 0.7)
   }
 }
 
@@ -233,7 +233,6 @@ plot.ndive <- function(x,
                        text_print = TRUE,
                        line_print = TRUE,
                        def_cols = FALSE,
-                       legend = FALSE,
                        # safe = TRUE,
                        add = FALSE) {
   # x <- mult_dive ; text_print = T; add = F
@@ -315,146 +314,7 @@ plot.ndive <- function(x,
       }
     }
   }
-  
-  dtcurve <- x$dive1$dtcurve
-  
-  line_par <- c(list(x = dtcurve$times, y = -dtcurve$depths), call_par)
-  line_par$xlim <- NULL
-  line_par$xlim <- NULL
-  line_par$ylim <- NULL
-  line_par$xlab <- NULL
-  line_par$ylab <- NULL
-  line_par$main <- NULL
-  line_par$log <- NULL
-  
-  do.call(lines, line_par)
-  
-  if (text_print) {
-    text( # max_depth
-      x = dtcurve$times[2], y = -max(dtcurve$depths),
-      paste(-max(dtcurve$depths), "m"),
-      pos = 1,
-      col = call_par$col
-    )
-    
-    text( # depth_time
-      x = mean(dtcurve$times[c(2, 3)]), y = -max(dtcurve$depths),
-      paste(dtcurve$times[3] - x$dive1$hour[1], "'", sep = ""), pos = 3,
-      col = call_par$col
-    )
-    
-    points(x = x$dive1$hour, y = rep(0, 2), pch = c(25, 24), 
-           bg = rep(call_par$col, 2))
-    text(
-      x = x$dive1$hour, y = 0,
-      sprintf("%s: %g'", c("start", "end"), x$dive1$hour), pos = 3,
-      col = call_par$col
-    )
-    
-    # paliers infos
-    for (i in x$dive1$palier$depth[x$dive1$palier$time > 0]) {
-      # depth of palier
-      text(
-        x = max(dtcurve$time[dtcurve$depths == i]), y = -i,
-        paste(-i, "m"), pos = 4, col = call_par$col
-      )
-      # time of palier
-      text(
-        x = mean(dtcurve$time[dtcurve$depths == i]), y = -i,
-        paste(x$dive1$palier$time[x$dive1$palier$depth == i], "'", sep = ""), pos = 3,
-        col = call_par$col
-      )
-    }
-    
-    # dtr
-    lines(
-      x = dtcurve$times[c(3, rep(length(dtcurve$depths), 2))],
-      y = -dtcurve$depths[c(3, 3, length(dtcurve$depths))],
-      lty = 3, col = call_par$col
-    )
-    text(
-      x = mean(dtcurve$times[c(3, length(dtcurve$depths))]),
-      y = -max(dtcurve$depths),
-      paste("dtr = ", x$dive1$dtr, "'", sep = ""), pos = 3,
-      col = call_par$col
-    )
-  }
-  
-  if (legend) {
-    legend("top", sprintf(
-      "%s speed : %g m/min", c("ascent", "deco stop"),
-      unlist(speed(xdive1))
-    ), horiz = T)
-  }
-  
-  dtcurve <- x$dive2$dtcurve
-  
-  line_par <- c(list(x = dtcurve$times, y = -dtcurve$depths), call_par)
-  line_par$xlim <- NULL
-  line_par$xlim <- NULL
-  line_par$ylim <- NULL
-  line_par$xlab <- NULL
-  line_par$ylab <- NULL
-  line_par$main <- NULL
-  line_par$log <- NULL
-  
-  do.call(lines, line_par)
-  
-  if (text_print) {
-    text( # max_depth
-      x = dtcurve$times[2], y = -max(dtcurve$depths),
-      paste(-max(dtcurve$depths), "m"),
-      pos = 1,
-      col = call_par$col
-    )
-    
-    text( # depth_time
-      x = mean(dtcurve$times[c(2, 3)]), y = -max(dtcurve$depths),
-      paste(dtcurve$times[3] - x$dive2$hour[1], "'", sep = ""), pos = 3,
-      col = call_par$col
-    )
-    
-    points(x = x$dive2$hour, y = rep(0, 2), pch = c(25, 24), 
-           bg = rep(call_par$col, 2))
-    text( 
-      x = x$dive2$hour, y = 0,
-      sprintf("%s: %g'", c("start", "end"), x$dive2$hour), pos = 3,
-      col = call_par$col
-    )
-    
-    # paliers infos
-    for (i in x$dive2$palier$depth[x$dive2$palier$time > 0]) {
-      # depth of palier
-      text(
-        x = max(dtcurve$time[dtcurve$depths == i]), y = -i,
-        paste(-i, "m"), pos = 4, col = call_par$col
-      )
-      # time of palier
-      text(
-        x = mean(dtcurve$time[dtcurve$depths == i]), y = -i,
-        paste(x$dive2$palier$time[x$dive2$palier$depth == i], "'", sep = ""), pos = 3,
-        col = call_par$col
-      )
-    }
-    
-    # dtr
-    lines(
-      x = dtcurve$times[c(3, rep(length(dtcurve$depths), 2))],
-      y = -dtcurve$depths[c(3, 3, length(dtcurve$depths))],
-      lty = 3, col = call_par$col
-    )
-    text(
-      x = mean(dtcurve$times[c(3, length(dtcurve$depths))]),
-      y = -max(dtcurve$depths),
-      paste("dtr = ", x$dive2$dtr, "'", sep = ""), pos = 3,
-      col = call_par$col
-    )
-  }
-  
-  if (legend) {
-    legend("top", sprintf(
-      "%s speed : %g m/min", c("ascent", "deco stop"),
-      unlist(speed(xdive2))
-    ), horiz = T)
-  }
-}
+
+  plot(x$dive1, add = TRUE, col = call_par$col)
+  plot(x$dive2, add = TRUE, col = call_par$col)
+}  
