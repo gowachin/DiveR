@@ -3,19 +3,24 @@
 \name{depth}
 \alias{depth}
 \alias{depth.dive}
+\alias{depth.ndive}
 \title{depth}
 \usage{
 depth(object)
 
 ## S3 method for class 'dive'
 # depth(dive)
+
+## S3 method for class 'dive'
+# depth(dive)
 }
 \arguments{
 \item{object}{is a mn90 object. There are methods for 
-\code{\link[mn90]{dive}} objects.}
+\code{\link[mn90]{dive}} and \code{\link[mn90]{ndive}} objects.}
 }
 \value{
-It returns a numeric with the duration of the ascent and deco.
+It returns a numeric with the depth of the dive. 
+Is a vector if working on ndive object
 }
 \description{
 \code{depth} retrive the depth of a singular or multiple dive sequence.

@@ -4,7 +4,15 @@
 \alias{plot.dive}
 \title{plot.dive}
 \usage{
-\method{plot}{dive}(x, ..., text_print = TRUE, add = FALSE)
+\method{plot}{dive}(
+  x,
+  ...,
+  text_print = TRUE,
+  line_print = TRUE,
+  def_cols = FALSE,
+  legend = FALSE,
+  add = FALSE
+)
 }
 \arguments{
 \item{x}{an object of class dive.}
@@ -24,8 +32,13 @@ dive curve.
 \item{text_print}{set to \code{TRUE} by default, whether there is a text 
 for depths and duration of deco stops.}
 
+\item{def_cols}{FALSE by default,}
+
 \item{add}{set to \code{FALSE} by default, to add another dive plot 
 on a precedent one.}
+
+\item{lines_print}{set to \code{TRUE} by default, whether there is lines 
+for depths.}
 }
 \description{
 Plot the dive curve depending on time and depth. 

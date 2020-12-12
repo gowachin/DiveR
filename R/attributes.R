@@ -60,9 +60,40 @@ dtr.palier <- function(object, ..., vup = 10) {
   return(dtr)
 }
 
+#' speed
+#'
+#' \code{speed} compute the ascent speed from a depth and between deco stages 
+#' of a dive.
+#' It can be retrieved from a dive object.
+#'
+#' @param object is a mn90 object. There are methods for 
+#' \code{\link[mn90]{dive}} objects.
+#'
+#' @return It returns a numeric with the duration of the ascent and deco.
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+speed <- function(object, ...) {
+  UseMethod("speed")
+}
+
+#' @rdname speed
+#' @usage ## S3 method for class 'dive'
+#' # speed(dive)
+#' @export
+speed.dive <- function(object, ...) {
+  l = length(times)
+  times <- object$dtcurve$times
+  depths <- object$dtcurve$depths
+  l = length(times)
+  asc <- -(depths[4] - depths[3]) / (times[4] - times[3])
+  plt <- -(depths[l] - depths[l-1]) / (times[l] - times[l -1])
+  
+  return(list(asc = asc, plt = plt))
+}
+
 #' summary
-#' 
-#' TODO summary ndive
 #'
 #' summary of a dive object
 #'
@@ -146,9 +177,10 @@ dtime.dive <- function(object) {
 #' \code{depth} retrive the depth of a singular or multiple dive sequence.
 #'
 #' @param object is a mn90 object. There are methods for 
-#' \code{\link[mn90]{dive}} objects.
+#' \code{\link[mn90]{dive}} and \code{\link[mn90]{ndive}} objects.
 #' 
-#' @return It returns a numeric with the duration of the ascent and deco.
+#' @return It returns a numeric with the depth of the dive. 
+#' Is a vector if working on ndive object
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -163,4 +195,14 @@ depth <- function(object) {
 #' @export
 depth.dive <- function(object) {
   return(max(object$dtcurve$depths))
+}
+
+#' @rdname depth
+#' @usage ## S3 method for class 'dive'
+#' # depth(dive)
+#' @export
+depth.ndive <- function(object) {
+  d1 <- max(object$dive1$dtcurve$depths)
+  d2 <- max(object$dive2$dtcurve$depths)
+  return(c(d1,d2))
 }

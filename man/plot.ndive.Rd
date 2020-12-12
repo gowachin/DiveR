@@ -4,7 +4,15 @@
 \alias{plot.ndive}
 \title{plot.ndive}
 \usage{
-\method{plot}{ndive}(x, ..., text_print = TRUE, add = FALSE)
+\method{plot}{ndive}(
+  x,
+  ...,
+  text_print = TRUE,
+  line_print = TRUE,
+  def_cols = FALSE,
+  legend = FALSE,
+  add = FALSE
+)
 }
 \arguments{
 \item{x}{an object of class ndive.}
