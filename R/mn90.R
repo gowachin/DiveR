@@ -163,7 +163,7 @@ ndive <- function(dive1, dive2, inter = 16) {
       max_depth_t(depth2) > time2 + maj & depth(dive1) <= 60) {
       hour2 <- dive1$hour[2] + inter
       suc_dive <- dive(depth = depth2, time = time2, maj = maj, hour = hour2)
-
+      
       ndive <- list(
         dive1 = dive1, dive2 = suc_dive,
         inter = inter, type = "success"
