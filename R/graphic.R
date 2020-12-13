@@ -41,6 +41,7 @@ NULL
 plot.dive <- function(x,
                       ...,
                       text_print = TRUE,
+                      hour_print = TRUE,
                       line_print = TRUE,
                       def_cols = FALSE,
                       legend = FALSE,
@@ -148,15 +149,18 @@ plot.dive <- function(x,
       paste(dtcurve$times[3] - x$hour[1], "'", sep = ""), pos = 3,
       col = call_par$col
     )
-
+    
     points(x = x$hour, y = rep(0, 2), pch = c(25, 24), 
            bg = rep(call_par$col, 2))
-    text(
-      x = x$hour, y = 0,
-      sprintf("%s: %g'", c("start", "end"), x$hour), pos = 3,
-      col = call_par$col
-    )
-
+    if (hour_print){
+      text(
+        x = x$hour, y = 0,
+        # x$hour, pos = 3,
+        sprintf("%s: %g'", c("start", "end"), x$hour), pos = 3,
+        col = call_par$col
+      )
+    }
+    
     # paliers infos
     for (i in x$palier$depth[x$palier$time > 0]) {
       # depth of palier
@@ -181,7 +185,8 @@ plot.dive <- function(x,
     text(
       x = mean(dtcurve$times[c(3, length(dtcurve$depths))]),
       y = -max(dtcurve$depths),
-      paste("dtr = ", x$dtr, "'", sep = ""), pos = 3,
+      paste(x$dtr, "'", sep = ""), pos = 3,
+      # paste("dtr = ", x$dtr, "'", sep = ""), pos = 3,
       col = call_par$col
     )
   }
@@ -315,6 +320,26 @@ plot.ndive <- function(x,
     }
   }
 
-  plot(x$dive1, add = TRUE, col = call_par$col)
-  plot(x$dive2, add = TRUE, col = call_par$col)
+  if (x$type == 'success'){
+    plot(x$dive1, add = TRUE, col = call_par$col, text_print= text_print)
+    plot(x$dive2, add = TRUE, col = call_par$col, text_print= text_print)
+    
+    text(
+      x = mean(c(x$dive1$hour[2], x$dive2$hour[1])), y = 0,
+      sprintf("%s: %g'",c('inter', 'maj'), c(x$inter, x$dive2$maj)), pos = c(3,1),
+      col = call_par$col
+    )
+  } else if (x$type == 'consec'){
+    plot(x$dive1, add = TRUE, col = call_par$col, hour_print= FALSE)
+    plot(x$dive2, add = TRUE, col = call_par$col, hour_print= FALSE)
+    hours <- c(x$dive1$hour[1], x$dive2$hour[2],
+               mean(x$dive1$hour[2], x$dive2$hour[1]))
+    t <- c(x$dive1$hour[1], x$dive2$hour[2], x$inter)
+    text(
+      x = hours, y = 0,
+      # x$hour, pos = 3,
+      sprintf("%s: %g'", c("start", "end", 'inter'), t), pos = 3,
+      col = call_par$col
+    )
+  }
 }  
