@@ -11,12 +11,12 @@ ui <- # navbarPage("My app",
   # tabPanel("truc",
   fluidPage(
     class = "R1",
-    #### CSS ####
-    tags$head(tags$link(
-      rel = "stylesheet",
-      type = "text/css",
-      href = "bootstrap.css"
-    )),
+    # #### CSS ####
+    # tags$head(tags$link(
+    #   rel = "stylesheet",
+    #   type = "text/css",
+    #   href = "bootstrap.css"
+    # )),
     # ####
     tabsetPanel(
       type = "pills",
@@ -27,6 +27,15 @@ ui <- # navbarPage("My app",
           # Sidebar panel for inputs ----
           sidebarPanel(
             id = "sidebar",
+            
+            selectInput("type", "Profile type:",
+                        c("Square" = "sqr",
+                          "Profile" = "pro")),
+            
+            # checkboxInput("sqr", i18n$t("Second Dive")),
+            conditionalPanel(
+              condition = "input.type == 'sqr'",
+              
             titlePanel(i18n$t("First dive")),
             # Input: Slider for the number of bins ----
             sliderInput(
@@ -54,6 +63,24 @@ ui <- # navbarPage("My app",
                 inputId = "time2", label = i18n$t("Time (minutes):"),
                 min = 1, max = 180, value = 40
               )
+            )
+            # ),
+            # conditionalPanel(
+            #   condition = "input.type == 'pro'",
+            #   
+            #   titlePanel(i18n$t("First dive")),
+            #   # Input: Slider for the number of bins ----
+            #   sliderInput(
+            #     inputId = "prodepth1", label = i18n$t("Depth (meter):"),
+            #     min = 6, max = 65, value = 20
+            #   ),
+            #   
+            #   # Input: Slider for the number of bins ----
+            #   sliderInput(
+            #     inputId = "ptime1", label = i18n$t("Time (minutes):"),
+            #     min = 1, max = 180, value = 40
+            #   ),
+            #   checkboxInput("psecu1", i18n$t("Security stop"), TRUE)
             )
           ),
 
@@ -90,6 +117,15 @@ server <- function(input, output, session) {
     updateSliderInput(session, "time1", value = 1,
                       min = 0, max = maxt1)
   })
+  
+  # depth <- reactive({
+  #   paste('input$',input$type,"depth1", collapse = '')
+  # })
+  # output$divePlot <- renderPlot({
+  #   dive <- dive(depth = eval(depth), time = input$time1, 
+  #                secu = input$secu1, vup = 10)
+  #   plot(dive)
+  # })
 
   output$divePlot <- renderPlot({
     dive <- dive(depth = input$depth1, time = input$time1, 
@@ -97,13 +133,13 @@ server <- function(input, output, session) {
     plot(dive)
   })
 
-  output$dive1 <- renderText({
-    paste("You have selected", input$depth1, 'for', input$time1)
-  })
+  # output$dive1 <- renderText({
+  #   paste("You have selected", input$depth1, 'for', input$time1)
+  # })
 
-  output$dive2 <- renderText({
-    paste("You have selected", input$depth2, 'for', input$time2)
-  })
+#   output$dive2 <- renderText({
+#     paste("You have selected", input$depth2, 'for', input$time2)
+#   })
 }
 
 # Create Shiny app ----
