@@ -8,6 +8,7 @@
   x,
   ...,
   text_print = TRUE,
+  hour_print = TRUE,
   line_print = TRUE,
   def_cols = FALSE,
   legend = FALSE,

@@ -4,7 +4,15 @@
 \alias{dtcurve}
 \title{dtcurve}
 \usage{
-dtcurve(time, depth, palier, vup = 10)
+dtcurve(
+  time,
+  depth,
+  palier,
+  vup = 10,
+  dist = NULL,
+  speed = NULL,
+  way = c("AR", "AS")
+)
 }
 \arguments{
 \item{time}{in minute. Max is 180' see Detail !}

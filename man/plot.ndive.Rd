@@ -10,7 +10,6 @@
   text_print = TRUE,
   line_print = TRUE,
   def_cols = FALSE,
-  legend = FALSE,
   add = FALSE
 )
 }

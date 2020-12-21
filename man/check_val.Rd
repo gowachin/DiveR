@@ -4,7 +4,7 @@
 \alias{check_val}
 \title{check_val}
 \usage{
-check_val(val)
+check_val(val, zero = FALSE)
 }
 \arguments{
 \item{val}{a single positive numeric value}

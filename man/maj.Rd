@@ -4,9 +4,7 @@
 \name{maj}
 \alias{maj}
 \title{MN90 table}
-\format{
-An object of class \code{data.frame} with 18 rows and 20 columns.
-}
+\format{An object of class \code{data.frame} with 18 rows and 20 columns.}
 \source{
 Trucco, Jean-Noël; Biard, Jef; Redureau, Jean-Yves; Fauvel, Yvon (3 May 1999). 
 pdf in french :

@@ -4,9 +4,7 @@
 \name{grp}
 \alias{grp}
 \title{Deco Group}
-\format{
-An object of class \code{data.frame} with 25 rows and 27 columns.
-}
+\format{An object of class \code{data.frame} with 25 rows and 27 columns.}
 \source{
 Trucco, Jean-Noël; Biard, Jef; Redureau, Jean-Yves; Fauvel, Yvon (3 May 1999). 
 pdf in french :
