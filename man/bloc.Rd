@@ -4,7 +4,12 @@
 \alias{bloc}
 \title{bloc}
 \usage{
-bloc(vol = 10, press = 200, gaz = "O2", typ = "back")
+bloc(vol, press, gas = "Air", typ = "back")
+}
+\arguments{
+\item{vol}{tank volume in litre}
+
+\item{press}{tank pression in bar}
 }
 \description{
 bloc

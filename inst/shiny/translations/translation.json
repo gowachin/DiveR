@@ -1,12 +1,35 @@
 {
   "languages": ["en", "fr"],
   "translation": [
+    {"en": "Dive Profile", "fr": "Profil de plongée"},
+    {"en": "You can input a dive with a depth and time or", 
+    "fr": "Il est possible de définir une plongée par son temps"},
+    {"en": "input multiple time/depths points", 
+    "fr": " et sa profondeur (carré) ou par une table profondeur-durée"},
+    {"en": "Profile type:", "fr": "Type de profil"},
+    {"en": "Square", "fr": "Carre"},
+    
       {"en": "First dive", "fr": "Première plongée"},
       {"en": "Depth (meter):", "fr": "Profondeur (metre) :"},
       {"en": "Time (minutes):", "fr": "Temps (minutes):"},
       {"en": "Security stop", "fr": "Palier de sécurité"},
       {"en": "Second Dive", "fr": "Seconde plongée"},
-      {"en": "Advanced settings", "fr": "Paramètres avancés"}
+      {"en": "Advanced settings", "fr": "Paramètres avancés"},
+      {"en": "Ascent speed:", "fr": "Vitesse de remontée"},
+      {"en": "Immersion time", "fr": "Heure d'immersion"},
+      {"en": "Interval time", "fr": "Temps d'intervel"},
+      {"en": "%s%d minutes at %d meters", "fr": "%s%d minutes à %d metres"},
+      
+      {"en": "The first dive reach ", "fr": "La première plongée atteins "},
+      {"en": " meters for a duration of ", "fr": " metres pour une durée de "},
+      {"en": "Total dive time is ", "fr": "Le temps total de plongée est de "},
+      {"en": " minutes with an ascent of ", 
+      "fr": " minutes avec \nun temps de remontée de "},
+      {"en": " stops :", "fr": " paliers :"},
+      {"en": "The dive group is ", "fr": "Le groupe de plongée est "}
+      
+      
+      
       
     ]
 }

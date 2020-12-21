@@ -166,7 +166,6 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
 #' @export
 ndive <- function(dive1, dive2, inter = 16) {
   # checks
-  check_val(inter)
   if (class(dive1) != "dive") stop("dive1 must be of class dive")
   if (class(dive2) != "dive") stop("dive2 must be of class dive")
   # retrive some data avout dive2
