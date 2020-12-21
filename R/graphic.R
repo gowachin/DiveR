@@ -177,9 +177,10 @@ plot.dive <- function(x,
     }
 
     # dtr
+    last <- max(which(dtcurve$depths == max(dtcurve$depths)))
     lines(
-      x = dtcurve$times[c(3, rep(length(dtcurve$depths), 2))],
-      y = -dtcurve$depths[c(3, 3, length(dtcurve$depths))],
+      x = dtcurve$times[c(last, rep(length(dtcurve$depths), 2))],
+      y = -dtcurve$depths[c(last, last, length(dtcurve$depths))],
       lty = 3, col = call_par$col
     )
     text(

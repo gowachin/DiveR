@@ -1,4 +1,5 @@
 #' @import graphics
+#' @import shiny
 NULL
 
 #' mn90
@@ -14,7 +15,7 @@ NULL
 #' custom function to run the shiny app (thinkR idea, to explore in docker)
 #' 
 #' @examples 
-#' mn90::shiny_mn90_app()
+#' # mn90::shiny_mn90_app()
 #' 
 #' @export
 shiny_mn90_app <- function(){
@@ -28,13 +29,24 @@ shiny_mn90_app <- function(){
 #' 
 #' @param val a single positive numeric value
 #' @export
-check_val <- function(val) {
-  if (val < 0 | !is.numeric(val)) {
-    stop(paste(
-      deparse(substitute(val)),
-      "must be a single positive numeric value."
-    ))
+check_val <- function(val, zero = FALSE) {
+  if (zero){
+    if (val <= 0 | !is.numeric(val)) {
+      stop(paste(
+        deparse(substitute(val)),
+        "must be a single positive numeric value."
+      ))
+    }
+    
+  } else {
+    if (val < 0 | !is.numeric(val)) {
+      stop(paste(
+        deparse(substitute(val)),
+        "must be a single positive numeric value."
+      ))
+    }
   }
+  
 }
 
 #' dive
@@ -58,13 +70,41 @@ check_val <- function(val) {
 #' 
 #' @export
 dive <- function(depth = 20, time = 40, secu = TRUE,
-                 vup = 10, maj = 0, hour = NULL) {
+                 vup = 10, maj = 0, hour = NULL,
+                 dist = NULL,  speed = NULL, way = c('AS','AR')) {
   # depth = 39; time = 22; secu = TRUE; vup = 10
   # checks
-  check_val(depth)
-  check_val(time)
   check_val(vup)
   check_val(maj)
+  
+  if (length(depth) > 1){
+    if (is.null(speed)){stop('A speed must be provided')}
+    
+    if (is.null(dist) & length(time) == length(depth)){
+      dist <- time * speed
+    } else {
+      stop(paste('multiple points dive need a same lenght numeric vector of',
+                 'time or distances'))
+    }
+    
+    if (length(dist) != length(depth)){
+      stop('depth and dist must be of same length')
+    }
+    
+    vdepth <- depth
+    depth <- max(vdepth)
+    check_val(depth)
+    
+    if (way == 'AR'){
+      vdepth <- c(vdepth, rev(vdepth)[-1])
+      dist <- c(dist, rev(dist))
+    } 
+    time <- sum(dist)/speed
+    
+  } else {
+    vdepth <- depth
+    check_val(time)
+  }
 
   if (maj > 0) {
     timaj <- time + maj
@@ -76,10 +116,19 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   tablecheck(depth, timaj)
   # get the palier from the table
   palier <- palier(depth, timaj, secu)
-  # compute the dtr from palier and depth in square profile
-  dtr <- dtr(palier, depth = depth, vup = vup)
   # dive dtcurve
-  dtcurve <- dtcurve(time = time, depth = depth, palier = palier, vup = vup)[-3]
+  if (length(vdepth) > 1){
+    # stop('not yet implemented')
+    dtcurve <- dtcurve(depth = vdepth, time = time, dist = dist, palier = palier, vup = vup, 
+                       speed = speed, way = way)
+  } else {
+    dtcurve <- dtcurve(time = time, depth = depth, palier = palier, vup = vup)
+  }
+  # compute the dtr from palier and depth in square profile
+  # dtr <- dtr(palier, depth = depth, vup = vup)
+  dtr <- unname(unlist(dtcurve[3]))
+  dtcurve[3] <- NULL
+  
   # hour 
   if (is.null(hour)) {
     hour <- c(0, time + dtr)

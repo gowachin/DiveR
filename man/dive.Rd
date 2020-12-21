@@ -4,7 +4,17 @@
 \alias{dive}
 \title{dive}
 \usage{
-dive(depth = 20, time = 40, secu = TRUE, vup = 10, maj = 0, hour = NULL)
+dive(
+  depth = 20,
+  time = 40,
+  secu = TRUE,
+  vup = 10,
+  maj = 0,
+  hour = NULL,
+  dist = NULL,
+  speed = NULL,
+  way = c("AS", "AR")
+)
 }
 \arguments{
 \item{depth}{in meter}

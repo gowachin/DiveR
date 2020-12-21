@@ -187,29 +187,50 @@ majoration <- function(depth, group = "Z", inter = 16) {
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
 #' @export
-dtcurve <- function(time, depth, palier, vup = 10) {
+dtcurve <- function(time, depth, palier, vup = 10, 
+                    dist = NULL, speed = NULL, way = c('AR','AS')) {
   # checks
-  check_val(depth)
   check_val(time)
+  
+  if (length(depth) > 1){
+    if (is.null(speed)){stop('A speed must be provided')}
+    
+    vdepth <- depth
+    depth <- max(vdepth)
+    check_val(depth)
+    
+    vtimes <- cumsum(dist/speed)
+    if (way == 'AR'){
+      vtimes <- vtimes[-length(dist)]
+    }
+  } else {
+    vdepth <- rep(depth, 2)
+    check_val(depth)
+    
+    vtimes <- c(0, 0, time)
+  }
+  
   if (class(palier) != "palier") stop("palier must be of class palier")
   # time of deco
   tpal <- sum(palier$time)
-  # compute dtr
+  # maxpal
   maxpal <- sum(3 * (palier$time > 0))
+  if(any(!vdepth > maxpal)){
+    stop('this probleme is not yet fully implemented')
+  }
   # time to deco
   up <- (depth - maxpal) / vup
   # time between deco
   vpal <- maxpal / 6
-  dtr <- up + tpal + vpal
+  dend <- up + tpal + vpal
 
   depths <- c(
-    0, rep(depth, 2),
+    0, vdepth,
     rev(sort(rep(palier$depth[palier$time > 0], 2))), 0
   )
 
   times <- c(
-    0, 0,
-    time,
+    vtimes,
     time + up,
     time + up + palier$time["m9"],
     time + up + palier$time["m9"] + 0.5 * (palier$time[1] > 0),
@@ -217,14 +238,15 @@ dtcurve <- function(time, depth, palier, vup = 10) {
     time + up + sum(palier$time[c("m9", "m6")]) + # line
       sum(0.5 * (palier$time[c(1, 2)] > 0)),
     time + up + sum(palier$time) + sum(0.5 * (palier$time[c(1, 2)] > 0)),
-    time + dtr
+    time + dend
   )
 
-  times <- c(0, times[!duplicated(times)])
+  times <- unname(c(0, times[!duplicated(times)]))
+  
+  dtr = max(times) - times[max(which(depths == max(depths)))]
 
   # plot(times, -depths, type = "l")
   # abline(h = 0, col = "darkblue", lty = 3)
-  names(times) <- NULL
 
   curve <- list(depths = depths, times = times, dtr = dtr)
   # end
