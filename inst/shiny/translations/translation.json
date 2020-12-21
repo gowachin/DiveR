@@ -2,10 +2,10 @@
   "languages": ["en", "fr"],
   "translation": [
     {"en": "Dive Profile", "fr": "Profil de plongée"},
-    {"en": "You can input a dive with a depth and time or", 
-    "fr": "Il est possible de définir une plongée par son temps"},
-    {"en": "input multiple time/depths points", 
-    "fr": " et sa profondeur (Square) ou par une table profondeur-durée"},
+    {"en": "You can input a dive with a depth and time", 
+    "fr": "Il est possible de définir une plongée par son temps et sa profondeur"},
+    {"en": "or input multiple time/depths points", 
+    "fr": "(Square) ou par une table profondeur-durée"},
     {"en": "Profile type:", "fr": "Type de profil"},
     {"en": "Square", "fr": "Carre"},
     

@@ -50,8 +50,8 @@ ui <- # navbarPage("My app",
           sidebarPanel(
             id = "sidebar",
             helpText(paste(
-              i18n$t("You can input a dive with a depth and time or"),
-              i18n$t("input multiple time/depths points")
+              i18n$t("You can input a dive with a depth and time")#,
+              # i18n$t("or input multiple time/depths points")
             )),
             ### Profile type ####
             selectInput(
@@ -64,7 +64,7 @@ ui <- # navbarPage("My app",
             ),
             ## Square profile ####
             square_panel, # sourced in square.R
-            # return following inputs : depth1 time1 sec depth2 time2
+            # return following inputs : depth1 time1 sec interv depth2 time2
             ## Point profile ####
             conditionalPanel(
               condition = "input.type == 'pro'",
@@ -110,11 +110,10 @@ ui <- # navbarPage("My app",
               plotOutput(outputId = "divePlot"),
               # textOutput("dive1"),
               verbatimTextOutput("dive"),
-              conditionalPanel(
-                condition = "input.sec == true",
-
-                textOutput("dive2")
-              )
+              conditionalPanel(                        # will be removed TODO 
+                condition = "input.sec == true",       # will be removed
+                textOutput("dive2")                    # will be removed
+              )                                        # will be removed
             ),
             ## Point profile ####
             conditionalPanel(
@@ -124,11 +123,15 @@ ui <- # navbarPage("My app",
             )
           )
         )
-      ),
-      tabPanel(
-        "Consommation",
-        "this is a test, i repete, it's a test"
-      )
+      )#,
+      # tabPanel(
+      #   "Security curve & Tables",
+      #   "this is a test, i repete, it's a test"
+      # ),
+      # tabPanel(
+      #   "Consommation",
+      #   "this is a test, i repete, it's a test"
+      # )
     )
   )
 # ) ,
@@ -136,61 +139,59 @@ ui <- # navbarPage("My app",
 
 # Define server logic required to draw a histogram ----
 server <- function(input, output, session) {
+  #### Square intput ####
   # max range of depth1
   observe({
     maxt1 <- max_depth_t(input$depth1)
     tmp <- input$time1
-    if (input$time1 > maxt1){
-      updateSliderInput(session, "time1",
-                        value = maxt1,
-                        min = 0, max = maxt1
-      )
+    if (input$time1 > maxt1) {
+      updateSliderInput(session, "time1", value = maxt1, min = 0, max = maxt1)
     } else {
-      updateSliderInput(session, "time1",
-                        value = tmp,
-                        min = 0, max = maxt1
-      )
+      updateSliderInput(session, "time1", value = tmp, min = 0, max = maxt1)
     }
   })
-  
+
   #### Square output ####
   observe({
     maxt1 <- max_depth_t(input$depth1)
-    if(input$time1 <= maxt1){
-    
-    # if (input$type == 'sqr'){}
-    if (!input$sec){
-      dive1 <- dive(
-        depth = input$depth1, time = input$time1,
-        secu = input$secu, vup = input$vup
-      )
-      
-      output$divePlot <- renderPlot({
-        plot(dive1, ylab = i18n$t("Depth (m)"), 
-             xlab = i18n$t("Time (min)"))
-      })
-      output$dive <- summarise_dive(dive1)
-    } else {
-      mult_dive <- ndive(dive(depth = input$depth1, time = input$time1,
-                              secu = input$secu, vup = input$vup),
-                         dive(depth = input$depth2, time = input$time2,
-                              secu = input$secu, vup = input$vup),
-                         inter = minute(input$interv) + 60 * hour(input$interv))
-
-      output$divePlot <- renderPlot({
-        plot(mult_dive)
-      })
-      output$dive <- summarise_dive(mult_dive$dive1)
-      
-      output$dive2 <- renderText({
-        paste0('NOT YET IMPLEMENTED')
-      })
-    }
+    if (input$time1 <= maxt1) {
+      # if (input$type == 'sqr'){}
+      if (!input$sec) {
+        # compute the dive
+        dive1 <- dive(
+          depth = input$depth1, time = input$time1,
+          secu = input$secu, vup = input$vup
+        )
+        # Plot the dive
+        output$divePlot <- renderPlot({
+          plot(dive1, ylab = i18n$t("Depth (m)"), xlab = i18n$t("Time (min)"))
+        })
+        # Dive summary
+        output$dive <- summarise_dive(dive1)
+      } else {
+        # compute the dive
+        mult_dive <- ndive(dive(
+          depth = input$depth1, time = input$time1,
+          secu = input$secu, vup = input$vup
+        ),
+        dive(
+          depth = input$depth2, time = input$time2,
+          secu = input$secu, vup = input$vup
+        ),
+        inter = minute(input$interv) + 60 * hour(input$interv)
+        )
+        # Plot the dive
+        output$divePlot <- renderPlot({
+          plot(mult_dive)
+        })
+        # Dive summary
+        output$dive <- summarise_dive(mult_dive$dive1)
+        output$dive2 <- renderText({
+          paste0("NOT YET IMPLEMENTED")
+        })
+      }
     }
   })
-
-  
-  
 
   #### Profile input ####
   values <- reactiveValues()
