@@ -3,12 +3,25 @@ NULL
 
 #' bloc
 #' 
+#' @param vol tank volume in litre
+#' @param press tank pression in bar
+#' @gas tank gas, by default "Air"
+#' @typ tank type, by default "back"
+#' \describe{
+#'   \item{"solo"}{single tank}
+#'   \item{"bi"}{two separated tanks}
+#'   \item{"relay"}{single tank to be dropped at certain time}
+#'   \item{"deco"}{single tank to be used in deco ascent}
+#' }
+#' 
 #' @export
-bloc <- function(vol = 10, press = 200, gaz = "O2", typ = "back"){
+bloc <- function(vol, press, gas = "Air", typ = "back"){
   bloc <- list(vol = vol, press = press, gaz = gaz, typ = typ)
   class(bloc) <- "bloc"
   return(bloc)
 }
+
+# conso relais - depos relais à la regle - conso bloc perso - demi-tour sur regle perso - recup relais - conso relais
 
 #' press_time
 #' 
