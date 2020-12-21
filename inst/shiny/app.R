@@ -5,8 +5,8 @@ library(shiny.i18n)
 library(rhandsontable)
 library(shinyTime)
 library(lubridate)
-library(pacman)
-p_load_gh('burgerga/shinyTime@fix/gh8')
+# library(pacman)
+# p_load_gh('burgerga/shinyTime@fix/gh8')
 library(shinyWidgets)
 # traduction settings (must be paste in sourced files!)
 language = 'fr' # 'en' or 'fr' language available
@@ -139,14 +139,25 @@ server <- function(input, output, session) {
   # max range of depth1
   observe({
     maxt1 <- max_depth_t(input$depth1)
-    updateSliderInput(session, "time1",
-      value = 1,
-      min = 0, max = maxt1
-    )
+    tmp <- input$time1
+    if (input$time1 > maxt1){
+      updateSliderInput(session, "time1",
+                        value = maxt1,
+                        min = 0, max = maxt1
+      )
+    } else {
+      updateSliderInput(session, "time1",
+                        value = tmp,
+                        min = 0, max = maxt1
+      )
+    }
   })
-
+  
   #### Square output ####
   observe({
+    maxt1 <- max_depth_t(input$depth1)
+    if(input$time1 <= maxt1){
+    
     # if (input$type == 'sqr'){}
     if (!input$sec){
       dive1 <- dive(
@@ -155,7 +166,8 @@ server <- function(input, output, session) {
       )
       
       output$divePlot <- renderPlot({
-        plot(dive1)
+        plot(dive1, ylab = i18n$t("Depth (m)"), 
+             xlab = i18n$t("Time (min)"))
       })
       output$dive <- summarise_dive(dive1)
     } else {
@@ -174,8 +186,10 @@ server <- function(input, output, session) {
         paste0('NOT YET IMPLEMENTED')
       })
     }
+    }
   })
 
+  
   
 
   #### Profile input ####
