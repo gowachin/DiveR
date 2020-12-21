@@ -9,7 +9,9 @@ License: CeCILL-2
 Encoding: UTF-8
 LazyData: true
 Imports: graphics,
-         R.utils
+         R.utils,
+         stats,
+         shiny
 RoxygenNote: 7.1.0
 Depends: R (>= 2.10)
 Suggests: 

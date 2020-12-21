@@ -4,9 +4,7 @@ Package and shiny app to compute and represent dive curve, deco time and other p
 
 ## To do : 
 
-- add the possibility to use multiple dives
-- plot ndives
-- more informations in plot.dive
+- doc on new conso and dive functions
 - more attributes
 - make a beautiful doc for every functions
 
