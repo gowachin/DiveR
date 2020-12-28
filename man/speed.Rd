@@ -5,7 +5,7 @@
 \alias{speed.dive}
 \title{speed}
 \usage{
-speed(object, ...)
+speed(object)
 
 ## S3 method for class 'dive'
 # speed(dive)

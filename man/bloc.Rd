@@ -10,7 +10,20 @@ bloc(vol, press, gas = "Air", typ = "back")
 \item{vol}{tank volume in litre}
 
 \item{press}{tank pression in bar}
+
+\item{gas}{tank gas, by default "Air"}
+
+\item{typ}{tank type, by default "back"
+\describe{
+  \item{"solo"}{single tank}
+  \item{"bi"}{two separated tanks}
+  \item{"relay"}{single tank to be dropped at certain time}
+  \item{"deco"}{single tank to be used in deco ascent}
+}}
 }
 \description{
 bloc
+}
+\author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

@@ -8,7 +8,12 @@ check_val(val, zero = FALSE)
 }
 \arguments{
 \item{val}{a single positive numeric value}
+
+\item{zero}{set to \code{FALSE} by default, to include zero value to the test}
 }
 \description{
 custom function for checking if values are single positive numeric.
+}
+\author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

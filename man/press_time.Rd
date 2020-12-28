@@ -6,6 +6,17 @@
 \usage{
 press_time(vpress, times, press = 100)
 }
+\arguments{
+\item{vpress}{a vector of pression at different times.}
+
+\item{times}{a vector of times values that match the vpress vector}
+
+\item{press}{an unique value of pression to be reached.}
+}
 \description{
-press_time
+compute the time at which a pression is obtained. Allow to find mid pression
+time or reserve time.
+}
+\author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

@@ -5,8 +5,8 @@ NULL
 #' 
 #' @param vol tank volume in litre
 #' @param press tank pression in bar
-#' @gas tank gas, by default "Air"
-#' @typ tank type, by default "back"
+#' @param gas tank gas, by default "Air"
+#' @param typ tank type, by default "back"
 #' \describe{
 #'   \item{"solo"}{single tank}
 #'   \item{"bi"}{two separated tanks}
@@ -14,9 +14,11 @@ NULL
 #'   \item{"deco"}{single tank to be used in deco ascent}
 #' }
 #' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
 #' @export
 bloc <- function(vol, press, gas = "Air", typ = "back"){
-  bloc <- list(vol = vol, press = press, gaz = gaz, typ = typ)
+  bloc <- list(vol = vol, press = press, gaz = gas, typ = typ)
   class(bloc) <- "bloc"
   return(bloc)
 }
@@ -24,6 +26,15 @@ bloc <- function(vol, press, gas = "Air", typ = "back"){
 # conso relais - depos relais à la regle - conso bloc perso - demi-tour sur regle perso - recup relais - conso relais
 
 #' press_time
+#' 
+#' compute the time at which a pression is obtained. Allow to find mid pression
+#' time or reserve time.
+#' 
+#' @param vpress a vector of pression at different times.
+#' @param times a vector of times values that match the vpress vector
+#' @param press an unique value of pression to be reached.
+#' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
 #' @export
 press_time <- function(vpress, times, press = 100){

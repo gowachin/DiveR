@@ -7,9 +7,12 @@
 \method{plot}{dive}(
   x,
   ...,
-  text_print = TRUE,
+  dtr_print = TRUE,
   hour_print = TRUE,
   line_print = TRUE,
+  deco_print = TRUE,
+  depth_print = TRUE,
+  time_print = TRUE,
   def_cols = FALSE,
   legend = FALSE,
   add = FALSE
@@ -30,16 +33,32 @@ dive curve.
   see \code{\link[graphics]{title}}.
   }}
 
-\item{text_print}{set to \code{TRUE} by default, whether there is a text 
-for depths and duration of deco stops.}
+\item{dtr_print}{set to \code{TRUE} by default, whether there is text and 
+line for ascent time.}
 
-\item{def_cols}{FALSE by default,}
+\item{hour_print}{set to \code{TRUE} by default, whether there is the hour
+at beginning and end of the dive.}
+
+\item{line_print}{set to \code{TRUE} by default, whether there is lines 
+for depths.}
+
+\item{deco_print}{set to \code{TRUE} by default, whether there is information
+about desat stop for depths and times.}
+
+\item{depth_print}{set to \code{TRUE} by default, whether there is depth 
+values along the dive.}
+
+\item{time_print}{set to \code{TRUE} by default, whether there is time 
+values along the dive.}
+
+\item{def_cols}{set to \code{FALSE} by default, modify plot colors to match
+shinyapp css.}
+
+\item{legend}{set to \code{FALSE} by default, print legend about the ascent 
+speeds.}
 
 \item{add}{set to \code{FALSE} by default, to add another dive plot 
 on a precedent one.}
-
-\item{lines_print}{set to \code{TRUE} by default, whether there is lines 
-for depths.}
 }
 \description{
 Plot the dive curve depending on time and depth. 

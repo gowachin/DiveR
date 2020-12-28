@@ -74,7 +74,7 @@ dtr.palier <- function(object, ..., vup = 10) {
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
 #' @export
-speed <- function(object, ...) {
+speed <- function(object) {
   UseMethod("speed")
 }
 
@@ -82,7 +82,7 @@ speed <- function(object, ...) {
 #' @usage ## S3 method for class 'dive'
 #' # speed(dive)
 #' @export
-speed.dive <- function(object, ...) {
+speed.dive <- function(object) {
   times <- object$dtcurve$times
   depths <- object$dtcurve$depths
   l = length(times)

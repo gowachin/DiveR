@@ -1,5 +1,6 @@
 #' @import graphics
 #' @import shiny
+#' @import utils
 NULL
 
 #' mn90
@@ -28,6 +29,10 @@ shiny_mn90_app <- function(){
 #' custom function for checking if values are single positive numeric.
 #' 
 #' @param val a single positive numeric value
+#' @param zero set to \code{FALSE} by default, to include zero value to the test
+#' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
 #' @export
 check_val <- function(val, zero = FALSE) {
   if (zero){
@@ -131,9 +136,9 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   
   # hour 
   if (is.null(hour)) {
-    hour <- c(0, time + dtr)
+    hour <- c(0, tail(dtcurve$time,1))
   } else {
-    hour <- c(hour, hour + time + dtr)
+    hour <- c(hour, hour + tail(dtcurve$time,1))
   }
 
   dive <- list(
@@ -200,11 +205,15 @@ ndive <- function(dive1, dive2, inter = 16) {
     }
   } else {
     # successiv dives
-    # compute maj
-    maj <- majoration(
-      depth = depth2, inter = inter,
-      group = dive1$palier$group
-    )
+    if (inter > 720){ # 12h interv is not longuer
+      maj <- 0
+    } else {
+      # compute maj
+      maj <- majoration(
+        depth = depth2, inter = inter,
+        group = dive1$palier$group
+      )
+    }
     
     # check if second dive possible (time in talbe)
     if (tablecheck(depth2, time2 + maj, force = TRUE) &
@@ -216,6 +225,10 @@ ndive <- function(dive1, dive2, inter = 16) {
         dive1 = dive1, dive2 = suc_dive,
         inter = inter, type = "success"
       )
+      
+      if (inter > 720){
+        ndive$type <- "diff"
+        }
     } else {
       # second dive is impossible here in the table
       ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
