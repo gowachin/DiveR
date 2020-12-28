@@ -148,20 +148,15 @@ server <- function(input, output, session) {
       updateSliderInput(session, "time1", value = maxt1, min = 0, max = maxt1)
     } else {
       updateSliderInput(session, "time1", value = tmp, min = 0, max = maxt1)
-    }
-  })
 
-  #### Square output ####
-  observe({
-    maxt1 <- max_depth_t(input$depth1)
-    if (input$time1 <= maxt1) {
+      # compute the dive
+      dive1 <- dive(
+        depth = input$depth1, time = input$time1,
+        secu = input$secu, vup = input$vup # , 
+        # hour = minute(input$time_input1) + 60 * hour(input$time_input1)
+      )
       # if (input$type == 'sqr'){}
       if (!input$sec) {
-        # compute the dive
-        dive1 <- dive(
-          depth = input$depth1, time = input$time1,
-          secu = input$secu, vup = input$vup
-        )
         # Plot the dive
         output$divePlot <- renderPlot({
           plot(dive1, ylab = i18n$t("Depth (m)"), xlab = i18n$t("Time (min)"))
@@ -170,10 +165,7 @@ server <- function(input, output, session) {
         output$dive <- summarise_dive(dive1)
       } else {
         # compute the dive
-        mult_dive <- ndive(dive(
-          depth = input$depth1, time = input$time1,
-          secu = input$secu, vup = input$vup
-        ),
+        mult_dive <- ndive(dive1,
         dive(
           depth = input$depth2, time = input$time2,
           secu = input$secu, vup = input$vup
