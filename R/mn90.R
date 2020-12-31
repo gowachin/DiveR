@@ -207,18 +207,27 @@ ndive <- function(dive1, dive2, inter = 16) {
     # successiv dives
     if (inter > 720){ # 12h interv is not longuer
       maj <- 0
-    } else {
+    } else if( depth2 > 60 | dive1$palier$group == 'Z'){
+        ndive <- list(dive1 = dive1, dive2 = "STOP", 
+                      inter = inter, type = "solo")
+        class(ndive) <- "ndive"
+        return(ndive)
+      } else {
       # compute maj
       maj <- majoration(
         depth = depth2, inter = inter,
         group = dive1$palier$group
       )
-    }
+    }      
+    print(depth2)
+    print(time2)
+    print(maj)
     
     # check if second dive possible (time in talbe)
     if (tablecheck(depth2, time2 + maj, force = TRUE) &
       max_depth_t(depth2) > time2 + maj & depth(dive1) <= 60) {
       hour2 <- dive1$hour[2] + inter
+
       suc_dive <- dive(depth = depth2, time = time2, maj = maj, hour = hour2)
       
       ndive <- list(

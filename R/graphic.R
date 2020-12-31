@@ -280,8 +280,6 @@ times_inf <- function(x, col){
 #'   \item \strong{ylab} set to \code{'Depth'} by default, 
 #'   see \code{\link[graphics]{title}}.
 #'   }
-#' @param text_print set to \code{TRUE} by default, whether there is a text 
-#' for depths and duration of deco stops.
 #' @param add set to \code{FALSE} by default, to add another dive plot 
 #' on a precedent one.
 #' 
@@ -299,13 +297,17 @@ times_inf <- function(x, col){
 #' @export
 plot.ndive <- function(x,
                        ...,
-                       text_print = TRUE,
                        line_print = TRUE,
                        def_cols = FALSE,
                        # safe = TRUE,
                        add = FALSE) {
-  # x <- mult_dive ; text_print = T; add = F
+  # x <- mult_dive ; add = F
   # x <- dive
+  
+  if (x$type == 'solo'){
+    plot(x$dive1)
+    return()
+  }
   
   delta_x <- (max(x$dive2$hour) - min(x$dive1$hour)) * 0.1
   delta_y <- (max(depth(x)) - min(min(x$dive1$dtcurve$depths),
@@ -384,9 +386,9 @@ plot.ndive <- function(x,
     }
   }
 
-  if (x$type == 'success'){
-    plot(x$dive1, add = TRUE, col = call_par$col, text_print= text_print)
-    plot(x$dive2, add = TRUE, col = call_par$col, text_print= text_print)
+  if (x$type %in% c('success', 'diff') ){
+    plot(x$dive1, add = TRUE, col = call_par$col)
+    plot(x$dive2, add = TRUE, col = call_par$col)
     
     text(
       x = mean(c(x$dive1$hour[2], x$dive2$hour[1])), y = 0,

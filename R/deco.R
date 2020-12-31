@@ -144,6 +144,7 @@ majoration <- function(depth, group = "Z", inter = 16) {
   tmaj <- mn90::maj
   # checks
   check_val(depth)
+  if(depth > 60) stop('Depth must be inferior or equal to 60.')
   check_val(inter)
   if (!group %in% c(rownames(n2), "Z")) {
     stop("Group must be a capital letter between A and P or Z")

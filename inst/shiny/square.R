@@ -26,7 +26,7 @@ square_panel <- conditionalPanel(
     ),
     sliderInput(
       inputId = "depth2", label = i18n$t("Depth (meter):"),
-      min = 6, max = 65, value = 20
+      min = 6, max = 60, value = 20
     ),
     # Input: Slider for time ----
     sliderInput(

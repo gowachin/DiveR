@@ -164,23 +164,46 @@ server <- function(input, output, session) {
         # Dive summary
         output$dive <- summarise_dive(dive1)
       } else {
-        # compute the dive
-        mult_dive <- ndive(dive1,
-        dive(
-          depth = input$depth2, time = input$time2,
-          secu = input$secu, vup = input$vup
-        ),
-        inter = minute(input$interv) + 60 * hour(input$interv)
-        )
-        # Plot the dive
-        output$divePlot <- renderPlot({
-          plot(mult_dive)
-        })
-        # Dive summary
-        output$dive <- summarise_dive(mult_dive$dive1)
-        output$dive2 <- renderText({
-          paste0("NOT YET IMPLEMENTED")
-        })
+        # max range of depth2
+        if(input$interv <= 15){
+          timet <- max(dive1$dtcurve$times) + input$interv + input$time2
+          maxt2 <- max_depth_t(max(input$depth1, input$depth2))
+        } else if(input$interv > 720){
+          timet <- input$time2
+          maxt2 <- max_depth_t(input$depth2)
+        } else {
+          timet <- input$time2 +  majoration(
+            depth = input$depth2, inter = input$interv,
+            group = dive1$palier$group
+          )
+          maxt2 <- max_depth_t(input$depth2)
+        }
+        tmp <- input$time2
+        if (timet > maxt2) {
+          updateSliderInput(session, "time2", value = maxt2,
+                            min = 0, max = maxt2)
+        } else {
+          updateSliderInput(session, "time2", value = tmp,
+                            min = 0, max = maxt2)
+          # compute the dive
+          mult_dive <- ndive(dive1,
+                             dive(
+                               depth = input$depth2, time = input$time2,
+                               secu = input$secu, vup = input$vup
+                             ),
+                             inter = minute(input$interv) + 
+                               60 * hour(input$interv)
+          )
+          # Plot the dive
+          output$divePlot <- renderPlot({
+            plot(mult_dive)
+          })
+          # Dive summary
+          output$dive <- summarise_dive(mult_dive$dive1)
+          output$dive2 <- renderText({
+            paste0("NOT YET IMPLEMENTED")
+          })
+        }
       }
     }
   })
