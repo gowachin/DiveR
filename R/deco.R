@@ -146,9 +146,14 @@ majoration <- function(depth, group = "Z", inter = 16) {
   check_val(depth)
   if(depth > 60) stop('Depth must be inferior or equal to 60.')
   check_val(inter)
+  if( group == "Z"){
+    stop(paste0('Majoration can not be computed with a group Z',
+         ' and less than 12h interval'))
+  }
   if (!group %in% c(rownames(n2), "Z")) {
     stop("Group must be a capital letter between A and P or Z")
   }
+  
   # get n2 values
   grps <- rownames(n2)
   times <- as.numeric(colnames(n2))
@@ -158,6 +163,7 @@ majoration <- function(depth, group = "Z", inter = 16) {
   # roud the interval to lower interval given in tables and get azote value
   rinter <- max(times[times <= inter])
   azote <- n2[grps == group, times == rinter]
+  if(is.na(azote)) azote = 0
   # round depth and get maj
   rdepth <- min(depths[depths >= depth])
   razote <- min(azotes[azotes >= azote])

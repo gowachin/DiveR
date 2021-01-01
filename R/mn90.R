@@ -218,10 +218,7 @@ ndive <- function(dive1, dive2, inter = 16) {
         depth = depth2, inter = inter,
         group = dive1$palier$group
       )
-    }      
-    print(depth2)
-    print(time2)
-    print(maj)
+    }
     
     # check if second dive possible (time in talbe)
     if (tablecheck(depth2, time2 + maj, force = TRUE) &

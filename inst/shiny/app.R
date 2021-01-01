@@ -97,6 +97,12 @@ ui <- # navbarPage("My app",
               timeInput("time_input1", i18n$t("Immersion time"),
                 value = strptime("00:00:00", "%T"), seconds = FALSE
               )
+            ),
+            # ghost panel for ui inf
+            conditionalPanel(
+              condition = "input.depth1 < 0",
+              checkboxInput("ghost_sec", 'ghost second dive', FALSE),
+              checkboxInput("time_sec", 'time second dive', FALSE)
             )
           ),
           ######################################################################
@@ -110,10 +116,7 @@ ui <- # navbarPage("My app",
               plotOutput(outputId = "divePlot"),
               # textOutput("dive1"),
               verbatimTextOutput("dive"),
-              conditionalPanel(                        # will be removed TODO 
-                condition = "input.sec == true",       # will be removed
-                textOutput("dive2")                    # will be removed
-              )                                        # will be removed
+              textOutput("dive2")
             ),
             ## Point profile ####
             conditionalPanel(
@@ -140,72 +143,98 @@ ui <- # navbarPage("My app",
 # Define server logic required to draw a histogram ----
 server <- function(input, output, session) {
   #### Square intput ####
-  # max range of depth1
+  ################ SLIDER UPDATE ################
   observe({
+    interv <- minute(input$interv) +
+      60 * hour(input$interv)
     maxt1 <- max_depth_t(input$depth1)
     tmp <- input$time1
     if (input$time1 > maxt1) {
       updateSliderInput(session, "time1", value = maxt1, min = 0, max = maxt1)
+      return()
     } else {
       updateSliderInput(session, "time1", value = tmp, min = 0, max = maxt1)
-
-      # compute the dive
-      dive1 <- dive(
-        depth = input$depth1, time = input$time1,
-        secu = input$secu, vup = input$vup # , 
-        # hour = minute(input$time_input1) + 60 * hour(input$time_input1)
-      )
-      # if (input$type == 'sqr'){}
-      if (!input$sec) {
-        # Plot the dive
-        output$divePlot <- renderPlot({
-          plot(dive1, ylab = i18n$t("Depth (m)"), xlab = i18n$t("Time (min)"))
-        })
-        # Dive summary
-        output$dive <- summarise_dive(dive1)
+      # print('compute dive1')
+    }
+    dive1 <- dive(
+      depth = input$depth1, time = input$time1,
+      secu = input$secu, vup = input$vup # ,
+      # hour = minute(input$time_input1) + 60 * hour(input$time_input1)
+    )
+    # allow for second dive depending interval and depth
+    updateCheckboxInput(session, 'ghost_sec', 'ghost second dive', 
+                        value = ! (input$depth1 > 60 & interv < 720))
+    # max range of depth2
+    timet <- input$time2
+    if (interv <= 15) {
+      spendt <- max(dive1$dtcurve$times) + interv # already spent time
+      maxt2 <- max_depth_t(max(input$depth1, input$depth2)) - spendt
+    } else if (interv > 720) {
+      maxt2 <- max_depth_t(input$depth2)
+    } else {
+      if (input$ghost_sec > 60){ 
+        maxt2 <- -1
       } else {
-        # max range of depth2
-        if(input$interv <= 15){
-          timet <- max(dive1$dtcurve$times) + input$interv + input$time2
-          maxt2 <- max_depth_t(max(input$depth1, input$depth2))
-        } else if(input$interv > 720){
-          timet <- input$time2
-          maxt2 <- max_depth_t(input$depth2)
-        } else {
-          timet <- input$time2 +  majoration(
-            depth = input$depth2, inter = input$interv,
-            group = dive1$palier$group
-          )
-          maxt2 <- max_depth_t(input$depth2)
-        }
-        tmp <- input$time2
-        if (timet > maxt2) {
-          updateSliderInput(session, "time2", value = maxt2,
-                            min = 0, max = maxt2)
-        } else {
-          updateSliderInput(session, "time2", value = tmp,
-                            min = 0, max = maxt2)
-          # compute the dive
-          mult_dive <- ndive(dive1,
-                             dive(
-                               depth = input$depth2, time = input$time2,
-                               secu = input$secu, vup = input$vup
-                             ),
-                             inter = minute(input$interv) + 
-                               60 * hour(input$interv)
-          )
-          # Plot the dive
-          output$divePlot <- renderPlot({
-            plot(mult_dive)
-          })
-          # Dive summary
-          output$dive <- summarise_dive(mult_dive$dive1)
-          output$dive2 <- renderText({
-            paste0("NOT YET IMPLEMENTED")
-          })
-        }
+        maj <- majoration(
+          depth = input$depth2, inter = interv,
+          group = dive1$palier$group
+        )
+        maxt2 <- max_depth_t(input$depth2) - maj
       }
     }
+    tmp <- input$time2
+    cat('\n\nghost check ', input$ghost_sec)
+    cat('\nsec', input$sec,'\n')
+    cat('inter ',interv, 'time2 ', input$time2)
+    cat('\ndepth2 ', input$depth2, 'group ',dive1$palier$group)
+    cat('\ntimet ',timet,'maxt2 ', maxt2, '\n')
+    updateCheckboxInput(session, 'time_sec', 'ghost second dive', 
+                        value = (maxt2 > 0))
+    cat('\n time check ', input$time_sec)
+    if (timet > maxt2 | !input$time_sec) {
+      updateSliderInput(session, "time2", value = maxt2, min = 0, max = maxt2 )
+      if(input$sec) return()
+    } else {
+      updateSliderInput(session, "time2", value = tmp, min = 0, max = maxt2 )
+    }
+    ################ compute the dives ################
+    # if (input$type == 'sqr'){}
+    cat('\n dives compute')
+    if (!input$sec | !input$ghost_sec | !input$time_sec) {
+      cat('\n single dive')
+      # Plot the dive
+      output$divePlot <- renderPlot({
+        plot(dive1, ylab = i18n$t("Depth (m)"), xlab = i18n$t("Time (min)"))
+      })
+      # Dive summary
+      output$dive <- summarise_dive(dive1)
+      # Second dive impossible if depth > 60
+      if(input$ghost_sec){
+        output$dive2 <- renderText({""})
+      } else {
+        output$dive2 <- renderText({
+          paste0( "Second dive impossible in less than 12h ",
+                  "after a dive a 60 more meters" )
+        })
+      }
+    } else {
+      cat('\n multiples dives')
+      # compute the dive
+      mult_dive <- ndive(dive1,
+                         dive( depth = input$depth2, time = input$time2,
+                               secu = input$secu, vup = input$vup ),
+                         inter = interv )
+      # Plot the dive
+      output$divePlot <- renderPlot({
+        plot(mult_dive)
+      })
+      # Dive summary
+      output$dive <- summarise_dive(mult_dive$dive1)
+      output$dive2 <- renderText({
+        paste0("NOT YET IMPLEMENTED dive is ", mult_dive$type)
+      })
+    }
+    cat('\n done')
   })
 
   #### Profile input ####
