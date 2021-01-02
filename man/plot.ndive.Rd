@@ -4,14 +4,7 @@
 \alias{plot.ndive}
 \title{plot.ndive}
 \usage{
-\method{plot}{ndive}(
-  x,
-  ...,
-  text_print = TRUE,
-  line_print = TRUE,
-  def_cols = FALSE,
-  add = FALSE
-)
+\method{plot}{ndive}(x, ..., line_print = TRUE, def_cols = FALSE, add = FALSE)
 }
 \arguments{
 \item{x}{an object of class ndive.}
@@ -27,9 +20,6 @@ dive curve
   \item \strong{ylab} set to \code{'Depth'} by default, 
   see \code{\link[graphics]{title}}.
   }}
-
-\item{text_print}{set to \code{TRUE} by default, whether there is a text 
-for depths and duration of deco stops.}
 
 \item{add}{set to \code{FALSE} by default, to add another dive plot 
 on a precedent one.}

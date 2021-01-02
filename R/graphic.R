@@ -185,7 +185,7 @@ plot.dive <- function(x,
     text(
       x = mean(dtcurve$times[c(3, length(dtcurve$depths))]),
       y = -max(dtcurve$depths),
-      paste(x$dtr, "'", sep = ""), pos = 3,
+      paste(round(x$dtr,2), "'", sep = ""), pos = 3,
       # paste("dtr = ", x$dtr, "'", sep = ""), pos = 3,
       col = call_par$col
     )
@@ -257,7 +257,7 @@ times_inf <- function(x, col){
   
   pos <- rep(3,length(dtimes))
   
-  time_inf <- list(x = times, y = -depths, labels = paste0(dtimes, "'"), 
+  time_inf <- list(x = times, y = -depths, labels = paste0(round(dtimes,1), "'"), 
                    pos = pos, col = col)
   
   return(time_inf)

@@ -23,6 +23,8 @@ tablecheck <- function(depth, time, force = FALSE) {
   depths <- as.numeric(rownames(table))
   times <- as.numeric(colnames(table))
 
+  maxt <- max_depth_t(depth)
+  
   res <- TRUE
   # checks for max
   if (depth > max(depths) | time > max(times)) {
@@ -32,6 +34,12 @@ tablecheck <- function(depth, time, force = FALSE) {
       stop("Time or depth values are outside the mn90 table 
          depth must be not exceed 65 and time 3h (180 minutes)
          please read doc with ?tablecheck or help(tablecheck)", call. = F)
+    }
+  } else if( time > maxt) {
+    if (force) {
+      res <- FALSE
+    } else {
+      stop(paste("Maximum time at",depth, "meters is",maxt,'minutes' ), call. = F)
     }
   }
   return(res)
