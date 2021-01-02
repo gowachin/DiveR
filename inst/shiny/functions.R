@@ -9,6 +9,13 @@ summarise_dive <- function(dive) {
   n <- sum(sup)
   diz <- sum(dive$palier$time[sup] > 9)
   sp <- c(rep("  ", n - diz), rep(" ", diz))
+  
+  if(dive$palier$group != "Z"){
+    group <- paste0(i18n$t('The dive group is '), dive$palier$group)
+  } else {
+    group <- ''
+  }
+  
   ret <- renderText({
     paste0(
       i18n$t("The first dive reach "), depth(dive),
@@ -22,8 +29,7 @@ summarise_dive <- function(dive) {
         dive$palier$depth[sup]
       ),
       collapse = "\n         "
-      ), '\n',
-      i18n$t('The dive group is '), dive$palier$group
+      ), '\n', group
     )
     
   })
