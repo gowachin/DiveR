@@ -1,19 +1,56 @@
 # MN90
 
-Package and shiny app to compute and represent dive curve, deco time and other parameters.
-Contains all functions used in a shiny app for dive planification.
+R package and shiny application for dive planification tools. It contains functions and methods to represent dive curves, desaturation time and gas consumption. At this day, only mn90 tables models are coded for single, consecutive or successive dives. This mean all profile are square ones and only maximum depth and dive time are used to compute desaturation.
 
-Intended to be used by french dive student, traduction of the lexic is on it's way.
+The shiny application is not yet in production.
+
+Future parts are work in progress, like more precise planification setup with different depths and time input. Desaturation planification with other models are also planned along with maybe other gas than air supported for consumption
+
+Intended to be used by french dive student, traduction of the lexic is on it's way. For this part the shiny app is written in english with french translation possible in settings.
+
+<!--
+## Installation
+
+This package can be installed with the devtools package or by cloning this repository.
+
+## Usage
+
+### Planning a single dive
+
+Apart from default/advanced settings, a dive can be resumed by it's maximum depth and duration. For example, here is the default dive for this pacakge, a maximum depth at 20 meters for 40 minutes. Note here that despite going underwater at an altitude of -20, we use positive numeric values.
+
+dive(20,40)
+
+### Planning a second dive
+
+A second dive depends heavily on the first one as the desaturation is not perfect and residual azote will impact the second saturation. 
+-->
+
+
+## Actual in work part
+
+Consumption part of shiny (plot.conso, more text, reactive slider etc)
 
 ## To do : 
 
-- resolve diff dive case in ndive and shniy (more info)
-- doc on new conso and dive functions
-- conso tabset in shiny
 - Complete README with shiny in prod and examples.
+- Change package, repository name
 
+### Shiny 
+- change maximum depth for consecutive dives in shiny
+- modify advanced parameters for screen
+- push shiny in prod
+- add hour
+- checkbox to force inverse profile or 60+ dive !
+
+### Package
+- fix plot.ndive when consecutive dives (depths)
+- make plot with hours
+- doc on new conso and dive functions
 - more attributes
 - make a beautiful doc for every functions
+- desaturation with complex models
+- multiple gas tank consumption.
 
 
-Feel free to fork this, and use it. Any recommendation is welcome :)
+Feel free to fork this, and use it. Any recommendation is welcome :) 
