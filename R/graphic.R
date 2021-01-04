@@ -69,7 +69,7 @@ plot.dive <- function(x,
   delta_x <- diff(x$hour) * 0.1
   delta_y <- (depth(x) - min(dtcurve$depths)) * 0.2
   default_par <- list(
-    col = 1, type = "l",
+    col = 1, type = "l", axes = FALSE,
     xlab = "Time (min)", ylab = "Depth (m)",
     xlim = c(min(dtcurve$times) - delta_x, max(dtcurve$times) + delta_x),
     ylim = -c(max(dtcurve$depths) + delta_y, min(dtcurve$depths) - delta_y)
@@ -77,6 +77,7 @@ plot.dive <- function(x,
   # check ... ----
   call_par <- list(...)
   names_defaut_par <- names(default_par)
+  if(!'axes' %in% names(call_par) & !add){ default_par$axes = TRUE}
   for (i in seq_along(default_par)) {
     if (!names_defaut_par[i] %in% names(call_par) |
       is.null(call_par[[names_defaut_par[i]]])) {
@@ -91,6 +92,8 @@ plot.dive <- function(x,
   # def bg cols ----
   if (def_cols) {
     call_par$col <- "darkred" # TODO here modify def col
+    call_par$col.axis <- "darkred"
+    
     par(bg = "gray")
   }
 
@@ -98,7 +101,7 @@ plot.dive <- function(x,
     # init plot ----
     empty_par <- c(list(x = 1, y = 1), call_par)
     empty_par$type <- "n"
-    empty_par$axes=FALSE
+    empty_par$axes=FALSE 
     do.call(plot, empty_par)
     # def bg cols bis ----
     if (def_cols) {
@@ -115,12 +118,7 @@ plot.dive <- function(x,
       }
     }
     # change color around and make axis ----
-    box(col = call_par$col)
-    axis(1, col = call_par$col, col.ticks = call_par$col, 
-         col.axis = call_par$col) #, 
-         # labels=letters[1:10], at=1:10) # TODO here make the hour placement !
-    axis(2, col = call_par$col, col.ticks = call_par$col, 
-         col.axis = call_par$col)
+    box(col = call_par$col.axis)
     mtext(call_par$xlab, side=1, line=3, col=call_par$col)
     mtext(call_par$ylab, side=2, line=3, col=call_par$col)
     
@@ -134,12 +132,21 @@ plot.dive <- function(x,
       }
     }
   }
+  
+  if (call_par$axes){
+    cust_axis(x, call_par$col.axis)
+  } else {
+    # axis(1, col = call_par$col.axis, col.ticks = call_par$col.axis, 
+    #      col.axis = call_par$col.axis)
+    # axis(2, col = call_par$col.axis, col.ticks = call_par$col.axis, 
+    #      col.axis = call_par$col.axis)
+  }
 
   # print the dive line ----
   line_par <- c(list(x = dtcurve$times, y = -dtcurve$depths), call_par)
   line_par$xlim <- NULL ; line_par$ylim <- NULL
   line_par$xlab <- NULL ; line_par$ylab <- NULL
-  line_par$main <- NULL
+  line_par$main <- NULL ; line_par$axes <- NULL
   do.call(lines, line_par)
   
   # hour points ----
@@ -199,7 +206,55 @@ plot.dive <- function(x,
   }
 }
 
+
+#' cust_axis
+#' 
+#' Draw the xaxis with time input for the plot.dive function
+#' 
+#' @param dive a \code{\link[mn90]{dive}} object.
+#' @param col a color 
+#' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
+#' @export
+cust_axis <- function(dive, col){
+  dist <- switch(sum(diff(dive$hour) >= c(1, 5, 10, 20, 40, 60, 80, 100)),
+                 c(0.5, 0.1), c(2, 1), c(2, 1), c(5, 1),
+                 c(10, 5), c(15, 5), c(20, 10), c(20, 10)
+  )
+  
+  x <- dive$hour[1] %% dist[1]
+  if (x <= dist[2]){
+    a = dive$hour[1] + dist[1] - (x * (x != dist[2]))
+    b = dive$hour[1] + dist[2] - (x * (x != dist[2]))
+  } else if (x > dist[2]) {
+    a = dive$hour[1] + 2 * dist[1]  - (x * (x != dist[2]))
+    b = dive$hour[1] + 2 * dist[2]  - (x * (x != dist[2]))
+  }
+  
+  pos <- c(dive$hour[1], seq(a, dive$hour[2], by = dist[1]) )
+  minpos <- c(dive$hour[1], seq(b, dive$hour[2], by = dist[2]) )
+  h <- paste0(as.character(pos %/% 60), 'h')
+  m <- pos %% 60
+  
+  sh_hour <- (m != 0 & c(FALSE, rep(TRUE, length(h)- 2), FALSE))
+  h[sh_hour] =  ''
+  m[m < 10] =  paste0(0,m[m < 10])
+  m[m == 0] =  '00'
+  
+  lab <- paste0(h, m)
+  
+  axis(1,labels=lab, at= pos, col = col, col.ticks = col, col.axis = col)
+  axis(1,labels=rep('',length(minpos)), at= minpos, tck=-0.02, 
+       col = col, col.ticks = col, col.axis = col)
+}
+
+
 #' depths_inf
+#' 
+#' Create information about depth and time to use with text function 
+#' in plot.dive. 
+#' Find the places and labels to show depending on the dive curve.
 #' 
 #' @param x a \code{\link[mn90]{dive}} object.
 #' @param col a color value
@@ -219,7 +274,11 @@ depths_inf <- function(x, col, only_pal = FALSE){
     first = 1
   }
   times <- x$dtcurve$times[x$dtcurve$depths %in% depths]
-  times <- times[c(first,seq(length(times), 2 + length(first) , by = -2))]
+  if(length(times) < 3){
+    times <- times[1]
+  } else {
+    times <- times[c(first,seq(length(times), 2 + length(first) , by = -2))]
+  }
   times <- sort(times)
   pos <- c(first, rep(4,length(times) - length(first)))
   
@@ -231,12 +290,12 @@ depths_inf <- function(x, col, only_pal = FALSE){
 }
 
 #' times_inf
-#' 
+#'  
 #' @param x a \code{\link[mn90]{dive}} object.
 #' @param col a color value
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
-#' 
+#' @rdname depths_inf
 #' @export
 times_inf <- function(x, col){
   

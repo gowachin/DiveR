@@ -26,7 +26,7 @@ shiny_mn90_app <- function(){
 
 #' check_val
 #' 
-#' custom function for checking if values are single positive numeric.
+#' Custom function for checking if values are single positive numeric.
 #' 
 #' @param val a single positive numeric value
 #' @param zero set to \code{FALSE} by default, to include zero value to the test
@@ -80,7 +80,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   # depth = 39; time = 22; secu = TRUE; vup = 10
   # checks
   check_val(vup)
-  check_val(maj)
+  check_val(maj, zero = TRUE)
   
   if (length(depth) > 1){
     if (is.null(speed)){stop('A speed must be provided')}

@@ -1,10 +1,10 @@
 Package: mn90
 Type: Package
-Title: A set of functions to play games in R
+Title: DiveR
 Version: 0.1.0
 Author: Maxime Jaunatre 
 Maintainer: Maxime Jaunatre <maxime.jaunatre@yahoo.fr>
-Description: Package to compute deco time from mn90 table.
+Description: Package for scubadiving planification.
 License: CeCILL-2
 Encoding: UTF-8
 LazyData: true
@@ -12,7 +12,7 @@ Imports: graphics,
          R.utils,
          stats,
          shiny
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Depends: R (>= 2.10)
 Suggests: 
     knitr,

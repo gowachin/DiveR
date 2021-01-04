@@ -2,9 +2,12 @@
 % Please edit documentation in R/deco.R
 \name{tablecheck}
 \alias{tablecheck}
+\alias{max_depth_t}
 \title{tablecheck}
 \usage{
 tablecheck(depth, time, force = FALSE)
+
+max_depth_t(depth)
 }
 \arguments{
 \item{depth}{in meter. Max is 65m see Detail !}
@@ -14,8 +17,14 @@ tablecheck(depth, time, force = FALSE)
 \item{force}{FALSE by default, if TRUE don't stop the function but 
 return a TRUE/FALSE value}
 }
+\value{
+a single numeric value, the max time possible to dive at the given 
+depth is the MN90 table.
+}
 \description{
-tablecheck
+check if the parameters are possible with table information
+
+Max time present in the table for a given depth.
 }
 \details{
 This function will stop if the depth > 65 or time > 180 because the table 
@@ -24,5 +33,7 @@ However for lower values the table can return NA values.
 This NA return is avoided in the shinyapp.
 }
 \author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

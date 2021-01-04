@@ -29,28 +29,45 @@ A second dive depends heavily on the first one as the desaturation is not perfec
 
 ## Actual in work part
 
-Consumption part of shiny (plot.conso, more text, reactive slider etc)
+Consumption plot.conso and plot.ndive.
 
 ## To do : 
 
-- Complete README with shiny in prod and examples.
+- Complete README with examples.
 - Change package, repository name
 
-### Shiny 
-- change maximum depth for consecutive dives in shiny
-- modify advanced parameters for screen
-- push shiny in prod
-- add hour
-- checkbox to force inverse profile or 60+ dive !
-
-### Package
 - fix plot.ndive when consecutive dives (depths)
-- make plot with hours
 - doc on new conso and dive functions
 - more attributes
 - make a beautiful doc for every functions
 - desaturation with complex models
 - multiple gas tank consumption.
 
+## Doc in work (mostly missing examples) :
+
+- attributes
+dtr
+speed
+summary.dive
+dtime
+depth
+
+- conso
+bloc
+press_time
+conso
+
+- deco
+majoration
+dtcurve
+
+- graphics
+plot.dive
+plot.ndive
+
+- mn90
+mn90
+dive
+ndive
 
 Feel free to fork this, and use it. Any recommendation is welcome :) 

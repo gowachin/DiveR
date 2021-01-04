@@ -1,5 +1,7 @@
 #' tablecheck
 #' 
+#' Check if the parameters are possible with table information.
+#' 
 #' @param depth in meter. Max is 65m see Detail !
 #' @param time in minute. Max is 180' see Detail !
 #' @param force FALSE by default, if TRUE don't stop the function but 
@@ -55,7 +57,7 @@ tablecheck <- function(depth, time, force = FALSE) {
 #' depth is the MN90 table.
 #'  
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
-#' 
+#' @rdname tablecheck
 #' @export
 max_depth_t <- function(depth) {
   table <- mn90::table[, , 1]
@@ -74,7 +76,8 @@ max_depth_t <- function(depth) {
 
 #' palier
 #'
-#' compute the palier depth and time from mn90 table.
+#' Compute the palier depth and time from mn90 table.
+#' 
 #' @param depth in meter. Max is 65m see Detail !
 #' @param time in minute. Max is 180' see Detail !
 #' @param secu true by default, add a secu deco 3 min at 3 meter
@@ -129,7 +132,7 @@ palier <- function(depth, time, secu = TRUE) {
 
 #' majoration
 #'
-#' compute the time majoration to a second dive at a specific depth.
+#' Compute the time majoration to a second dive at a specific depth.
 #' 
 #' @param depth in meter. Max is 65m see Detail !
 #' @param group byt default "Z", the deco group indicated by a letter. 
@@ -183,7 +186,7 @@ majoration <- function(depth, group = "Z", inter = 16) {
 
 #' dtcurve
 #' 
-#' compute the time from end of dive to surface
+#' Trace a curve of depth and time for given parameters and palier information
 #' 
 #' @param depth in meter. Max is 65m see Detail !
 #' @param time in minute. Max is 180' see Detail !
