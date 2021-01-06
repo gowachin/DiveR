@@ -154,6 +154,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
 #' @param dive2 the first dive, obtained by the dive function. This one will be
 #' modified with a majoration obtained from dive1 and the interval.
 #' @param inter 16 by default, interval between dives in minutes
+#' @param verbose allow cat return in consol for debug purposes
 #' 
 #' @details 
 #' See \code{\link[mn90]{tablecheck}} for limit values of depth and time 
@@ -169,7 +170,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
 #' @export
-ndive <- function(dive1, dive2, inter = 16) {
+ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
   # checks
   if (class(dive1) != "dive") stop("dive1 must be of class dive")
   if (class(dive2) != "dive") stop("dive2 must be of class dive")
@@ -194,11 +195,13 @@ ndive <- function(dive1, dive2, inter = 16) {
         ),
         inter = inter, type = "consec"
       )
+      if(verbose) cat('consec\n')
       # modification of dive2 curve in times for graphics !
       ndive$dive2$dtcurve$times[-c(1,2)] <- ndive$dive2$dtcurve$time[-c(1,2)] - 
         (dtime(dive1) + dive1$dtr + inter)
       ndive$dive2$hour[1] <- (dtime(dive1) + dive1$dtr + inter)
     } else {
+      if(verbose) cat('no_consec\n')
       # second dive is impossible here in the table
       warning("Cumulated time of both dives and interval is larger than table.")
       ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
@@ -213,6 +216,7 @@ ndive <- function(dive1, dive2, inter = 16) {
         ndive <- list(dive1 = dive1, dive2 = "STOP", 
                       inter = inter, type = "solo")
         class(ndive) <- "ndive"
+        if(verbose) cat('60_no_success\n')
         return(ndive)
       } else {
       # compute maj
@@ -235,9 +239,11 @@ ndive <- function(dive1, dive2, inter = 16) {
       )
       
       if (inter > 720){
+        if(verbose) cat('diff\n')
         ndive$type <- "diff"
-        }
+      } else {if(verbose) cat('success\n')}
     } else {
+      if(verbose) cat('maj_no_success\n')
       warning(paste0( "Second dive impossible due to majoration of time"))
       # second dive is impossible here in the table
       ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")

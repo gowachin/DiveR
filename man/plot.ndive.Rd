@@ -4,7 +4,20 @@
 \alias{plot.ndive}
 \title{plot.ndive}
 \usage{
-\method{plot}{ndive}(x, ..., line_print = TRUE, def_cols = FALSE, add = FALSE)
+\method{plot}{ndive}(
+  x,
+  ...,
+  dtr_print = TRUE,
+  hour_print = TRUE,
+  line_print = TRUE,
+  deco_print = TRUE,
+  depth_print = TRUE,
+  time_print = TRUE,
+  def_cols = FALSE,
+  cut_inter = 60,
+  legend = FALSE,
+  add = FALSE
+)
 }
 \arguments{
 \item{x}{an object of class ndive.}
@@ -21,12 +34,63 @@ dive curve
   see \code{\link[graphics]{title}}.
   }}
 
+\item{dtr_print}{set to \code{TRUE} by default, whether there is text and 
+line for ascent time.}
+
+\item{hour_print}{set to \code{TRUE} by default, whether there is the hour
+at beginning and end of the dive.}
+
+\item{line_print}{set to \code{TRUE} by default, whether there is lines 
+for depths.}
+
+\item{deco_print}{set to \code{TRUE} by default, whether there is information
+about desat stop for depths and times.}
+
+\item{depth_print}{set to \code{TRUE} by default, whether there is depth 
+values along the dive.}
+
+\item{time_print}{set to \code{TRUE} by default, whether there is time 
+values along the dive.}
+
+\item{def_cols}{set to \code{FALSE} by default, modify plot colors to match
+shinyapp css.}
+
+\item{cut_inter}{60 by default above which the plot is cut in x axis to 
+maintain readibility}
+
+\item{legend}{set to \code{FALSE} by default, print legend about the ascent 
+speeds.}
+
 \item{add}{set to \code{FALSE} by default, to add another dive plot 
 on a precedent one.}
 }
 \description{
 Plot the dive curve depending on time and depth. 
-Only represent sqare profile
+Only represent square profile
+}
+\examples{
+# Consecutive dives
+d <- ndive(dive1 = dive(18,11), dive2 = dive(15,40), inter = 1)
+plot(d, main = 'consec')
+# Consecutive dives with second impossible
+d <- ndive(dive1 = dive(35,11), dive2 = dive(30,20), inter = 4)
+plot(d, def_cols = TRUE, main = 'no_consec')
+# Successive dive when inter <= cut_inter
+d <- ndive(dive1 = dive(18,40), dive2 = dive(15,30), inter = 60)
+plot(d, def_cols = TRUE, main = 'success no cut')
+# Successive dive when inter > cut_inter
+d <- ndive(dive1 = dive(20,40), dive2 = dive(20,30), inter = 121)
+plot(d, def_cols = TRUE, main = 'success cut')
+# Successive dive with second impossible
+d <- ndive(dive1 = dive(18,40), dive2 = dive(35,30), inter = 120)
+plot(d, def_cols = TRUE, main = 'maj_no_success')
+# Successive dive with second impossible
+d <- ndive(dive1 = dive(62,11), dive2 = dive(15,30), inter = 120)
+plot(d, def_cols = TRUE, main = '60_no_sucess')
+# Different dives
+d <- ndive(dive1 = dive(18,11), dive2 = dive(47,8), inter = 730)
+plot(d, def_cols = TRUE, main = 'diff cut')
+
 }
 \seealso{
 \itemize{

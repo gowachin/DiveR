@@ -4,7 +4,7 @@
 \alias{ndive}
 \title{ndive}
 \usage{
-ndive(dive1, dive2, inter = 16)
+ndive(dive1, dive2, inter = 16, verbose = FALSE)
 }
 \arguments{
 \item{dive1}{the first dive, obtained by the dive function}
@@ -13,6 +13,8 @@ ndive(dive1, dive2, inter = 16)
 modified with a majoration obtained from dive1 and the interval.}
 
 \item{inter}{16 by default, interval between dives in minutes}
+
+\item{verbose}{allow cat return in consol for debug purposes}
 }
 \value{
 ndive, a ndive class object.

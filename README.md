@@ -29,14 +29,13 @@ A second dive depends heavily on the first one as the desaturation is not perfec
 
 ## Actual in work part
 
-Consumption plot.conso and plot.ndive.
+Consumption, plot.conso.
 
 ## To do : 
 
 - Complete README with examples.
 - Change package, repository name
 
-- fix plot.ndive when consecutive dives (depths)
 - doc on new conso and dive functions
 - more attributes
 - make a beautiful doc for every functions
@@ -63,7 +62,6 @@ dtcurve
 
 - graphics
 plot.dive
-plot.ndive
 
 - mn90
 mn90
