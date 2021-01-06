@@ -4,15 +4,18 @@
 \alias{cust_axis}
 \title{cust_axis}
 \usage{
-cust_axis(dive, col)
+cust_axis(dive, col, shift = NULL)
 }
 \arguments{
 \item{dive}{a \code{\link[mn90]{dive}} object.}
 
 \item{col}{a color}
+
+\item{shift}{a numeric to shift the axis in plots. 
+Is used with minutes values.}
 }
 \description{
-draw the xaxis with time input
+Draw the xaxis with time input for the plot.dive function
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>

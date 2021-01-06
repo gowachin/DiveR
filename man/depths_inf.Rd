@@ -2,9 +2,12 @@
 % Please edit documentation in R/graphic.R
 \name{depths_inf}
 \alias{depths_inf}
+\alias{times_inf}
 \title{depths_inf}
 \usage{
 depths_inf(x, col, only_pal = FALSE)
+
+times_inf(x, col)
 }
 \arguments{
 \item{x}{a \code{\link[mn90]{dive}} object.}
@@ -14,8 +17,12 @@ depths_inf(x, col, only_pal = FALSE)
 \item{only_pal}{set to \code{FALSE} by default,}
 }
 \description{
-depths_inf
+Create information about depth and time to use with text function 
+in plot.dive. 
+Find the places and labels to show depending on the dive curve.
 }
 \author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

@@ -29,7 +29,7 @@ Speed between deco is fixed to 6}
 a list, with a vector of depths, a vector of time and the dtr value.
 }
 \description{
-compute the time from end of dive to surface
+Trace a curve of depth and time for given parameters and palier information
 }
 \details{
 This function will stop if the depth > 65 or time > 180 because the table 

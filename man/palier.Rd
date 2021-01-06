@@ -18,7 +18,7 @@ palier, a list with a vector of depth and a vector of time.
 Vectors are ordered from deepest deco stage (9m) to the higher (3m).
 }
 \description{
-compute the palier depth and time from mn90 table.
+Compute the palier depth and time from mn90 table.
 }
 \details{
 This function will stop if the depth > 65 or time > 180 because the table 

@@ -22,7 +22,7 @@ a single numeric value, the max time possible to dive at the given
 depth is the MN90 table.
 }
 \description{
-check if the parameters are possible with table information
+Check if the parameters are possible with table information.
 
 Max time present in the table for a given depth.
 }
