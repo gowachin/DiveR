@@ -228,6 +228,7 @@ plot.dive <- function(x,
 #' 
 #' @export
 cust_axis <- function(dive, col, shift = NULL){
+  
   dist <- switch(sum(diff(dive$hour) >= c(1, 5, 10, 20, 40, 60, 80, 100)),
                  c(0.5, 0.1), c(2, 1), c(2, 1), c(5, 1),
                  c(10, 5), c(15, 5), c(20, 10), c(20, 10)
@@ -555,7 +556,7 @@ plot.ndive <- function(x,
   consec_call <- call_par
   consec_call$add <- TRUE 
   consec_call$cut_inter <- NULL 
-  if (x$type == 'consec'){
+  if (x$type == 'consec' | x$dive1$hour[1] > 0){
     cat('consec_plot \n')
     consec_call$axes <- FALSE
     consec_call$hour_print <- FALSE
@@ -574,21 +575,33 @@ plot.ndive <- function(x,
     dIvE <- list(hour = hours)
     # axes
     if (call_par$axes){
-      cust_axis(dIvE, call_par$col.axis)
+      cust_axis(dIvE, call_par$col.axis, shift = -x$dive1$hour[1] )
       axis(2, col = call_par$col.axis, col.ticks = call_par$col.axis, 
            col.axis = call_par$col.axis)
     }
     # hours add
     if (hour_print){
       text(
-        x = dIvE$hour, y = 0, 
+        x = dIvE$hour - dIvE$hour[1], y = 0, 
         # sprintf("%02.0f:%02.0f", dIvE$hour %/% 60, 
         #         dIvE$hour %% 60),
         sprintf("%02.0f:%02.0f:%02.0f", dIvE$hour %/% 60,
                 dIvE$hour %% 60, (dIvE$hour %% 60 %% 1) * 60 ),
         pos = 3, col = call_par$col
       )
+      
+      
     }
+    # 
+    # hours <- c(x$dive1$hour[1], x$dive2$hour[2],
+    #            mean(x$dive1$hour[2], x$dive2$hour[1]))
+    # t <- c(x$dive1$hour[1], x$dive2$hour[2], x$inter)
+    # text(
+    #   x = hours, y = 0,
+    #   # x$hour, pos = 3,
+    #   sprintf("%s: %g'", c("start", "end", 'inter'), t), pos = 3,
+    #   col = call_par$col
+    # )
   } else {
     inter_t <- c(tail(x$dive1$dtcurve$times, 1), x$dive2$dtcurve$times[1])
     
@@ -602,6 +615,17 @@ plot.ndive <- function(x,
     
     w_hours <- c(inter_t[2], tail(x$dive2$dtcurve$times, 1))
     if (hour_print ){
+      
+      if(x$dive1$hour[1] > 0){
+        text(
+          x = x$dive1$hour - x$dive1$hour[1] , y = 0,
+          # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60, 
+          sprintf("%02.0f:%02.0f:%02.0f", x$dive1$hour %/% 60, 
+                  x$dive1$hour %% 60, (x$dive1$hour %% 60 %% 1) * 60 ), 
+          pos = 3, col = call_par$col
+        )
+      }
+      
       text(
         x = w_hours, y = 0,
         # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60, 
@@ -612,6 +636,9 @@ plot.ndive <- function(x,
     }
     
     if (call_par$axes){
+      if(x$dive1$hour[1] > 0){
+        cust_axis(x$dive1, call_par$col.axis, shift = -x$dive1$hour[1] )
+      }
       cust_axis(x$dive2, call_par$col.axis, shift = -new_inter )
     }
   
