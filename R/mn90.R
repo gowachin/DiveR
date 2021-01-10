@@ -124,7 +124,8 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   # dive dtcurve
   if (length(vdepth) > 1){
     # stop('not yet implemented')
-    dtcurve <- dtcurve(depth = vdepth, time = time, dist = dist, palier = palier, vup = vup, 
+    dtcurve <- dtcurve(depth = vdepth, time = time, dist = dist, 
+                       palier = palier, vup = vup, 
                        speed = speed, way = way)
   } else {
     dtcurve <- dtcurve(time = time, depth = depth, palier = palier, vup = vup)
@@ -177,6 +178,8 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
   # retrive some data avout dive2
   time2 <- dtime(dive2)
   depth2 <- depth(dive2)
+  secu2 <- secu(dive2)
+  speed2 <- speed(dive2)$asc
 
   if (inter <= 15) {
     # consecutiv dives 
@@ -190,7 +193,7 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
       ndive <- list(
         dive1 = dive1,
         dive2 = dive(
-          depth = depth, time = time,
+          depth = depth, time = time, vup = speed2, secu = secu2,
           hour = dive1$hour[1]
         ),
         inter = inter, type = "consec"
@@ -231,7 +234,8 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
       max_depth_t(depth2) >= time2 + maj ){ # & depth(dive1) <= 60) {
       hour2 <- dive1$hour[2] + inter
 
-      suc_dive <- dive(depth = depth2, time = time2, maj = maj, hour = hour2)
+      suc_dive <- dive(depth = depth2, time = time2, maj = maj, secu = secu2,
+                       vup = speed2, hour = hour2)
       
       ndive <- list(
         dive1 = dive1, dive2 = suc_dive,

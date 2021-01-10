@@ -87,7 +87,13 @@ speed.dive <- function(object) {
   depths <- object$dtcurve$depths
   l = length(times)
   asc <- -(depths[4] - depths[3]) / (times[4] - times[3])
-  plt <- -(depths[l] - depths[l-1]) / (times[l] - times[l -1])
+  
+  if(sum(object$palier$time) > 0){
+    plt <- -(depths[l] - depths[l-1]) / (times[l] - times[l -1])
+  } else {
+    # cat('There is not deco stop so no speed between deco and surface.')
+    plt <- NA
+  }
   
   return(list(asc = asc, plt = plt))
 }
@@ -204,4 +210,32 @@ depth.ndive <- function(object) {
   d1 <- max(object$dive1$dtcurve$depths)
   d2 <- max(object$dive2$dtcurve$depths)
   return(c(d1,d2))
+}
+
+
+#' secu
+#'
+#' \code{secu} retrieve if a dive was set with secu = TRUE or FALSE.
+#'
+#' @param object is a mn90 object. There are methods for 
+#' \code{\link[mn90]{dive}} objects.
+#' 
+#' @return Boolean
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+secu <- function(object) {
+  UseMethod("secu")
+}
+
+#' @rdname secu
+#' @usage ## S3 method for class 'dive'
+#' # depth(dive)
+#' @export
+secu.dive <- function(object) {
+  secutime <- palier(depth = depth(object), dtime(object)+ object$maj, 
+                     secu = TRUE)$time
+  divetime <- object$palier$time
+  return((secutime - divetime)[3] == 0)
 }
