@@ -1,5 +1,16 @@
 # DiveR
 
+# DIV<sub>e</sub>: Data Integrity Validation toolkit <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height=200px/>
+
+<!-- badges: start -->
+
+<!-- [![](https://img.shields.io/github/languages/code-size/villegar/dive.svg)](https://github.com/villegar/dive) -->
+
+[![R build
+status](https://github.com/villegar/dive/workflows/R-CMD-check/badge.svg)](https://github.com/villegar/dive/actions)
+[![](https://img.shields.io/badge/devel%20version-0.0.1-blue.svg)](https://github.com/villegar/dive)
+<!-- badges: end -->
+
 R package for dive planification tools. It contains functions and methods to represent dive curves, desaturation time and gas consumption. At this day, only mn90 tables models are coded for single, consecutive or successive dives. This mean all profile are square ones and only maximum depth and dive time are used to compute desaturation.
 
 The shiny application is not yet in production.
