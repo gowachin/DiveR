@@ -38,7 +38,15 @@ nbloc <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
   typo <- c(gas, typ, names(rules$rules))
   names(typo) <- c('gas', 'typ', 'rule1', 'rule2')
   
-  limit <- c(0,60,limit)
+  if(gas != 'Air'){
+    stop('Only air is working at this moment')
+  } else {
+    ppo2 <- 0.21
+    dmin <- 0 # assimilé a ppo2 > 0.18
+    dmax <- 60 # assimilé a ppo2 < 1.6
+  }
+  
+  limit <- c(dmin,dmax,limit)
   names(limit) <- c('mind', 'maxd', 't1', 't2')
   
   bloc <- list(carac = carac, typo = typo, limit = limit)
@@ -47,3 +55,8 @@ nbloc <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
 }
 
 nbloc(12, 200)
+
+# conso curve quand val < 0 , val <- 0 !!
+
+# modif de courbe pour que values soit placées pareille sur graph.
+
