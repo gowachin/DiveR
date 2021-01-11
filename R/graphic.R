@@ -246,7 +246,11 @@ cust_axis <- function(dive, col, shift = NULL){
   # arrondis à la minute près
   pos <- c(floor(dive$hour[1]), seq(a, dive$hour[2], by = dist[1]) )
   minpos <- c(floor(dive$hour[1]), seq(b, dive$hour[2], by = dist[2]) )
-  h <- paste0(as.character(pos %/% 60), 'h')
+  h <- pos %/% 60
+  while(any(h >= 24)){
+    h[h >= 24] <- h[h >= 24] - 24
+  }
+  h <- paste0(as.character(h), 'h')
   m <- pos %% 60
   
   sh_hour <- (m != 0 & c(FALSE, rep(TRUE, length(h)- 2), FALSE))
@@ -612,7 +616,8 @@ plot.ndive <- function(x,
     
     text(
       x = mean(inter_t), 
-      y = 0, c(paste('inter:', minute_to_time(x$inter, sec = TRUE, sep = ':')),
+      y = 0, c(paste('inter:', minute_to_time(x$inter, sec = TRUE, sep = ':',
+                                              day = F)),
                      # sprintf("%02.0f:%02.0f:%02.0f", x$inter %/% 60, 
                      # x$inter %% 60, (x$inter %% 60 %% 1) * 60 )
                                   paste('maj:', x$dive2$maj)), pos = c(3,1),

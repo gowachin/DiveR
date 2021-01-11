@@ -284,6 +284,8 @@ secu.dive <- function(object) {
 #' @param sec add the sec part of the string. 
 #' @param sep ':' by default, choice between ':' and 'h'. Only affect only the
 #' first separator character
+#' @param day TRUE by default, allow to set time in a day period (betwwen 00h00 
+#' and 23:59)
 #' 
 #' @return character string
 #' 
@@ -298,10 +300,12 @@ secu.dive <- function(object) {
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
 #' @export
-minute_to_time <- function(time, sec = TRUE, sep = c(':', 'h')){
+minute_to_time <- function(time, sec = TRUE, sep = c(':', 'h'), day = TRUE){
   sep <- match.arg(sep)
   
-  time[time >= 1440 ] <- time[time >= 1440] - 1440
+  while(any(time >= 1440) & day){
+    time[time >= 1440 ] <- time[time >= 1440] - 1440
+  }
   
   if(sec){
     res = sprintf("%02.0f%s%02.0f:%02.0f", time %/% 60, sep, time %% 60, 

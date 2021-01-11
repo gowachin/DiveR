@@ -4,7 +4,7 @@
 \alias{minute_to_time}
 \title{minute_to_time}
 \usage{
-minute_to_time(time, sec = TRUE, sep = c(":", "h"))
+minute_to_time(time, sec = TRUE, sep = c(":", "h"), day = TRUE)
 }
 \arguments{
 \item{time}{positive numeric value in minute}
@@ -13,6 +13,9 @@ minute_to_time(time, sec = TRUE, sep = c(":", "h"))
 
 \item{sep}{':' by default, choice between ':' and 'h'. Only affect only the
 first separator character}
+
+\item{day}{TRUE by default, allow to set time in a day period (betwwen 00h00 
+and 23:59)}
 }
 \value{
 character string
