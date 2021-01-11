@@ -7,8 +7,7 @@
 \usage{
 \method{summary}{dive}(object, ...)
 
-## S3 method for class 'palier'
-# summary(palier)
+\method{summary}{palier}(object, ...)
 }
 \arguments{
 \item{object}{is a mn90 object. There are methods for 

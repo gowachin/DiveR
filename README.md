@@ -51,11 +51,7 @@ Consumption, plot.conso.
 ## Doc in work (mostly missing examples) :
 
 - attributes
-dtr
-speed
 summary.dive
-dtime
-depth
 
 - conso
 bloc

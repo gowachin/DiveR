@@ -464,12 +464,15 @@ plot.ndive <- function(x,
     return()
   }
   
+
   # set border for plot
   delta_x <- (max(x$dive2$hour) - min(x$dive1$hour)) * 0.1
   delta_y <- (max(depth(x)) - min(min(x$dive1$dtcurve$depths),
                                   min(x$dive2$dtcurve$depths))) * 0.2
   
-  x$dive2$dtcurve$times <- x$dive2$dtcurve$times + x$dive2$hour[1]
+  # maybe an add if here ?
+  x$dive1$dtcurve$times <- x$dive1$dtcurve$times + x$dive1$hour[1]
+  x$dive2$dtcurve$times <- x$dive2$dtcurve$times + x$dive2$hour[1] 
   
   default_par$xlim = c(min(x$dive1$dtcurve$times) - delta_x, 
              max(x$dive2$dtcurve$times) + delta_x)
@@ -519,7 +522,7 @@ plot.ndive <- function(x,
     # init plot ----
     empty_par <- c(list(x = 1, y = 1), call_par)
     empty_par$type <- "n"
-    empty_par$axes=FALSE 
+    empty_par$axes=FALSE
     empty_par[other_params] <- NULL
     do.call(plot, empty_par)
     # def bg cols bis ----
@@ -618,7 +621,7 @@ plot.ndive <- function(x,
       
       if(x$dive1$hour[1] > 0){
         text(
-          x = x$dive1$hour - x$dive1$hour[1] , y = 0,
+          x = x$dive1$hour , y = 0,
           # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60, 
           sprintf("%02.0f:%02.0f:%02.0f", x$dive1$hour %/% 60, 
                   x$dive1$hour %% 60, (x$dive1$hour %% 60 %% 1) * 60 ), 
@@ -637,7 +640,7 @@ plot.ndive <- function(x,
     
     if (call_par$axes){
       if(x$dive1$hour[1] > 0){
-        cust_axis(x$dive1, call_par$col.axis, shift = -x$dive1$hour[1] )
+        cust_axis(x$dive1, call_par$col.axis )
       }
       cust_axis(x$dive2, call_par$col.axis, shift = -new_inter )
     }

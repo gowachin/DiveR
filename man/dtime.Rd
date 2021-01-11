@@ -3,12 +3,14 @@
 \name{dtime}
 \alias{dtime}
 \alias{dtime.dive}
+\alias{dtime.ndive}
 \title{dtime}
 \usage{
 dtime(object)
 
-## S3 method for class 'dive'
-# dtime(dive)
+\method{dtime}{dive}(object)
+
+\method{dtime}{ndive}(object)
 }
 \arguments{
 \item{object}{is a mn90 object. There are methods for 
@@ -18,7 +20,14 @@ dtime(object)
 a single numeric value
 }
 \description{
-\code{dtime} retrive the depth time of a singular or multiple dive sequence.
+\code{dtime} retrieve the depth time of a singular or multiple dive sequence.
+}
+\examples{
+# Simple dive
+dtime(dive(20,40))
+# Multiple dives
+dtime(ndive(dive(20,40), dive(15, 80), inter = 540))
+
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>

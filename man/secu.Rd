@@ -7,8 +7,7 @@
 \usage{
 secu(object)
 
-## S3 method for class 'dive'
-# depth(dive)
+\method{secu}{dive}(object)
 }
 \arguments{
 \item{object}{is a mn90 object. There are methods for 
@@ -19,6 +18,15 @@ Boolean
 }
 \description{
 \code{secu} retrieve if a dive was set with secu = TRUE or FALSE.
+}
+\examples{
+# Without desat stop
+secu(dive(20,40, secu = TRUE))
+secu(dive(20,40, secu = FALSE))
+# With desat stop
+secu(dive(20,60, secu = TRUE))
+secu(dive(20,60, secu = FALSE))
+
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>

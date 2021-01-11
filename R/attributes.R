@@ -12,8 +12,16 @@
 #'   \item{depth}{a numeric in meter}
 #'   \item{vup}{10 meter/minute by default.}
 #' }
+#' @param vup speed of ascent, 10 m/min by default
 #'
 #' @return It returns a numeric with the duration of the ascent and deco.
+#' 
+#' @examples 
+#' dtr(dive(20,40))
+#' # absurd slowness with vup = 1
+#' dtr(dive(20,40, vup = 1))
+#' # from a palier object
+#' dtr(palier(20, 40), depth = 20, vup = 10)
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -23,16 +31,14 @@ dtr <- function(object, ...) {
 }
 
 #' @rdname dtr
-#' @usage ## S3 method for class 'dive'
-#' # dtr(dive)
+#' 
 #' @export
 dtr.dive <- function(object, ...) {
   object$dtr
 }
 
 #' @rdname dtr
-#' @usage ## S3 method for class 'palier'
-#' # dtr(palier, depth, vup = 10)
+#' 
 #' @export
 dtr.palier <- function(object, ..., vup = 10) {
   palier <- object
@@ -70,6 +76,14 @@ dtr.palier <- function(object, ..., vup = 10) {
 #' \code{\link[mn90]{dive}} objects.
 #'
 #' @return It returns a numeric with the duration of the ascent and deco.
+#' 
+#' @examples 
+#' # Dive with default parameters
+#' speed(dive(20,40, vup = 10, secu = TRUE))
+#' # different vup
+#' speed(dive(20,40, vup = 15, secu = TRUE))
+#' # No desat stop induce NA for plt speed (between desat stop speed)
+#' speed(dive(20,40, vup = 10, secu = FALSE))
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -79,8 +93,7 @@ speed <- function(object) {
 }
 
 #' @rdname speed
-#' @usage ## S3 method for class 'dive'
-#' # speed(dive)
+#' 
 #' @export
 speed.dive <- function(object) {
   times <- object$dtcurve$times
@@ -125,9 +138,7 @@ summary.dive <- function(object, ...){
 }
 
 #' @rdname summary.dive
-#' @usage ## S3 method for class 'palier'
-#' # summary(palier)
-#' 
+#'  
 #' @examples 
 #' summary(palier(depth = 20, time = 50))
 #' summary(palier(depth = 20, time = 40,secu = FALSE))
@@ -153,12 +164,18 @@ summary.palier <- function(object, ...) {
 
 #' dtime
 #'
-#' \code{dtime} retrive the depth time of a singular or multiple dive sequence.
+#' \code{dtime} retrieve the depth time of a singular or multiple dive sequence.
 #'
 #' @param object is a mn90 object. There are methods for 
 #' \code{\link[mn90]{dive}} objects.
 #'
 #' @return a single numeric value
+#' 
+#' @examples 
+#' # Simple dive
+#' dtime(dive(20,40))
+#' # Multiple dives
+#' dtime(ndive(dive(20,40), dive(15, 80), inter = 540))
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -168,8 +185,7 @@ dtime <- function(object) {
 }
 
 #' @rdname dtime
-#' @usage ## S3 method for class 'dive'
-#' # dtime(dive)
+#' 
 #' @export
 dtime.dive <- function(object) {
   t <- object$dtcurve$times
@@ -177,15 +193,30 @@ dtime.dive <- function(object) {
   return(dt)
 }
 
+#' @rdname dtime
+#' 
+#' @export
+dtime.ndive <- function(object) {
+  d1 <- dtime(object$dive1)
+  d2 <- dtime(object$dive2)
+  return(c(d1,d2))
+}
+
 #' depth
 #'
-#' \code{depth} retrive the depth of a singular or multiple dive sequence.
+#' \code{depth} retrieve the depth of a singular or multiple dive sequence.
 #'
 #' @param object is a mn90 object. There are methods for 
 #' \code{\link[mn90]{dive}} and \code{\link[mn90]{ndive}} objects.
 #' 
 #' @return It returns a numeric with the depth of the dive. 
 #' Is a vector if working on ndive object
+#' 
+#' @examples 
+#' # Simple dive
+#' depth(dive(20,40))
+#' # Multiple dives
+#' depth(ndive(dive(20,40), dive(15, 80), inter = 540))
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -195,20 +226,18 @@ depth <- function(object) {
 }
 
 #' @rdname depth
-#' @usage ## S3 method for class 'dive'
-#' # depth(dive)
+#' 
 #' @export
 depth.dive <- function(object) {
   return(max(object$dtcurve$depths))
 }
 
 #' @rdname depth
-#' @usage ## S3 method for class 'dive'
-#' # depth(dive)
+#' 
 #' @export
 depth.ndive <- function(object) {
-  d1 <- max(object$dive1$dtcurve$depths)
-  d2 <- max(object$dive2$dtcurve$depths)
+  d1 <- depth(object$dive1)
+  d2 <- depth(object$dive2)
   return(c(d1,d2))
 }
 
@@ -221,6 +250,14 @@ depth.ndive <- function(object) {
 #' \code{\link[mn90]{dive}} objects.
 #' 
 #' @return Boolean
+#' 
+#' @examples 
+#' # Without desat stop
+#' secu(dive(20,40, secu = TRUE))
+#' secu(dive(20,40, secu = FALSE))
+#' # With desat stop
+#' secu(dive(20,60, secu = TRUE))
+#' secu(dive(20,60, secu = FALSE))
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -230,8 +267,7 @@ secu <- function(object) {
 }
 
 #' @rdname secu
-#' @usage ## S3 method for class 'dive'
-#' # depth(dive)
+#' 
 #' @export
 secu.dive <- function(object) {
   secutime <- palier(depth = depth(object), dtime(object)+ object$maj, 

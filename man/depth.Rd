@@ -8,11 +8,9 @@
 \usage{
 depth(object)
 
-## S3 method for class 'dive'
-# depth(dive)
+\method{depth}{dive}(object)
 
-## S3 method for class 'dive'
-# depth(dive)
+\method{depth}{ndive}(object)
 }
 \arguments{
 \item{object}{is a mn90 object. There are methods for 
@@ -23,7 +21,14 @@ It returns a numeric with the depth of the dive.
 Is a vector if working on ndive object
 }
 \description{
-\code{depth} retrive the depth of a singular or multiple dive sequence.
+\code{depth} retrieve the depth of a singular or multiple dive sequence.
+}
+\examples{
+# Simple dive
+depth(dive(20,40))
+# Multiple dives
+depth(ndive(dive(20,40), dive(15, 80), inter = 540))
+
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>

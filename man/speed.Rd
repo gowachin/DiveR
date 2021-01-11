@@ -7,8 +7,7 @@
 \usage{
 speed(object)
 
-## S3 method for class 'dive'
-# speed(dive)
+\method{speed}{dive}(object)
 }
 \arguments{
 \item{object}{is a mn90 object. There are methods for 
@@ -21,6 +20,15 @@ It returns a numeric with the duration of the ascent and deco.
 \code{speed} compute the ascent speed from a depth and between deco stages 
 of a dive.
 It can be retrieved from a dive object.
+}
+\examples{
+# Dive with default parameters
+speed(dive(20,40, vup = 10, secu = TRUE))
+# different vup
+speed(dive(20,40, vup = 15, secu = TRUE))
+# No desat stop induce NA for plt speed (between desat stop speed)
+speed(dive(20,40, vup = 10, secu = FALSE))
+
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
