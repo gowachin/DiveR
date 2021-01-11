@@ -162,8 +162,9 @@ plot.dive <- function(x,
     text(
       x = x$hour, y = 0,
       # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60, 
-      sprintf("%02.0f:%02.0f:%02.0f", x$hour %/% 60, 
-              x$hour %% 60, (x$hour %% 60 %% 1) * 60 ), 
+      minute_to_time(x$hour, sec = TRUE, sep = ':'),
+      # sprintf("%02.0f:%02.0f:%02.0f", x$hour %/% 60, 
+      #         x$hour %% 60, (x$hour %% 60 %% 1) * 60 ), 
       pos = 3, col = call_par$col
     )
   }
@@ -588,8 +589,9 @@ plot.ndive <- function(x,
         x = dIvE$hour - dIvE$hour[1], y = 0, 
         # sprintf("%02.0f:%02.0f", dIvE$hour %/% 60, 
         #         dIvE$hour %% 60),
-        sprintf("%02.0f:%02.0f:%02.0f", dIvE$hour %/% 60,
-                dIvE$hour %% 60, (dIvE$hour %% 60 %% 1) * 60 ),
+        minute_to_time(dIvE$hour, sec = TRUE, sep = ':'),
+        # sprintf("%02.0f:%02.0f:%02.0f", dIvE$hour %/% 60,
+        #         dIvE$hour %% 60, (dIvE$hour %% 60 %% 1) * 60 ),
         pos = 3, col = call_par$col
       )
       
@@ -610,8 +612,9 @@ plot.ndive <- function(x,
     
     text(
       x = mean(inter_t), 
-      y = 0, c(paste('inter:', sprintf("%02.0f:%02.0f:%02.0f", x$inter %/% 60, 
-                                       x$inter %% 60, (x$inter %% 60 %% 1) * 60 )),
+      y = 0, c(paste('inter:', minute_to_time(x$inter, sec = TRUE, sep = ':')),
+                     # sprintf("%02.0f:%02.0f:%02.0f", x$inter %/% 60, 
+                     # x$inter %% 60, (x$inter %% 60 %% 1) * 60 )
                                   paste('maj:', x$dive2$maj)), pos = c(3,1),
       col = call_par$col
     )
@@ -622,9 +625,10 @@ plot.ndive <- function(x,
       if(x$dive1$hour[1] > 0){
         text(
           x = x$dive1$hour , y = 0,
-          # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60, 
-          sprintf("%02.0f:%02.0f:%02.0f", x$dive1$hour %/% 60, 
-                  x$dive1$hour %% 60, (x$dive1$hour %% 60 %% 1) * 60 ), 
+          # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60,
+          minute_to_time(x$dive1$hour, sec = TRUE, sep = ':'),
+          # sprintf("%02.0f:%02.0f:%02.0f", x$dive1$hour %/% 60, 
+                  # x$dive1$hour %% 60, (x$dive1$hour %% 60 %% 1) * 60 ), 
           pos = 3, col = call_par$col
         )
       }
@@ -632,8 +636,9 @@ plot.ndive <- function(x,
       text(
         x = w_hours, y = 0,
         # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60, 
-        sprintf("%02.0f:%02.0f:%02.0f", x$dive2$hour %/% 60, 
-                x$dive2$hour %% 60, (x$dive2$hour %% 60 %% 1) * 60 ), 
+        minute_to_time(x$dive2$hour, sec = TRUE, sep = ':'),
+        # sprintf("%02.0f:%02.0f:%02.0f", x$dive2$hour %/% 60, 
+                # x$dive2$hour %% 60, (x$dive2$hour %% 60 %% 1) * 60 ), 
         pos = 3, col = call_par$col
       )
     }
