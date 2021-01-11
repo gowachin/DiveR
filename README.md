@@ -39,8 +39,7 @@ Consumption, plot.conso.
 
 ## To do : 
 
-- Complete README with examples.
-- Change package, repository name
+- Complete README with examples
 
 - doc on new conso and dive functions
 - more attributes
