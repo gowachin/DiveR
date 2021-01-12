@@ -5,8 +5,8 @@
 #' It can be retrieved from a dive object or computed with a depth and 
 #' a palier object.
 #'
-#' @param object is a mn90 object. There are methods for 
-#' \code{\link[mn90]{dive}} and \code{\link[mn90]{palier}} objects.
+#' @param object is a DiveR object. There are methods for 
+#' \code{\link[DiveR]{dive}} and \code{\link[DiveR]{palier}} objects.
 #' @param ... other arguments passed to the dtr.palier method.
 #' \describe{
 #'   \item{depth}{a numeric in meter}
@@ -72,8 +72,8 @@ dtr.palier <- function(object, ..., vup = 10) {
 #' of a dive.
 #' It can be retrieved from a dive object.
 #'
-#' @param object is a mn90 object. There are methods for 
-#' \code{\link[mn90]{dive}} objects.
+#' @param object is a DiveR object. There are methods for 
+#' \code{\link[DiveR]{dive}} objects.
 #'
 #' @return It returns a numeric with the duration of the ascent and deco.
 #' 
@@ -115,8 +115,8 @@ speed.dive <- function(object) {
 #'
 #' summary of a dive object
 #'
-#' @param object is a mn90 object. There are methods for 
-#' \code{\link[mn90]{dive}} and \code{\link[mn90]{palier}} objects.
+#' @param object is a DiveR object. There are methods for 
+#' \code{\link[DiveR]{dive}} and \code{\link[DiveR]{palier}} objects.
 #' @param ... other arguments passed to the dtr.palier method.
 #' \describe{
 #'   \item{plot}{FALSE by default}
@@ -166,8 +166,8 @@ summary.palier <- function(object, ...) {
 #'
 #' \code{dtime} retrieve the depth time of a singular or multiple dive sequence.
 #'
-#' @param object is a mn90 object. There are methods for 
-#' \code{\link[mn90]{dive}} objects.
+#' @param object is a DiveR object. There are methods for 
+#' \code{\link[DiveR]{dive}} objects.
 #'
 #' @return a single numeric value
 #' 
@@ -196,6 +196,15 @@ dtime.dive <- function(object) {
 #' @rdname dtime
 #' 
 #' @export
+dtime.conso <- function(object) {
+  t <- object$dtcurve$times
+  dt <- min(t[t > 0])
+  return(dt)
+}
+
+#' @rdname dtime
+#' 
+#' @export
 dtime.ndive <- function(object) {
   d1 <- dtime(object$dive1)
   d2 <- dtime(object$dive2)
@@ -206,8 +215,8 @@ dtime.ndive <- function(object) {
 #'
 #' \code{depth} retrieve the depth of a singular or multiple dive sequence.
 #'
-#' @param object is a mn90 object. There are methods for 
-#' \code{\link[mn90]{dive}} and \code{\link[mn90]{ndive}} objects.
+#' @param object is a DiveR object. There are methods for 
+#' \code{\link[DiveR]{dive}} and \code{\link[DiveR]{ndive}} objects.
 #' 
 #' @return It returns a numeric with the depth of the dive. 
 #' Is a vector if working on ndive object
@@ -235,6 +244,13 @@ depth.dive <- function(object) {
 #' @rdname depth
 #' 
 #' @export
+depth.conso <- function(object) {
+  return(max(object$dtcurve$depths))
+}
+
+#' @rdname depth
+#' 
+#' @export
 depth.ndive <- function(object) {
   d1 <- depth(object$dive1)
   d2 <- depth(object$dive2)
@@ -246,8 +262,8 @@ depth.ndive <- function(object) {
 #'
 #' \code{secu} retrieve if a dive was set with secu = TRUE or FALSE.
 #'
-#' @param object is a mn90 object. There are methods for 
-#' \code{\link[mn90]{dive}} objects.
+#' @param object is a DiveR object. There are methods for 
+#' \code{\link[DiveR]{dive}} objects.
 #' 
 #' @return Boolean
 #' 
@@ -313,5 +329,33 @@ minute_to_time <- function(time, sec = TRUE, sep = c(':', 'h'), day = TRUE){
   } else {
     res = sprintf("%02.0f%s%02.0f", time %/% 60, sep, time %% 60)
   }
+  return(res)
+}
+
+
+#' depth at time
+#'
+#' Find the depth for a given time and dive.
+#'
+#' @param dive \code{\link[DiveR]{dive}} object.
+#' @param time positive numeric value in minute 
+#' 
+#' @examples 
+#' depth_at_time(dive(20,40), 38)
+#' depth_at_time(dive(20,40), 41)
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+depth_at_time <- function(dive, time){
+  times <- dive$dtcurve$times
+  depths <- dive$dtcurve$depths
+  if(time > max(times)){return(0)}
+  
+  befd <-  max(depths[times < time]) ; beft <-  max(times[times < time])
+  aftd <- max(depths[times >= time]) ; aftt <- min(times[times >= time])
+  
+  reg <- lm(c(befd,aftd)~ c(beft,aftt))
+  res <- reg$coefficients[2] * time + reg$coefficients[1]
   return(res)
 }

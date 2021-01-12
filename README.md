@@ -46,14 +46,13 @@ Despite using diving table as base for computation, no output from this applicat
 
 ## Actual in work part
 
-Consumption, plot.conso.
+Refactorisation of Consumption, plot.conso for multi tank dives.
 
 ## To do : 
 
 - Complete README with examples
 
 - doc on new conso and dive functions
-- more attributes
 - make a beautiful doc for every functions
 - desaturation with complex models
 - multiple gas tank consumption.

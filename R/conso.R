@@ -47,10 +47,10 @@ press_time <- function(vpress, times, press = 100){
 
 #' conso
 #' 
-#' @param dive \code{\link[mn90]{dive}} object
+#' @param dive \code{\link[DiveR]{dive}} object
 #' 
 #' @details 
-#' See \code{\link[mn90]{tablecheck}} for limit values of depth and time.
+#' See \code{\link[DiveR]{tablecheck}} for limit values of depth and time.
 #' 
 #' @examples 
 #' c1 = conso(dive = dive(20,40), bloc = bloc(12, 230), cons = 20, mid = 100, reserve = 50)
@@ -109,16 +109,27 @@ conso <- function(dive, bloc, cons = 20, mid = 100, reserve = 50,
     treserve <- NULL
   }
   # compute death time
-  if (any(vpress < 0 )){
+  if (any(vpress <= 0 )){
     tPA <- c(0, press_time(vpress, dtcurve$times, 0))
+    # ajouter un point dans la courbe a cet endroit !
+    if(! tPA[2] %in% dive$dtcurve$times){
+      vpress <- c(vpress, 0)
+      # add a depth at this time
+      dtimes <- dive$dtcurve$times
+      dive$dtcurve$depths <- c(dive$dtcurve$depths[dtimes < tPA[2]],
+                               unname(depth_at_time(dive = dive, time = tPA[2])),
+                               dive$dtcurve$depths[dtimes > tPA[2]])
+      dive$dtcurve$times <- sort(c(dive$dtcurve$times, unname(tPA[2]) ))
+    }
+    vpress[vpress <= 0] <- 0 
     names(tPA) = c('press','time')
   } else {
     tPA <- NULL
   }
   
-  conso <- list(dtcurve = dtcurve,
-    vcons = vcons, vpress = vpress, 
-    time_mid = tmid, time_reserve = treserve, time_PA = tPA
+  conso <- list(dtcurve = dive$dtcurve,
+    vcons = vcons, vpress = vpress, lab = c('midtank', 'reserve', 'PA'),
+    time_mid = tmid, time_reserve = treserve, time_PA = tPA, hour = dive$hour
   )
   class(conso) <- "conso"
   return(conso)

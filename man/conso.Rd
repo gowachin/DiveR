@@ -7,7 +7,7 @@
 conso(dive, bloc, cons = 20, mid = 100, reserve = 50, rule = NULL)
 }
 \arguments{
-\item{dive}{\code{\link[mn90]{dive}} object}
+\item{dive}{\code{\link[DiveR]{dive}} object}
 }
 \value{
 conso, a conso class object.
@@ -16,7 +16,7 @@ conso, a conso class object.
 conso
 }
 \details{
-See \code{\link[mn90]{tablecheck}} for limit values of depth and time.
+See \code{\link[DiveR]{tablecheck}} for limit values of depth and time.
 }
 \examples{
 c1 = conso(dive = dive(20,40), bloc = bloc(12, 230), cons = 20, mid = 100, reserve = 50)
