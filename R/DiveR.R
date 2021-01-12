@@ -3,26 +3,13 @@
 #' @import utils
 NULL
 
-#' mn90
+#' DiveR
 #'
 #' A package to code some basic function about dive profiles.
 #'
 #' @docType package
-#' @name mn90
+#' @name DiveR
 NULL
-
-#' mn90 app
-#' 
-#' custom function to run the shiny app (thinkR idea, to explore in docker)
-#' 
-#' @examples 
-#' # mn90::shiny_mn90_app()
-#' 
-#' @export
-shiny_mn90_app <- function(){
-  appDir <- system.file("app", package = "mn90")
-  shiny::runApp(appDir, display.mode = "normal")
-}
 
 #' check_val
 #' 
@@ -64,7 +51,7 @@ check_val <- function(val, zero = FALSE) {
 #' @param hour NULL not implemented yet
 #' 
 #' @details 
-#' See \code{\link[mn90]{tablecheck}} for limit values of depth and time.
+#' See \code{\link[DiveR]{tablecheck}} for limit values of depth and time.
 #' 
 #' @examples 
 #' dive = dive(depth = 39, time = 22, secu = TRUE, vup = 10)
@@ -158,7 +145,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
 #' @param verbose allow cat return in consol for debug purposes
 #' 
 #' @details 
-#' See \code{\link[mn90]{tablecheck}} for limit values of depth and time 
+#' See \code{\link[DiveR]{tablecheck}} for limit values of depth and time 
 #' of a dive.
 #' 
 #' @examples 

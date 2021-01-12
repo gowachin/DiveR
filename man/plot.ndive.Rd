@@ -97,7 +97,7 @@ plot(d, def_cols = TRUE, main = 'diff cut')
 \item \code{\link[graphics]{plot}}, \code{\link[graphics]{title}} and 
 \code{\link[graphics]{par}} for plot parameter that were omitted 
 on this documentation
-\item \code{\link[mn90]{ndive}} for every aspect about 
+\item \code{\link[DiveR]{ndive}} for every aspect about 
 ndive object creations.
 }
 }

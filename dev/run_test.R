@@ -1,6 +1,6 @@
 
 # running tests
-library(mn90)
+library(DiveR)
 # plot.dive ####
 d <- dive(20, 40, secu = T, hour = 10*60 + 24.5)
 plot(d, def_cols = T)

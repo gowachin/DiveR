@@ -17,7 +17,7 @@
 #' 
 #' @export
 tablecheck <- function(depth, time, force = FALSE) {
-  table <- mn90::table
+  table <- DiveR::table
   # checks
   check_val(depth)
   check_val(time)
@@ -60,7 +60,7 @@ tablecheck <- function(depth, time, force = FALSE) {
 #' @rdname tablecheck
 #' @export
 max_depth_t <- function(depth) {
-  table <- mn90::table[, , 1]
+  table <- DiveR::table[, , 1]
   # chekcs
   check_val(depth)
 
@@ -94,8 +94,8 @@ max_depth_t <- function(depth) {
 #' 
 #' @export
 palier <- function(depth, time, secu = TRUE) {
-  table <- mn90::table
-  grp <- mn90::grp
+  table <- DiveR::table
+  grp <- DiveR::grp
   # checks
   check_val(depth)
   check_val(time)
@@ -151,8 +151,8 @@ palier <- function(depth, time, secu = TRUE) {
 #' 
 #' @export
 majoration <- function(depth, group = "Z", inter = 16) {
-  n2 <- mn90::azote
-  tmaj <- mn90::maj
+  n2 <- DiveR::azote
+  tmaj <- DiveR::maj
   # checks
   check_val(depth)
   if(depth > 60) stop('Depth must be inferior or equal to 60.')

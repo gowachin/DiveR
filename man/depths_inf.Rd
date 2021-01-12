@@ -10,7 +10,7 @@ depths_inf(x, col, only_pal = FALSE)
 times_inf(x, col)
 }
 \arguments{
-\item{x}{a \code{\link[mn90]{dive}} object.}
+\item{x}{a \code{\link[DiveR]{dive}} object.}
 
 \item{col}{a color value}
 

@@ -14,7 +14,7 @@
 #' 
 #' @details 
 #' As the table is limited in row and column, some values of time and 
-#' depth can not return values. See \code{\link[mn90]{tablecheck}} for 
+#' depth can not return values. See \code{\link[DiveR]{tablecheck}} for 
 #' limit values of depth and time.
 #' Also you can note that part of the table are NA values. 
 #' This mean that the couple of dive parameters are not included in this model.

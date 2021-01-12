@@ -1,5 +1,5 @@
 ### examples ####
-library(mn90)
+library(DiveR)
 
 pa20 <- dive(depth = 19, time = 43, secu = TRUE, vup = 10)
 plot(pa20)

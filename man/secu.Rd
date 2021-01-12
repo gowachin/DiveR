@@ -10,8 +10,8 @@ secu(object)
 \method{secu}{dive}(object)
 }
 \arguments{
-\item{object}{is a mn90 object. There are methods for 
-\code{\link[mn90]{dive}} objects.}
+\item{object}{is a DiveR object. There are methods for 
+\code{\link[DiveR]{dive}} objects.}
 }
 \value{
 Boolean

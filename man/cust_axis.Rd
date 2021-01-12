@@ -7,7 +7,7 @@
 cust_axis(dive, col, shift = NULL)
 }
 \arguments{
-\item{dive}{a \code{\link[mn90]{dive}} object.}
+\item{dive}{a \code{\link[DiveR]{dive}} object.}
 
 \item{col}{a color}
 

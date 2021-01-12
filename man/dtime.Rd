@@ -3,6 +3,7 @@
 \name{dtime}
 \alias{dtime}
 \alias{dtime.dive}
+\alias{dtime.conso}
 \alias{dtime.ndive}
 \title{dtime}
 \usage{
@@ -10,11 +11,13 @@ dtime(object)
 
 \method{dtime}{dive}(object)
 
+\method{dtime}{conso}(object)
+
 \method{dtime}{ndive}(object)
 }
 \arguments{
-\item{object}{is a mn90 object. There are methods for 
-\code{\link[mn90]{dive}} objects.}
+\item{object}{is a DiveR object. There are methods for 
+\code{\link[DiveR]{dive}} objects.}
 }
 \value{
 a single numeric value

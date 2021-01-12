@@ -10,8 +10,8 @@
 \method{summary}{palier}(object, ...)
 }
 \arguments{
-\item{object}{is a mn90 object. There are methods for 
-\code{\link[mn90]{dive}} and \code{\link[mn90]{palier}} objects.}
+\item{object}{is a DiveR object. There are methods for 
+\code{\link[DiveR]{dive}} and \code{\link[DiveR]{palier}} objects.}
 
 \item{...}{other arguments passed to the dtr.palier method.
 \describe{

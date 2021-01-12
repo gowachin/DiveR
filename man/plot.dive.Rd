@@ -69,7 +69,7 @@ Only represent sqare profile
 \item \code{\link[graphics]{plot}}, \code{\link[graphics]{title}} and 
 \code{\link[graphics]{par}} for plot parameter that were omitted 
 on this documentation
-\item \code{\link[mn90]{dive}} for every aspect about dive object creations.
+\item \code{\link[DiveR]{dive}} for every aspect about dive object creations.
 }
 }
 \author{
