@@ -7,12 +7,12 @@
 depth_at_time(dive, time)
 }
 \arguments{
-\item{dive}{}
+\item{dive}{\code{\link[DiveR]{dive}} object.}
 
 \item{time}{positive numeric value in minute}
 }
 \description{
-Transform minute variable into a character string in hour format.
+Find the depth for a given time and dive.
 }
 \examples{
 depth_at_time(dive(20,40), 38)

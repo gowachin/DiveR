@@ -285,6 +285,9 @@ cust_axis <- function(dive, col, shift = NULL){
 #' 
 #' @export
 depths_inf <- function(x, col, only_pal = FALSE){
+  
+  x$dtcurve <- simpl(x$dtcurve)
+  
   depths <- unique(x$dtcurve$depths)
   depths <- depths[depths != 0]
   if(only_pal){
@@ -319,6 +322,8 @@ depths_inf <- function(x, col, only_pal = FALSE){
 #' @rdname depths_inf
 #' @export
 times_inf <- function(x, col){
+  
+  x$dtcurve <- simpl(x$dtcurve)
   
   times <- x$dtcurve$times[-c(1, length(x$dtcurve$times))]
   depths <- x$dtcurve$depths[-c(1, length(x$dtcurve$depths))]
@@ -728,8 +733,8 @@ plot.conso <- function(x,
                       rules_print = TRUE,
                       hour_print = TRUE,
                       line_print = TRUE,
-                      # depth_print = TRUE,
-                      # time_print = TRUE,
+                      depth_print = TRUE,
+                      time_print = TRUE,
                       def_cols = FALSE,
                       add = FALSE) {
   
@@ -771,7 +776,7 @@ plot.conso <- function(x,
   # def bg cols ----
   if (def_cols) {
     call_par$col <- "darkred" # TODO here modify def col
-    call_par$dive_col <- 'peru'
+    call_par$dive_col <- 'black'# 'peru'
     call_par$col.axis <- "darkred"
     tmp_bg <- par('bg') # save bg for later
     par(bg = "gray")
@@ -788,19 +793,17 @@ plot.conso <- function(x,
     empty_par$xlab = empty_par$ylab = empty_par$main = ''
     do.call(plot, empty_par)
     # def bg cols bis ----
-    # if (def_cols) {
-    #   colfunc <- colorRampPalette(c("cyan", "royalblue")) 
-    #   # TODO change the colors here
-    #   rect(par("usr")[1], 0, par("usr")[2], par("usr")[4], col = "white")
-    #   n <- 100
-    #   rec <- seq(0, par("usr")[3], length.out = n)
-    #   for (i in 2:n) {
-    #     rect(par("usr")[1], rec[i], par("usr")[2], rec[i - 1],
-    #          col = colfunc(n)[i - 1],
-    #          border = colfunc(n)[i - 1]
-    #     )
-    #   }
-    # }
+    if (def_cols) {
+      limits <- c(max(x$vpress), x$time_mid[1], 
+                  x$time_reserve[1], x$time_PA[1], 0)
+      limits[is.na(limits)] <- 0
+      # TODO change the colors her
+      cols <- c('#0571b0','#92c5de', '#f4a582', '#ca0020')
+      for(i in 1:4){
+        rect(x$hour[1], limits[i+1], x$hour[2], limits[i], 
+             col = cols[i], border = cols[i])
+      }
+    }
     # change color around and make axis ----
     box(col = call_par$col.axis)
     mtext(call_par$xlab, side=1, line=3, col=call_par$col)
@@ -878,19 +881,19 @@ plot.conso <- function(x,
     )
   }
   
-  # if(depth_print & dive_print){
-  #   depth_lab <- depths_inf(list(dtcurve = x$dtcurve), col = call_par$dive_col)
-  #   depth_depth <- depths_inf(list(dtcurve = dtcurve), col = call_par$dive_col)
-  #   depth_lab$y <- c(0, -depth_depth$y[2])
-  #   do.call(text, depth_lab)
-  # }
-  # 
-  # if(time_print & dive_print){
-  #   time_lab <- times_inf(list(dtcurve = x$dtcurve), col = call_par$dive_col)
-  #   time_depth <- times_inf(list(dtcurve = dtcurve), col = call_par$dive_col)
-  #   time_lab$y <- c(0, -depth_depth$y[2])
-  #   do.call(text, time_lab)
-  # }
+  if(depth_print & dive_print){
+    depth_lab <- depths_inf(list(dtcurve = x$dtcurve), col = call_par$dive_col)
+    depth_depth <- depths_inf(list(dtcurve = dtcurve), col = call_par$dive_col)
+    depth_lab$y <- c(0, -depth_depth$y[2])
+    do.call(text, depth_lab)
+  }
+
+  if(time_print & dive_print){
+    time_lab <- times_inf(list(dtcurve = x$dtcurve), col = call_par$dive_col)
+    time_depth <- times_inf(list(dtcurve = dtcurve), col = call_par$dive_col)
+    time_lab$y <- c(0, -depth_depth$y[2])
+    do.call(text, time_lab)
+  }
   
   if (def_cols) {par(bg = tmp_bg)}
 }

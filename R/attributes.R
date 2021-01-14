@@ -359,3 +359,31 @@ depth_at_time <- function(dive, time){
   res <- reg$coefficients[2] * time + reg$coefficients[1]
   return(res)
 }
+
+
+#'simpl
+#'
+#' Remove points of curve when isodepth around
+#'
+#' @param dtcurve a curve dive list
+#' 
+#' @examples 
+#' cons <- conso(dive = dive(20,40), bloc = bloc(10, 230), cons = 20, mid = 100, reserve = 50)
+#' cons$dtcurve
+#' simpl(cons$dtcurve)
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+simpl <- function(dtcurve){
+  rm <- c()
+  for(i in c(2: (length(dtcurve$depths)-1))){
+    if (dtcurve$depths[i] == dtcurve$depths[i-1] & dtcurve$depths[i] == dtcurve$depths[i+1]){
+      rm <- append(rm, i)
+    }
+  }
+  if(is.null(rm)) return(dtcurve)
+  dtcurve$depths <- dtcurve$depths[-rm]
+  dtcurve$times <- dtcurve$times[-rm]
+  return(dtcurve)
+}
