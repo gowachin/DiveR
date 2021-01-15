@@ -348,15 +348,19 @@ minute_to_time <- function(time, sec = TRUE, sep = c(':', 'h'), day = TRUE){
 #'
 #' @export
 depth_at_time <- function(dive, time){
+  time <- time + dive$hour[1]
   times <- dive$dtcurve$times
   depths <- dive$dtcurve$depths
   if(time > max(times)){return(0)}
   
-  befd <-  max(depths[times < time]) ; beft <-  max(times[times < time])
-  aftd <- max(depths[times >= time]) ; aftt <- min(times[times >= time])
-  
-  reg <- lm(c(befd,aftd)~ c(beft,aftt))
-  res <- reg$coefficients[2] * time + reg$coefficients[1]
+  befd <-  tail(depths[times < time], 1) ; beft <-  tail(times[times < time], 1)
+  aftd <- depths[times >= time][1] ; aftt <- times[times >= time][1]
+  if(befd==aftd){
+    return(befd)
+  } else {
+    reg <- lm(c(befd,aftd)~ c(beft,aftt))
+    res <- reg$coefficients[2] * time + reg$coefficients[1]
+  }
   return(res)
 }
 

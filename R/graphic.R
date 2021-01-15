@@ -857,7 +857,7 @@ plot.conso <- function(x,
     lab = 1
     for( i in x[c('time_mid', 'time_reserve', 'time_PA')]){
       if(is.numeric(i)){
-        posx <- c(rep(i['time'], 2), par("usr")[1])
+        posx <- c(rep(i['time']+ x$hour[1], 2), par("usr")[1])
         posy <- c(par("usr")[3], rep(i['press'], 2))
         lines( x = posx, y = posy, lty = 3, col = call_par$col )
         legend(posx[2], posy[2], x$lab[lab], text.col = call_par$col, 
