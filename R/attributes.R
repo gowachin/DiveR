@@ -349,7 +349,7 @@ minute_to_time <- function(time, sec = TRUE, sep = c(':', 'h'), day = TRUE){
 #' @export
 depth_at_time <- function(dive, time){
   time <- time + dive$hour[1]
-  times <- dive$dtcurve$times
+  times <- dive$dtcurve$times + dive$hour[1]
   depths <- dive$dtcurve$depths
   if(time > max(times)){return(0)}
   
