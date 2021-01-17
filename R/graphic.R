@@ -588,14 +588,14 @@ plot.ndive <- function(x,
     dIvE <- list(hour = hours)
     # axes
     if (call_par$axes){
-      cust_axis(dIvE, call_par$col.axis, shift = -x$dive1$hour[1] )
+      cust_axis(dIvE, call_par$col.axis) #, shift = -x$dive1$hour[1] )
       axis(2, col = call_par$col.axis, col.ticks = call_par$col.axis, 
            col.axis = call_par$col.axis)
     }
     # hours add
     if (hour_print){
       text(
-        x = dIvE$hour - dIvE$hour[1], y = 0, 
+        x = dIvE$hour, y = 0, 
         # sprintf("%02.0f:%02.0f", dIvE$hour %/% 60, 
         #         dIvE$hour %% 60),
         minute_to_time(dIvE$hour, sec = TRUE, sep = ':'),
