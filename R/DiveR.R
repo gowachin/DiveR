@@ -189,7 +189,7 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
       # modification of dive2 curve in times for graphics !
       ndive$dive2$dtcurve$times[-c(1,2)] <- ndive$dive2$dtcurve$time[-c(1,2)] - 
         (dtime(dive1) + dive1$dtr + inter)
-      ndive$dive2$hour[1] <- (dtime(dive1) + dive1$dtr + inter)
+      ndive$dive2$hour[1] <- (dive1$hour[1] + dtime(dive1) + dive1$dtr + inter)
     } else {
       if(verbose) cat('no_consec\n')
       # second dive is impossible here in the table
