@@ -90,10 +90,10 @@ plot.dive <- function(x,
   }
   # def bg cols ----
   if (def_cols) {
-    call_par$col <- "darkred" # TODO here modify def col
-    call_par$col.axis <- "darkred"
+    call_par$col <- "#bd971e" # TODO here modify def col
+    call_par$col.axis <- "#741d16"
     tmp_bg <- par('bg') # save bg for later
-    par(bg = "gray")
+    par(bg = "#909fa1")
   } else {
     call_par$col.axis <- par('col.axis')
   }
@@ -107,9 +107,9 @@ plot.dive <- function(x,
     do.call(plot, empty_par)
     # def bg cols bis ----
     if (def_cols) {
-      colfunc <- colorRampPalette(c("cyan", "royalblue")) 
+      colfunc <- colorRampPalette(c("#04728d", "#051c2e")) 
       # TODO change the colors here
-      rect(par("usr")[1], 0, par("usr")[2], par("usr")[4], col = "white")
+      rect(par("usr")[1], 0, par("usr")[2], par("usr")[4], col = "#628db0")
       n <- 100
       rec <- seq(0, par("usr")[3], length.out = n)
       for (i in 2:n) {
@@ -121,9 +121,9 @@ plot.dive <- function(x,
     }
     # change color around and make axis ----
     box(col = call_par$col.axis)
-    mtext(call_par$xlab, side=1, line=3, col=call_par$col)
-    mtext(call_par$ylab, side=2, line=3, col=call_par$col)
-    mtext(call_par$main, side=3, line=1, col=call_par$col)
+    mtext(call_par$xlab, side=1, line=3, col=call_par$col.axis)
+    mtext(call_par$ylab, side=2, line=3, col=call_par$col.axis)
+    mtext(call_par$main, side=3, line=1, col=call_par$col.axis)
     
     # add depth lines ----
     if (line_print) {
@@ -209,7 +209,8 @@ plot.dive <- function(x,
     legend("bottomright", sprintf(
       "%s speed : %g m/min", c("ascent", "deco stop"),
       unlist(speed(x))
-    ), horiz = T, cex = 0.7, box.col = call_par$col, text.col = call_par$col)
+    ), horiz = T, cex = 0.7, box.col = call_par$col.axis, 
+    text.col = call_par$col.axis)
   }
   
   if (def_cols) {par(bg = tmp_bg)}
@@ -509,10 +510,10 @@ plot.ndive <- function(x,
   
   # def bg cols ----
   if (def_cols) {
-    call_par$col <- "darkred" # TODO here modify def col
-    call_par$col.axis <- "darkred"
+    call_par$col <- "#bd971e" # TODO here modify def col
+    call_par$col.axis <- "#741d16"
     tmp_bg <- par('bg') # save bg for later
-    par(bg = "gray")
+    par(bg = "#909fa1")
   } else {
     call_par$col.axis <- par('col.axis')
   }
@@ -538,9 +539,9 @@ plot.ndive <- function(x,
     # def bg cols bis ----
     limits <- par("usr")
     if (def_cols) {
-      colfunc <- colorRampPalette(c("cyan", "royalblue")) 
+      colfunc <- colorRampPalette(c("#04728d", "#051c2e")) 
       # TODO change the colors here
-      rect(limits[1], 0, limits[2], limits[4], col = "white")
+      rect(par("usr")[1], 0, par("usr")[2], par("usr")[4], col = "#628db0")
       n <- 100
       rec <- seq(0, limits[3], length.out = n)
       for (i in 2:n) {
@@ -552,8 +553,8 @@ plot.ndive <- function(x,
     }
     # change color around and make axis ----
     box(col = call_par$col.axis)
-    mtext(call_par$xlab, side=1, line=3, col=call_par$col)
-    mtext(call_par$ylab, side=2, line=3, col=call_par$col)
+    mtext(call_par$xlab, side=1, line=3, col=call_par$col.axis)
+    mtext(call_par$ylab, side=2, line=3, col=call_par$col.axis)
     
     # add depth lines ----
     if (line_print) {
@@ -775,11 +776,11 @@ plot.conso <- function(x,
   }
   # def bg cols ----
   if (def_cols) {
-    call_par$col <- "darkred" # TODO here modify def col
-    call_par$dive_col <- 'black'# 'peru'
-    call_par$col.axis <- "darkred"
+    call_par$col <- "#bd971e" # TODO here modify def col
+    call_par$dive_col <- '#909fa1'# 'peru'
+    call_par$col.axis <- "#bd971e"
     tmp_bg <- par('bg') # save bg for later
-    par(bg = "gray")
+    par(bg = "#073642")
   } else {
     call_par$col.axis <- par('col.axis')
   }
