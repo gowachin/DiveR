@@ -567,9 +567,11 @@ plot.ndive <- function(x,
     }
   }
   
+  # Plot the dives ----
   consec_call <- call_par
   consec_call$add <- TRUE 
   consec_call$cut_inter <- NULL 
+  consec_call$def_cols <- TRUE
   if (x$type == 'consec' | x$dive1$hour[1] > 0){
     cat('consec_plot \n')
     consec_call$axes <- FALSE
@@ -657,6 +659,8 @@ plot.ndive <- function(x,
     if (call_par$axes){
       if(x$dive1$hour[1] > 0){
         cust_axis(x$dive1, call_par$col.axis )
+        axis(2, col = call_par$col.axis, col.ticks = call_par$col.axis, 
+             col.axis = call_par$col.axis)
       }
       cust_axis(x$dive2, call_par$col.axis, shift = -new_inter )
     }
