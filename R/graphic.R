@@ -90,7 +90,7 @@ plot.dive <- function(x,
   }
   # def bg cols ----
   if (def_cols) {
-    call_par$col <- "#bd971e" # TODO here modify def col
+    call_par$col <- "#fd8f0c" # TODO here modify def col
     call_par$col.axis <- "#741d16"
     tmp_bg <- par('bg') # save bg for later
     par(bg = "#909fa1")
@@ -510,7 +510,7 @@ plot.ndive <- function(x,
   
   # def bg cols ----
   if (def_cols) {
-    call_par$col <- "#bd971e" # TODO here modify def col
+    call_par$col <- "#fd8f0c" # TODO here modify def col
     call_par$col.axis <- "#741d16"
     tmp_bg <- par('bg') # save bg for later
     par(bg = "#909fa1")
@@ -780,7 +780,7 @@ plot.conso <- function(x,
   }
   # def bg cols ----
   if (def_cols) {
-    call_par$col <- "#bd971e" # TODO here modify def col
+    call_par$col <- "#fd8f0c" # TODO here modify def col
     call_par$dive_col <- '#909fa1'# 'peru'
     call_par$col.axis <- "#bd971e"
     tmp_bg <- par('bg') # save bg for later
