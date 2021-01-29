@@ -68,6 +68,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   # checks
   check_val(vup)
   check_val(maj, zero = TRUE)
+  way <- match.arg(way)
   
   if (length(depth) > 1){
     if (is.null(speed)){stop('A speed must be provided')}

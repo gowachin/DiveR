@@ -17,7 +17,8 @@
 #'   \item{"deco"}{single tank to be used in deco ascent}
 #' }
 #' @param limit a two element vector with times between which the tank 
-#' is not used. Used to mimic an accident, or a relay tank.
+#' is not used. Can be used to mimic an accident, or a relay tank.
+#' 
 nbloc <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25), 
                                            sys = '%' ), 
                   gas = "Air", typ = "back", limit = NULL){
@@ -31,6 +32,8 @@ nbloc <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
   
   if(is.null(limit)){
     limit <- rep(NA,2)
+  } else {
+    stop('This is not coded yet')
   }
   
   carac <- c(vol, press, unlist(rules$rules))
@@ -41,9 +44,9 @@ nbloc <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
   if(gas != 'Air'){
     stop('Only air is working at this moment')
   } else {
-    ppo2 <- 0.21
-    dmin <- 0 # assimilé a ppo2 > 0.18
-    dmax <- 60 # assimilé a ppo2 < 1.6
+    ppo2 <- c(0.21, 1.6)
+    dmin <- (ppo2[1] * 70 / 1.47) -10 # assimilé a ppo2 > 0.18
+    dmax <- (ppo2[2] * 70 / 1.47) -10 # assimilé a ppo2 < 1.6
   }
   
   limit <- c(dmin,dmax,limit)
