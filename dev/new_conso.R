@@ -18,10 +18,12 @@
 #' }
 #' @param limit a two element vector with times between which the tank 
 #' is not used. Can be used to mimic an accident, or a relay tank.
+#' @param name Possibility to name the tank for better understanding after.
+#' by default will be named after the typ and volume.
 #' 
 ntank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25), 
                                            sys = '%' ), 
-                  gas = "Air", typ = "back", limit = NULL){
+                  gas = "Air", typ = "back", limit = NULL, name = NULL){
   
   # IDIOT PROOF
   # vol numeric >= 1
@@ -54,10 +56,14 @@ ntank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
     stop('Idiot proof of limit not coded yet')
   }
   
+  if(is.null(name)){
+    name <- paste0(typ, vol)
+  }
+  
   carac <- c(vol, press, unlist(rules$rules))
   names(carac) <- c('vol', 'press', 'rule1', 'rule2')
-  typo <- c(gas, typ, names(rules$rules))
-  names(typo) <- c('gas', 'typ', 'rule1', 'rule2')
+  typo <- c(gas, typ, names(rules$rules), name)
+  names(typo) <- c('gas', 'typ', 'rule1', 'rule2', 'name')
   
   if(gas != 'Air'){
     stop('Only air is working at this moment')
@@ -78,34 +84,52 @@ ntank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
   return(tank)
 }
 
+dive <- dive(20, 40)
+
 y <- ntank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50), 
                                  sys = "bar"))
 
 x <- ntank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50), 
-                                 sys = "bar"))
+                                 sys = "bar"), typ = 'relai')
 x$limit['t1'] <- 20
 x$limit['t2'] <- 30
-x
+# x$limit['mind'] <- 10
+# x$limit['maxd'] <- 15
 
-tanks <- list(y, x)
+expand(x, dive)
+
+y$limit['mind'] <- 5
+y$limit['maxd'] <- 10
+
+expand(y, dive)
+
+tanks <- list(x, y)
 
 expand(tanks, dive)
 
+
+#' expand
+#' 
+#' @param tank \code{\link[DiveR]{ntank}} object or a list of ntank objects. 
+#' Priority of consumption for tanks is set by their order in list.
+#' @param dive \code{\link[DiveR]{dive}} object
+#'  
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
+#' @export
 expand <- function(tank, dive){
   
   dtime <- dtime(dive)
+  depth <- depth(dive)
   
+  #### Single tank ####
   if(class(tank) == "tank"){
-    
-    mind <- max(0, tank$limit['mind'])
-    maxd <- max(depth(dive), tank$limit['maxd'])
-    
-    table <- data.frame(min_depth = mind, max_depth = maxd,
+    # init table
+    table <- data.frame(min_depth = tank$limit['mind'], max_depth = tank$limit['maxd'],
                         begin = 0, end = dtime, 
-                        type = tank$typo['typ'], usable = T, 
+                        type = tank$typo['typ'], 
                         press = tank$carac['press'])
-    
-    # duplicate rows to add time
+    # duplicate row to add time when it's not allowed
     if(!all(is.na(tank$limit[c('t1', 't2')]))){
       for(i in c('t1', 't2')){
         if(tank$limit[i] >= 0 & tank$limit[i] < dtime){
@@ -113,25 +137,67 @@ expand <- function(tank, dive){
           table$end[nrow(table)] <- table$end[nrow(table)-1]
           table$begin[nrow(table)] <- table$end[nrow(table)-1] <- tank$limit[i]
           
-          if(i == 't1') table$usable[nrow(table)] <- FALSE
+          if(i == 't1') table$press[nrow(table)] <- 0
         }
       }
     }
+    # duplicate table for allowed depths or not.
+    if((tank$limit['mind']) > 0){
+      min_table <- table
+      min_table$press <- 0
+      min_table$min_depth <- 0
+      min_table$max_depth <- tank$limit['mind']
+    } else {min_table <- NULL}
+
+    if((tank$limit['maxd']) < depth){
+        max_table <- table
+        max_table$press <- 0
+        max_table$min_depth <- tank$limit['maxd']
+        max_table$max_depth <- depth
+    } else {
+      max_table <- NULL
+      table$max_depth <- depth
+    }
+
+    table <- rbind(min_table, table, max_table)
     
-  } else if (class(tank) == 'list' & unique(unlist(lapply(l, class))) == 'tank'){
+  #### list of tank ####  
+  } else if (class(tank) == 'list' & unique(unlist(lapply(tank, class))) == 'tank'){
     # create a table per tank
     tank_list <- lapply(tank, expand, dive)
-    names(tank_list) <- lapply(lapply(tank,'[[', 2), '[', 2)
+    name <- lapply(lapply(tank,'[[', 2), '[', 5)
+    tmp <- do.call("rbind",tank_list) # bind the tank list for unique values
     
-    # if(unique(unlist(lapply(tank_list, nrow))) == 1){
-    #   # rbind list.
-    # }
+    mindv <- sort(unique(tmp$min_depth))
+    maxdv <- sort(unique(tmp$max_depth))
+    t1v <- sort(unique(tmp$begin))
+    t2v <- sort(unique(tmp$end))
     
-    print(tank_list)
-    print(table)
+    tmpa <- expand.grid(mindv, t1v)
+    tmpb <- expand.grid(maxdv, t2v)
+    # table of combinaisons
+    table <- cbind(tmpa[,1], tmpb[, 1], tmpa[,2], tmpb[, 2])
+    # init empty table of possibility
+    table <- cbind(table, as.data.frame(matrix(0, nrow = nrow(table), 
+                                            ncol = 2*length(tank))))
+    colnames(table) <- c(colnames(tank_list[[1]])[1:4],
+                         unlist(lapply(name, paste0, c('', '_press'))))
     
-    # call expand on every tank and merge after with a specific algo
-    stop('not coded yet')
+    for(i in c(1:length(tank))){
+      # possible depths for tank
+      possib_depth <- table$min_depth >= tank[[i]]$limit['mind'] &
+        table$max_depth <= tank[[i]]$limit['maxd']
+      # possible time for tank
+      if(!all(is.na(tank[[i]]$limit[c('t1', 't2')]))){
+        possib_time <- table$begin < tank[[i]]$limit['t1'] |
+          table$end > tank[[i]]$limit['t2'] 
+      } else {possib_time <- TRUE}
+      # set the typ in column 
+      table[, 4+i+(i-1)] <- tank[[i]]$typo['typ']
+      # put pression for possible usages
+      table[possib_depth & possib_time, 5+i+(i-1)] <- tank[[i]]$carac['press']
+    }
+    
   } else {
     stop('tank must be a single tank object or a list of tanks')
   }
@@ -144,7 +210,8 @@ expand <- function(tank, dive){
 #' conso
 #' 
 #' @param dive \code{\link[DiveR]{dive}} object
-#' @param tank \code{\link[DiveR]{ntank}} object or a list of ntank objects.
+#' @param tank \code{\link[DiveR]{ntank}} object or a list of ntank objects. 
+#' Priority of consumption for tanks is set by their order in list.
 #'   
 #' @return conso, a conso class object.
 #' 
@@ -155,6 +222,12 @@ nconso <- function(dive, tank, cons = 20){
   # add possible accident here later one ?
   
   table <- expand(tank)
+  
+  # extract points to cut dive in time and depths.
+  # make a table of this
+  
+  # apply function by row
+  
   PA <- FALSE
   while( PA == FALSE){
     PA <- TRUE
@@ -165,3 +238,4 @@ nconso <- function(dive, tank, cons = 20){
   
   
 }
+
