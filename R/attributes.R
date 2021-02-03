@@ -351,7 +351,7 @@ depth_at_time <- function(dive, time){
   time <- time + dive$hour[1]
   times <- dive$dtcurve$times + dive$hour[1]
   depths <- dive$dtcurve$depths
-  if(time > max(times)){return(0)}
+  if(time > max(times) | time <= 0){return(0)}
   
   befd <-  tail(depths[times < time], 1) ; beft <-  tail(times[times < time], 1)
   aftd <- depths[times >= time][1] ; aftt <- times[times >= time][1]
@@ -361,6 +361,47 @@ depth_at_time <- function(dive, time){
     reg <- lm(c(befd,aftd)~ c(beft,aftt))
     res <- reg$coefficients[2] * time + reg$coefficients[1]
   }
+  return(res)
+}
+
+
+#' time at depth
+#'
+#' Find the time for a given depth and dive.
+#'
+#' @param dive \code{\link[DiveR]{dive}} object.
+#' @param depth positive numeric value in meter 
+#' 
+#' @examples 
+#' time_at_depth(dive(20,40), 3)
+#' time_at_depth(dive(20,40), 10)
+#' time_at_depth(dive(20,40), 20)
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+time_at_depth <- function(dive, depth){
+  times <- dive$dtcurve$times + dive$hour[1]
+  depths <- dive$dtcurve$depths
+  res <- c()
+  
+  if(depth > max(depths) | depth < 0){
+    warning('Depth must be set between 0 and the maximum depth of the dive.')
+    return(res)
+  }
+  # TODO : refacto this code with vector !
+  for(i in 2:length(times)){
+    if(depth %in% depths[i-1]:depths[i] & depths[i-1] != depths[i]){
+      if(times[i-1] == times[i]){
+        res <- c(res,times[i])
+        next
+      }
+      reg <- lm(c(depths[i-1], depths[i])~ c(times[i-1], times[i]))
+      tmp <- unname( ( depth - reg$coefficients[1] ) / reg$coefficients[2])
+      res <- c(res, tmp )
+    }
+  }
+
   return(res)
 }
 

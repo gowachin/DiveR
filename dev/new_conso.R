@@ -103,9 +103,9 @@ y$limit['maxd'] <- 10
 
 expand(y, dive)
 
-tanks <- list(x, y)
+tank <- list(x, y)
 
-expand(tanks, dive)
+expand(tank, dive)
 
 
 #' expand
@@ -119,16 +119,18 @@ expand(tanks, dive)
 #' @export
 expand <- function(tank, dive){
   
-  dtime <- dtime(dive)
+  dtime <- max(dive$dtcurve$times)
   depth <- depth(dive)
   
   #### Single tank ####
   if(class(tank) == "tank"){
     # init table
-    table <- data.frame(min_depth = tank$limit['mind'], max_depth = tank$limit['maxd'],
+    table <- data.frame(min_depth = tank$limit['mind'], 
+                        max_depth = tank$limit['maxd'],
                         begin = 0, end = dtime, 
                         type = tank$typo['typ'], 
-                        press = tank$carac['press'])
+                        press = tank$carac['press'],
+                        vol = tank$carac['vol'])
     # duplicate row to add time when it's not allowed
     if(!all(is.na(tank$limit[c('t1', 't2')]))){
       for(i in c('t1', 't2')){
@@ -162,7 +164,8 @@ expand <- function(tank, dive){
     table <- rbind(min_table, table, max_table)
     
   #### list of tank ####  
-  } else if (class(tank) == 'list' & unique(unlist(lapply(tank, class))) == 'tank'){
+  } else if (class(tank) == 'list' & 
+             unique(unlist(lapply(tank, class))) == 'tank'){
     # create a table per tank
     tank_list <- lapply(tank, expand, dive)
     name <- lapply(lapply(tank,'[[', 2), '[', 5)
@@ -179,9 +182,9 @@ expand <- function(tank, dive){
     table <- cbind(tmpa[,1], tmpb[, 1], tmpa[,2], tmpb[, 2])
     # init empty table of possibility
     table <- cbind(table, as.data.frame(matrix(0, nrow = nrow(table), 
-                                            ncol = 2*length(tank))))
+                                            ncol = 3*length(tank))))
     colnames(table) <- c(colnames(tank_list[[1]])[1:4],
-                         unlist(lapply(name, paste0, c('', '_press'))))
+                         unlist(lapply(name, paste0, c('', '_press', '_vol'))))
     
     for(i in c(1:length(tank))){
       # possible depths for tank
@@ -193,9 +196,10 @@ expand <- function(tank, dive){
           table$end > tank[[i]]$limit['t2'] 
       } else {possib_time <- TRUE}
       # set the typ in column 
-      table[, 4+i+(i-1)] <- tank[[i]]$typo['typ']
+      table[, 5+3*(i-1)] <- tank[[i]]$typo['typ']
       # put pression for possible usages
-      table[possib_depth & possib_time, 5+i+(i-1)] <- tank[[i]]$carac['press']
+      table[possib_depth & possib_time, 6+3*(i-1)] <- tank[[i]]$carac['press']
+      table[, 7+3*(i-1)] <- tank[[i]]$carac['vol']
     }
     
   } else {
@@ -219,23 +223,117 @@ expand <- function(tank, dive){
 #' 
 #' @export
 nconso <- function(dive, tank, cons = 20){
+  
+  load("~/git/mn90/prep_conso.RData") ; cons = 20
   # add possible accident here later one ?
-  
-  table <- expand(tank)
-  
-  # extract points to cut dive in time and depths.
-  # make a table of this
-  
-  # apply function by row
-  
-  PA <- FALSE
-  while( PA == FALSE){
-    PA <- TRUE
+  # checks
+  check_val(cons)
+  # expand the tanks possibility
+  table <- expand(tank, dive)
+  # extract points to cut dive in time and depths
+  times <- unique(c(table$begin, table$end)) # unique(unlist(table[,c(3,4)]))
+  from_times <- data.frame(times = times, depths = times)
+  for(i in 1:nrow(from_times)) {
+    from_times$depths[i] <- depth_at_time(dive, from_times$depths[i])
   }
+  
+  depths <- as.list(unique(unlist(table[,1:2])))
+  for(i in 1:length(depths)) {
+    tmp <- time_at_depth(dive, depths[[i]])
+    depths[[i]] <- data.frame(times = tmp, 
+                              depths = rep(depths[[i]], length(tmp)))
+  }
+  from_depths <- do.call(rbind, depths)
+  
+  # join dfs and sort unique with time order. 
+  point <- unique(rbind(from_depths,from_times))
+  point <- point[order(point$times),]
+  # remove points with same time and keep first one (vertical motion)
+  point <- point[!duplicated(point$times),]
+  # adding points to dtcurve for cutting
+  dtcurve <- unique(rbind(data.frame(times = dive$dtcurve$times,
+                        depths = dive$dtcurve$depths), point))
+  dtcurve <- dtcurve[order(dtcurve$times),]
+  dtcurve$pressure <- dtcurve$depths / 10 + 1 
+
+  # below use table, point, dtcurve
+  l <- nrow(point) -1
+  # init a list of length l
+  lcons <- vector(mode = "list", length = l)
+  AIR_FAIL <- FALSE
+  
+  
+  # compute consumption dive cut by dive cut
+  for (i in 1:l){
+    cat('\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n')
+    print(i)
+    
+    press_cols <- 6+3*(c(1:length(tank))-1)
+    
+    t1 <- point$times[i] ; t2 <- point$times[i +1]
+    tmpdtcurve <- dtcurve[(dtcurve$times >=  t1) & (dtcurve$times <=  t2),]
+    d1 <- min(tmpdtcurve$depths) ; d2 <- max(tmpdtcurve$depths)
+    tankpres <- table[(table$min_depth <= d1 & table$max_depth >= d2 &
+                        table$begin < t2 & table$end > t1),]
+    
+    if(nrow(tankpres) < 1){
+      # case of vertical motion (like square dive first point)
+      tankpres <- table[(table$begin < t2 & table$end > t1),]
+      # cols <- 6+3*(c(1:length(tank))-1)
+      # tank available at all depths and first pressure > 0
+      tankpres[,press_cols[!((tankpres[1,press_cols] > 0) & 
+                      (colSums(tankpres[,press_cols] > 0) == nrow(tankpres)))
+                    ]
+               ] <- 0
+      tankpres <- tankpres[1, ]
+      
+      if(nrow(tankpres) < 0){ # TODO : round 2 has death because no tank available !!!
+        # AIR FAILURE HERE /!\
+        warning('No tank is available and you died. Try again !')
+        AIR_FAIL <- TRUE
+        break
+      }
+    } 
+    print(tankpres)
+    print(tmpdtcurve)
+    cat('\n ----------------------------------------- \n')
+    
+    # plus besoin de point
+    ll <- nrow(tmpdtcurve) -1
+    # init table of cons and press
+    lcons[[i]] <- as.data.frame(matrix(0, nrow = ll, ncol = 1+length(tank)))
+    colnames(lcons[[i]]) <- c("vcons")
+    
+    for (ii in 1:ll){
+      # trapeze method
+      lcons[[i]][ii,1] <-  cons * (tmpdtcurve$pressure[ii] + 
+                                   tmpdtcurve$pressure[ii + 1]) *
+                                (tmpdtcurve$times[ii + 1] - 
+                                   tmpdtcurve$times[ii]) / 2
+      # compute pression in every tank
+      tmp_press <- tankpres[press_cols] - (lcons[[i]][ii,1] / 
+                                             tankpres[press_cols + 1])
+      tmp_press[tmp_press < 0] <- 0
+      for(iii in 2:length(tank)){
+        if(tmp_press[iii -1] > 0){
+          tmp_press[iii:length(tank)] <- 0
+          # maube trigger AIR FAILURE HERE TOO
+        }
+      }
+      lcons[[i]][ii,-1] <- tmp_press
+      cat('\n ===================================== \n')
+    } 
+    lcons[[i]][,1] <- cumsum(lcons[[i]][,1])
+    
+    # apply(table[,press_cols], 1, function(x) x[x> 0] = -42)
+    # table[table[,press_cols] > 0] <- 42
+    
+    print(lcons[[i]])
+    
+  }
+  lcons
   
   # same output as conso !
   # or change plot.conso and attributes
-  
-  
 }
 

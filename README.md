@@ -44,6 +44,8 @@ This application is intended for use in education about scubadiving planificatio
 This application will provide planinfication about dive profile and air consumption, without giving any warning if the activity would be dangerous or fatal. In doing so, it does not take account of safety restrictions, other physical laws, or other important information. 
 Despite using diving table as base for computation, no output from this application should be misconstrued as a diving table. The author does not warrant that the application is correct in any sense whatsoever. Even if correctly computed, the predictions of a theoretical physical model may not be correct predictions.
 
+Note here that all dives simulated will also being at sea level.
+
 ## Actual in work part
 
 Refactorisation of Consumption, plot.conso for multi tank dives.
