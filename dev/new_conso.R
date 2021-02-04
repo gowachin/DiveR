@@ -98,8 +98,8 @@ x$limit['t2'] <- 30
 
 expand(x, dive)
 
-y$limit['mind'] <- 5
-y$limit['maxd'] <- 10
+# y$limit['mind'] <- 5
+# y$limit['maxd'] <- 10
 
 expand(y, dive)
 
@@ -224,7 +224,6 @@ expand <- function(tank, dive){
 #' @export
 nconso <- function(dive, tank, cons = 20){
   
-  load("~/git/mn90/prep_conso.RData") ; cons = 20
   # add possible accident here later one ?
   # checks
   check_val(cons)
@@ -261,21 +260,21 @@ nconso <- function(dive, tank, cons = 20){
   # init a list of length l
   lcons <- vector(mode = "list", length = l)
   AIR_FAIL <- FALSE
-  
-  
+  # rm(i, tmp, from_depths, from_times, x, y)
+  # load("~/git/mn90/prep_conso.RData")
   # compute consumption dive cut by dive cut
   for (i in 1:l){
     cat('\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n')
     print(i)
     
     press_cols <- 6+3*(c(1:length(tank))-1)
-    
+    #### get tank availables ####
     t1 <- point$times[i] ; t2 <- point$times[i +1]
     tmpdtcurve <- dtcurve[(dtcurve$times >=  t1) & (dtcurve$times <=  t2),]
     d1 <- min(tmpdtcurve$depths) ; d2 <- max(tmpdtcurve$depths)
     tankpres <- table[(table$min_depth <= d1 & table$max_depth >= d2 &
                         table$begin < t2 & table$end > t1),]
-    
+
     if(nrow(tankpres) < 1){
       # case of vertical motion (like square dive first point)
       tankpres <- table[(table$begin < t2 & table$end > t1),]
@@ -291,6 +290,7 @@ nconso <- function(dive, tank, cons = 20){
         # AIR FAILURE HERE /!\
         warning('No tank is available and you died. Try again !')
         AIR_FAIL <- TRUE
+        lcons[[i]]
         break
       }
     } 
@@ -298,13 +298,13 @@ nconso <- function(dive, tank, cons = 20){
     print(tmpdtcurve)
     cat('\n ----------------------------------------- \n')
     
-    # plus besoin de point
+    # no more need of point object
     ll <- nrow(tmpdtcurve) -1
     # init table of cons and press
     lcons[[i]] <- as.data.frame(matrix(0, nrow = ll, ncol = 1+length(tank)))
     colnames(lcons[[i]]) <- c("vcons")
     
-    for (ii in 1:ll){
+    for (ii in 1:ll){ # compute consumption for every cut step
       # trapeze method
       lcons[[i]][ii,1] <-  cons * (tmpdtcurve$pressure[ii] + 
                                    tmpdtcurve$pressure[ii + 1]) *
@@ -313,22 +313,33 @@ nconso <- function(dive, tank, cons = 20){
       # compute pression in every tank
       tmp_press <- tankpres[press_cols] - (lcons[[i]][ii,1] / 
                                              tankpres[press_cols + 1])
+      tmp_press[tankpres[press_cols] == 0] <- NA
       tmp_press[tmp_press < 0] <- 0
+      print(tmp_press)
       for(iii in 2:length(tank)){
-        if(tmp_press[iii -1] > 0){
-          tmp_press[iii:length(tank)] <- 0
-          # maube trigger AIR FAILURE HERE TOO
+        if(!is.na(tmp_press[iii -1]) & tmp_press[iii -1] > 0){
+          tmp_press[iii:length(tank)] <- NA
         }
       }
       lcons[[i]][ii,-1] <- tmp_press
-      cat('\n ===================================== \n')
     } 
     lcons[[i]][,1] <- cumsum(lcons[[i]][,1])
-    
-    # apply(table[,press_cols], 1, function(x) x[x> 0] = -42)
-    # table[table[,press_cols] > 0] <- 42
-    
+    cat('\n ===================================== \n')
     print(lcons[[i]])
+    cat('\n ============== \n')
+    # modify the air availability
+    for(ii in 1:length(tank)){
+      tmp_col <- press_cols[ii]
+      tmp <- max(table[table[,tmp_col] >= 0, tmp_col])
+      newpress <- min(lcons[[i]][,1+ ii])
+      print(tmp)
+      if(tmp == 0 | is.na(newpress)) next # in case tank is empty
+      print(newpress)
+      cat('\n ============== \n')
+      table[table[,tmp_col] == tmp, tmp_col] <- newpress
+    }
+    print(table)
+    
     
   }
   lcons
