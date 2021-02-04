@@ -210,15 +210,16 @@ expand <- function(tank, dive){
       # set the typ in column 
       table[, 5+3*(i-1)] <- tank[[i]]$typo['typ']
       # put pression for possible usages
-      table[possib_depth & possib_time, 6+3*(i-1)] <- tank[[i]]$carac['press']
+      table[possib_depth & possib_time, 6+3*(i-1)] <- tank[[i]]$carac['press'] -
+                                                      tank[[i]]$carac['rule1']
       table[, 7+3*(i-1)] <- tank[[i]]$carac['vol']
       # ajouter les rule1 et rule2
       
       table[possib_depth & possib_time, 
-            6+3*(i-1)*length(tank)] <- (tank[[i]]$carac['rule1'] - 
+            6+3*(i-1)+3*length(tank)] <- (tank[[i]]$carac['rule1'] - 
                                           tank[[i]]$carac['rule2'])
       table[possib_depth & possib_time, 
-            6+3*(i-1)*2*length(tank)] <- tank[[i]]$carac['rule2']
+            6+3*(i-1)+6*length(tank)] <- tank[[i]]$carac['rule2']
     }
     
   } else {
@@ -236,7 +237,7 @@ dive <- dive(20, 40)
 y <- ntank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50), 
                                  sys = "bar"))
 
-x <- ntank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50), 
+x <- ntank(12, 200, rules = list(rules = c('retour' = 110, 'reserve' = 50), 
                                  sys = "bar"), typ = 'relai')
 x$limit['t1'] <- 20
 x$limit['t2'] <- 30
