@@ -21,6 +21,11 @@
 #' @param name Possibility to name the tank for better understanding after.
 #' by default will be named after the typ and volume.
 #' 
+#' @details 
+#' To set a relai tank, rule1 and rule2 must be the same. Therefore the tank 
+#' won't be usable once pression reach rule2 and until all other tanks are
+#' not used. If mulitple tanks are used, the relai must be the first one in order
+#' 
 ntank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25), 
                                            sys = '%' ), 
                   gas = "Air", typ = "back", limit = NULL, name = NULL){
@@ -84,30 +89,6 @@ ntank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
   return(tank)
 }
 
-dive <- dive(20, 40)
-
-y <- ntank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50), 
-                                 sys = "bar"))
-
-x <- ntank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50), 
-                                 sys = "bar"), typ = 'relai')
-x$limit['t1'] <- 20
-x$limit['t2'] <- 30
-# x$limit['mind'] <- 10
-# x$limit['maxd'] <- 15
-
-expand(x, dive)
-
-# y$limit['mind'] <- 5
-# y$limit['maxd'] <- 10
-
-expand(y, dive)
-
-tank <- list(x, y)
-
-expand(tank, dive)
-
-
 #' expand
 #' 
 #' @param tank \code{\link[DiveR]{ntank}} object or a list of ntank objects. 
@@ -125,12 +106,33 @@ expand <- function(tank, dive){
   #### Single tank ####
   if(class(tank) == "tank"){
     # init table
-    table <- data.frame(min_depth = tank$limit['mind'], 
-                        max_depth = tank$limit['maxd'],
-                        begin = 0, end = dtime, 
-                        type = tank$typo['typ'], 
-                        press = tank$carac['press'],
-                        vol = tank$carac['vol'])
+    table <- data.frame(
+      min_depth = tank$limit['mind'], 
+      max_depth = tank$limit['maxd'],
+      begin = 0, end = dtime, 
+      type = tank$typo['typ'], 
+      press = tank$carac['press'],
+      vol = tank$carac['vol']
+      )
+    
+    # duplicate tank for different step in pression following rules
+    # TODO : REFACTO this when it's sure that rule >= 0 !!!
+    rulepress <- (table[, 6] - tank$carac['rule1'])
+    rulepress[rulepress < 0] <- 0
+    table$press <- rulepress
+    
+    rulepress <- (tank$carac['rule1'] - tank$carac['rule2'])
+    rulepress[rulepress < 0] <- 0
+    table <- cbind(table, table[, 5], rulepress, table[, 7])
+    colnames(table) <- c(colnames(table[-c((ncol(table)-2):ncol(table))]),
+                         paste0('rul1',colnames(table)[5:7]))
+    
+    rulepress <- (tank$carac['rule2'])
+    rulepress[rulepress < 0] <- 0
+    table <- cbind(table, table[, 5], rulepress, table[, 7])
+    colnames(table) <- c(colnames(table[-c((ncol(table)-2):ncol(table))]),
+                         paste0('rul2',colnames(table)[5:7]))
+    
     # duplicate row to add time when it's not allowed
     if(!all(is.na(tank$limit[c('t1', 't2')]))){
       for(i in c('t1', 't2')){
@@ -139,29 +141,38 @@ expand <- function(tank, dive){
           table$end[nrow(table)] <- table$end[nrow(table)-1]
           table$begin[nrow(table)] <- table$end[nrow(table)-1] <- tank$limit[i]
           
-          if(i == 't1') table$press[nrow(table)] <- 0
+          if(i == 't1'){
+            table$press[nrow(table)] <- 0
+            table$rul1press[nrow(table)] <- 0
+            table$rul2press[nrow(table)] <- 0
+          }
         }
       }
     }
     # duplicate table for allowed depths or not.
-    if((tank$limit['mind']) > 0){
+    if((tank$limit['mind']) > 0){ # minimum depth
       min_table <- table
       min_table$press <- 0
+      min_table$rul1press <- 0
+      min_table$rul2press <- 0
       min_table$min_depth <- 0
       min_table$max_depth <- tank$limit['mind']
     } else {min_table <- NULL}
-
-    if((tank$limit['maxd']) < depth){
+    
+    if((tank$limit['maxd']) < depth){ # maximum depth
         max_table <- table
         max_table$press <- 0
+        max_table$rul1press <- 0
+        max_table$rul2press <- 0
         max_table$min_depth <- tank$limit['maxd']
         max_table$max_depth <- depth
     } else {
       max_table <- NULL
       table$max_depth <- depth
     }
-
+    
     table <- rbind(min_table, table, max_table)
+    table
     
   #### list of tank ####  
   } else if (class(tank) == 'list' & 
@@ -182,7 +193,8 @@ expand <- function(tank, dive){
     table <- cbind(tmpa[,1], tmpb[, 1], tmpa[,2], tmpb[, 2])
     # init empty table of possibility
     table <- cbind(table, as.data.frame(matrix(0, nrow = nrow(table), 
-                                            ncol = 3*length(tank))))
+                                            ncol = 9*length(tank)))) 
+    # TODO : changer le 3 en 9 au dessus
     colnames(table) <- c(colnames(tank_list[[1]])[1:4],
                          unlist(lapply(name, paste0, c('', '_press', '_vol'))))
     
@@ -200,6 +212,13 @@ expand <- function(tank, dive){
       # put pression for possible usages
       table[possib_depth & possib_time, 6+3*(i-1)] <- tank[[i]]$carac['press']
       table[, 7+3*(i-1)] <- tank[[i]]$carac['vol']
+      # ajouter les rule1 et rule2
+      
+      table[possib_depth & possib_time, 
+            6+3*(i-1)*length(tank)] <- (tank[[i]]$carac['rule1'] - 
+                                          tank[[i]]$carac['rule2'])
+      table[possib_depth & possib_time, 
+            6+3*(i-1)*2*length(tank)] <- tank[[i]]$carac['rule2']
     }
     
   } else {
@@ -210,6 +229,31 @@ expand <- function(tank, dive){
   # trim rows with FALSE ??
   return(table)
 }
+
+
+dive <- dive(20, 40)
+
+y <- ntank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50), 
+                                 sys = "bar"))
+
+x <- ntank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50), 
+                                 sys = "bar"), typ = 'relai')
+x$limit['t1'] <- 20
+x$limit['t2'] <- 30
+# x$limit['mind'] <- 10
+# x$limit['maxd'] <- 15
+
+expand(x, dive)
+
+y$limit['mind'] <- 5
+y$limit['maxd'] <- 10
+
+expand(y, dive)
+
+tank <- list(x, y)
+
+expand(tank, dive)
+
 
 #' conso
 #' 
