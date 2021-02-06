@@ -209,12 +209,15 @@ expand <- function(tank, dive){
       } else {possib_time <- TRUE}
       # set the typ in column 
       table[, 5+3*(i-1)] <- tank[[i]]$typo['typ']
+      table[, 5+3*(i-1)+3*length(tank)] <- tank[[i]]$typo['typ']
+      table[, 5+3*(i-1)+6*length(tank)] <- tank[[i]]$typo['typ']
       # put pression for possible usages
       table[possib_depth & possib_time, 6+3*(i-1)] <- tank[[i]]$carac['press'] -
                                                       tank[[i]]$carac['rule1']
       table[, 7+3*(i-1)] <- tank[[i]]$carac['vol']
+      table[, 7+3*(i-1)+3*length(tank)] <- tank[[i]]$carac['vol']
+      table[, 7+3*(i-1)+6*length(tank)] <- tank[[i]]$carac['vol']
       # ajouter les rule1 et rule2
-      
       table[possib_depth & possib_time, 
             6+3*(i-1)+3*length(tank)] <- (tank[[i]]$carac['rule1'] - 
                                           tank[[i]]$carac['rule2'])
@@ -312,7 +315,7 @@ nconso <- function(dive, tank, cons = 20){
     cat('\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n')
     print(i)
     
-    press_cols <- 6+3*(c(1:length(tank))-1)
+    press_cols <- 6+3*(c(1:(length(tank)*3))-1)
     #### get tank availables ####
     t1 <- point$times[i] ; t2 <- point$times[i +1]
     tmpdtcurve <- dtcurve[(dtcurve$times >=  t1) & (dtcurve$times <=  t2),]
@@ -346,24 +349,31 @@ nconso <- function(dive, tank, cons = 20){
     # no more need of point object
     ll <- nrow(tmpdtcurve) -1
     # init table of cons and press
-    lcons[[i]] <- as.data.frame(matrix(0, nrow = ll, ncol = 1+length(tank)))
+    lcons[[i]] <- as.data.frame(matrix(0, nrow = ll, ncol = 1+(length(tank)*3)))
     colnames(lcons[[i]]) <- c("vcons")
     
     for (ii in 1:ll){ # compute consumption for every cut step
       # trapeze method
-      lcons[[i]][ii,1] <-  cons * (tmpdtcurve$pressure[ii] + 
-                                   tmpdtcurve$pressure[ii + 1]) *
-                                (tmpdtcurve$times[ii + 1] - 
-                                   tmpdtcurve$times[ii]) / 2
+      lcons[[i]][ii,1] <- tmp_conso <- cons * (tmpdtcurve$pressure[ii] + 
+                                               tmpdtcurve$pressure[ii + 1]) *
+                                              (tmpdtcurve$times[ii + 1] - 
+                                               tmpdtcurve$times[ii]) / 2
       # compute pression in every tank
-      tmp_press <- tankpres[press_cols] - (lcons[[i]][ii,1] / 
-                                             tankpres[press_cols + 1])
+      tmp_press <- unlist(tankpres[press_cols])
       tmp_press[tankpres[press_cols] == 0] <- NA
-      tmp_press[tmp_press < 0] <- 0
-      print(tmp_press)
-      for(iii in 2:length(tank)){
-        if(!is.na(tmp_press[iii -1]) & tmp_press[iii -1] > 0){
-          tmp_press[iii:length(tank)] <- NA
+      tmp_vols <-  unlist(tankpres[press_cols + 1])
+      
+      for(iii in 1:(length(tank)*3)){
+        if(is.na(tmp_press[iii])) next 
+        # pass if the prev tank not used
+        if(tmp_conso - tmp_press[iii] * tmp_vols[iii] > 0){
+          tmp_conso <- tmp_conso - tmp_press[iii] * tmp_vols[iii]
+          tmp_press[iii] <- 0
+        } else {
+          tmp_press[iii]<- tmp_press[iii] - tmp_conso / tmp_vols[iii]
+          tmp_conso <- 0
+          # modif le reste de tank  ??
+          # tmp_press[iii:(length(tank)*3)] <- NA
         }
       }
       lcons[[i]][ii,-1] <- tmp_press
@@ -373,7 +383,7 @@ nconso <- function(dive, tank, cons = 20){
     print(lcons[[i]])
     cat('\n ============== \n')
     # modify the air availability
-    for(ii in 1:length(tank)){
+    for(ii in 1:(length(tank)*3)){
       tmp_col <- press_cols[ii]
       tmp <- max(table[table[,tmp_col] >= 0, tmp_col])
       newpress <- min(lcons[[i]][,1+ ii])
@@ -384,8 +394,7 @@ nconso <- function(dive, tank, cons = 20){
       table[table[,tmp_col] == tmp, tmp_col] <- newpress
     }
     print(table)
-    
-    
+
   }
   lcons
   
