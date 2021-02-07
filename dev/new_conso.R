@@ -194,7 +194,6 @@ expand <- function(tank, dive){
     # init empty table of possibility
     table <- cbind(table, as.data.frame(matrix(0, nrow = nrow(table), 
                                             ncol = 9*length(tank)))) 
-    # TODO : changer le 3 en 9 au dessus
     colnames(table) <- c(colnames(tank_list[[1]])[1:4],
                          unlist(lapply(name, paste0, c('', '_press', '_vol'))))
     
@@ -258,6 +257,12 @@ tank <- list(x, y)
 
 expand(tank, dive)
 
+nconso(dive, x)
+
+nconso(dive, y)
+
+nconso(dive, list(x, y))
+
 
 #' conso
 #' 
@@ -275,6 +280,8 @@ nconso <- function(dive, tank, cons = 20){
   # add possible accident here later one ?
   # checks
   check_val(cons)
+  # set values to limit computations
+  if(class(tank) == 'tank'){ Ltank <- 1 } else { Ltank <- length(tank) }
   # expand the tanks possibility
   table <- expand(tank, dive)
   # extract points to cut dive in time and depths
@@ -308,14 +315,14 @@ nconso <- function(dive, tank, cons = 20){
   # init a list of length l
   lcons <- vector(mode = "list", length = l)
   AIR_FAIL <- FALSE
+  press_cols <- 6+3*(c(1:(Ltank*3))-1)
+  init_press <- apply(table[,press_cols], 2, max )
   # rm(i, tmp, from_depths, from_times, x, y)
   # load("~/git/mn90/prep_conso.RData")
   # compute consumption dive cut by dive cut
   for (i in 1:l){
-    cat('\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n')
-    print(i)
-    
-    press_cols <- 6+3*(c(1:(length(tank)*3))-1)
+    # cat('\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n')
+    # print(i)
     #### get tank availables ####
     t1 <- point$times[i] ; t2 <- point$times[i +1]
     tmpdtcurve <- dtcurve[(dtcurve$times >=  t1) & (dtcurve$times <=  t2),]
@@ -326,7 +333,7 @@ nconso <- function(dive, tank, cons = 20){
     if(nrow(tankpres) < 1){
       # case of vertical motion (like square dive first point)
       tankpres <- table[(table$begin < t2 & table$end > t1),]
-      # cols <- 6+3*(c(1:length(tank))-1)
+      # cols <- 6+3*(c(1:Ltank)-1)
       # tank available at all depths and first pressure > 0
       tankpres[,press_cols[!((tankpres[1,press_cols] > 0) & 
                       (colSums(tankpres[,press_cols] > 0) == nrow(tankpres)))
@@ -334,71 +341,124 @@ nconso <- function(dive, tank, cons = 20){
                ] <- 0
       tankpres <- tankpres[1, ]
       
-      if(nrow(tankpres) < 0){ # TODO : round 2 has death because no tank available !!!
+      if(nrow(tankpres) < 0){
         # AIR FAILURE HERE /!\
         warning('No tank is available and you died. Try again !')
         AIR_FAIL <- TRUE
-        lcons[[i]]
         break
       }
     } 
-    print(tankpres)
-    print(tmpdtcurve)
-    cat('\n ----------------------------------------- \n')
+    # print(tankpres)
+    # cat('total pression :', sum(tankpres[,press_cols]), '\n')
     
+    if(sum(tankpres[,press_cols]) == 0){
+      warning('No tank is available and you died. Try again !')
+      # TODO : add a time to check for availability. And longer message
+      AIR_FAIL <- TRUE
+      lcons[[i]] <- as.data.frame(matrix(0, nrow = 2, ncol = 2+(Ltank*3)))
+      lcons[[i]][,1] <- c(0,0)
+      lcons[[i]][,2] <- c(tmpdtcurve$times[1], tmpdtcurve$times[2])
+      
+      if(i == 1){ tmp_press <- init_press }
+      lcons[[i]][2,-c(1,2)] <- tmp_press
+      na_press <- tmp_press # assure tmp_press is still available if 2nd no tank
+      na_press[tankpres[press_cols] == 0] <- NA
+      lcons[[i]][1,-c(1,2)] <- na_press
+      colnames(lcons[[i]]) <- c("vcons","time", as.character(1:(Ltank*3)))
+      # print(lcons[[i]])
+      next
+    }
+    # print(tmpdtcurve)
+    # cat('\n ----------------------------------------- \n')
     # no more need of point object
     ll <- nrow(tmpdtcurve) -1
     # init table of cons and press
-    lcons[[i]] <- as.data.frame(matrix(0, nrow = ll, ncol = 1+(length(tank)*3)))
-    colnames(lcons[[i]]) <- c("vcons")
+    lcons[[i]] <- as.data.frame(matrix(0, nrow = ll, ncol = 2+(Ltank*3)))
+    colnames(lcons[[i]]) <- c("vcons","time", as.character(1:(Ltank*3)))
     
-    for (ii in 1:ll){ # compute consumption for every cut step
+    # load("~/git/mn90/prep_round.RData")
+    ii <- 1
+    while (ii <= ll){ # compute consumption for every cut step
       # trapeze method
       lcons[[i]][ii,1] <- tmp_conso <- cons * (tmpdtcurve$pressure[ii] + 
                                                tmpdtcurve$pressure[ii + 1]) *
                                               (tmpdtcurve$times[ii + 1] - 
                                                tmpdtcurve$times[ii]) / 2
+      lcons[[i]][ii,2] <- tmpdtcurve$times[ii + 1]
       # compute pression in every tank
-      tmp_press <- unlist(tankpres[press_cols])
+      if(ii > 1){
+        tmp_press <- unlist(lcons[[i]][ii-1,-c(1:2)])
+      } else {
+        tmp_press <- unlist(tankpres[press_cols])
+      }
       tmp_press[tankpres[press_cols] == 0] <- NA
       tmp_vols <-  unlist(tankpres[press_cols + 1])
       
-      for(iii in 1:(length(tank)*3)){
+      for(iii in 1:(Ltank*3)){
         if(is.na(tmp_press[iii])) next 
+        if(tmp_press[iii] == 0) next 
         # pass if the prev tank not used
-        if(tmp_conso - tmp_press[iii] * tmp_vols[iii] > 0){
-          tmp_conso <- tmp_conso - tmp_press[iii] * tmp_vols[iii]
-          tmp_press[iii] <- 0
+        if(tmp_conso - tmp_press[iii] * tmp_vols[iii] > 0){ 
+          # still need to breath, aka tank is not enough
+           # much left ?
+          neg_press <- tmp_press[iii] - tmp_conso / tmp_vols[iii] # 
+          # add a new time for this
+          reg <- lm(c( tmp_press[iii], neg_press) ~ 
+               c( tmpdtcurve$times[ii], tmpdtcurve$times[ii + 1]))
+          neg_time <- (0 - reg$coefficients[1]) /reg$coefficients[2]
+          # duplicate line in lcons and tmpdtcurve
+          lcons[[i]] <- rbind(lcons[[i]][1:ii,],lcons[[i]][ii,], 
+                              lcons[[i]][-c(1:ii),])
+          tmpdtcurve <- rbind(tmpdtcurve[1:ii,], tmpdtcurve[ii,], 
+                              tmpdtcurve[-c(1:ii),])
+          ll <- ll + 1 # add row in the for loop above
+          # modify time
+          lcons[[i]][ii,2] <- tmpdtcurve[ii+1,1] <- neg_time
+          
+          tmp_press[tankpres[press_cols] == 0] <- NA
+          tmp_press[iii] <- 0 # so finally this tank is empty
+          break # because next consumption is for next row
         } else {
           tmp_press[iii]<- tmp_press[iii] - tmp_conso / tmp_vols[iii]
-          tmp_conso <- 0
-          # modif le reste de tank  ??
-          # tmp_press[iii:(length(tank)*3)] <- NA
+          tmp_conso <- 0 # no more need to breath
         }
       }
-      lcons[[i]][ii,-1] <- tmp_press
+      lcons[[i]][ii,-c(1,2)] <- tmp_press
+      ii = ii + 1
     } 
+
     lcons[[i]][,1] <- cumsum(lcons[[i]][,1])
-    cat('\n ===================================== \n')
-    print(lcons[[i]])
-    cat('\n ============== \n')
+    # cat('\n ===================================== \n')
+    # print(lcons[[i]])
     # modify the air availability
-    for(ii in 1:(length(tank)*3)){
+    for(ii in 1:(Ltank*3)){
       tmp_col <- press_cols[ii]
       tmp <- max(table[table[,tmp_col] >= 0, tmp_col])
-      newpress <- min(lcons[[i]][,1+ ii])
-      print(tmp)
+      newpress <- min(lcons[[i]][,2+ ii])
+      # print(tmp)
       if(tmp == 0 | is.na(newpress)) next # in case tank is empty
-      print(newpress)
-      cat('\n ============== \n')
+      # print(newpress)
+      # cat('\n ============== \n')
       table[table[,tmp_col] == tmp, tmp_col] <- newpress
     }
-    print(table)
-
   }
-  lcons
+  a<- do.call(rbind, lcons) ; a
   
-  # same output as conso !
-  # or change plot.conso and attributes
+  plot(a$time, a[,3], type = 'l', ylim = c(0, 100))
+  for(i in 4 : ncol(a)) lines(a$time, a[,i], col = i - 2)
+  
+  # add init pressure and t = 0
+  #' copy this to conserve information about gaps !
+  # add column by 3
+  #' for i in 1:Ltank
+  #'   t <- a[,machin truc * i]
+  #'   a[,i] <- rowSums(t, na.rm = TRUE)
+  #'   # les valeurs zero sont des sums que de NA !!!
+  #' 
+  #' a <- a[,1:Ltank]
+  # changer either output or plot.
+  # make a summary and check for attributes
+  
+  return(a)
 }
 

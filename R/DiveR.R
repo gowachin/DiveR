@@ -1,5 +1,4 @@
 #' @import graphics
-#' @import shiny
 #' @import utils
 NULL
 

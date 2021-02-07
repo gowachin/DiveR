@@ -1,5 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^README\.Rmd$
 ^LICENCE-CECILL-2.1.txt$
 
 data_prep.R
