@@ -165,6 +165,7 @@ summary.palier <- function(object, ...) {
 #' dtime
 #'
 #' \code{dtime} retrieve the depth time of a singular or multiple dive sequence.
+#' WORK ONLY ON SQUARE DIVE
 #'
 #' @param object is a DiveR object. There are methods for 
 #' \code{\link[DiveR]{dive}} objects.
@@ -213,7 +214,7 @@ dtime.ndive <- function(object) {
 
 #' depth
 #'
-#' \code{depth} retrieve the depth of a singular or multiple dive sequence.
+#' \code{depth} retrieve the maximum depth of a singular or multiple dive sequence.
 #'
 #' @param object is a DiveR object. There are methods for 
 #' \code{\link[DiveR]{dive}} and \code{\link[DiveR]{ndive}} objects.

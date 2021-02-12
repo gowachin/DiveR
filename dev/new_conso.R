@@ -31,7 +31,6 @@ ntank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
                   gas = "Air", typ = "back", limit = NULL, name = NULL){
   
   # IDIOT PROOF
-  # vol numeric >= 1
   # press numeric >= 0
   # rules list length = 2 
   # gas single character string

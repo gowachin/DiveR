@@ -24,7 +24,7 @@ It returns a numeric with the depth of the dive.
 Is a vector if working on ndive object
 }
 \description{
-\code{depth} retrieve the depth of a singular or multiple dive sequence.
+\code{depth} retrieve the maximum depth of a singular or multiple dive sequence.
 }
 \examples{
 # Simple dive

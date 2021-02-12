@@ -24,6 +24,7 @@ a single numeric value
 }
 \description{
 \code{dtime} retrieve the depth time of a singular or multiple dive sequence.
+WORK ONLY ON SQUARE DIVE
 }
 \examples{
 # Simple dive

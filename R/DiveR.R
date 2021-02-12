@@ -136,6 +136,8 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   class(dive) <- "dive"
   return(dive)
 }
+
+
 #' ndive
 #' 
 #' @param dive1 the first dive, obtained by the dive function
