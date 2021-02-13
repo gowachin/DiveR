@@ -348,11 +348,10 @@ nconso <- function(dive, tank, cons = 20){
                         depths = dive$dtcurve$depths), point))
   dtcurve <- dtcurve[order(dtcurve$times),]
   dtcurve$pressure <- dtcurve$depths / 10 + 1 
+  rm(point)
   
   #### Loop in cuted dive ####
-  l <- nrow(point) -1
-  # TODO : could be easier to loop on dtcurve rather than point....
-  l <- nrow(dtcurve) -1 # *******************************************************
+  l <- nrow(dtcurve) -1 
   
   # init a list of length l
   lcons <- vector(mode = "list", length = l)
@@ -361,41 +360,37 @@ nconso <- function(dive, tank, cons = 20){
   init_press <- apply(table[,press_cols], 2, max )
   
   rm(list = ls())
-  cons <- 20
   load("~/git/mn90/prep_conso.RData")
-#  for (i in 1:l){
-  # TODO : refacto in work ******************************************************
+  init_vols <- apply(table[,(press_cols + 1)], 2, max )
+  cons <- 20
   i <- 1
+  lcons[[1]] <- c(0, 0, init_press)
+  # TODO : modify loop so lcons is df and not list
   while(i <= l){
-    cat('\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n')
-    print(i)
+    # cat('\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n')
+    # print(i)
     #### get tank availables for this cut ####
-    t1 <- point$times[i] ; t2 <- point$times[i +1]
-    tmpdtcurve <- dtcurve[(dtcurve$times >=  t1) & (dtcurve$times <=  t2),]
-    # TODO : refacto in work ****************************************************
     t1 <- dtcurve$times[i] ; t2 <- dtcurve$times[i +1]
     if(t1 == t2){
       cat('same time, vertical motion -> next\n')
       i <- i + 1
       next
     }
-    tmpdtcurve <- dtcurve[(dtcurve$times >=  t1) & (dtcurve$times <=  t2),]
-    # TODO : refacto in work ****************************************************
     tmpdtcurve <- dtcurve[c(i, i+1),]
     d1 <- min(tmpdtcurve$depths) ; d2 <- max(tmpdtcurve$depths)
     tankpres <- table[(table$min_depth <= d1 & table$max_depth >= d2 &
-                        table$begin < t2 & table$end > t1),]
-    
-    print(tmpdtcurve)
+                         table$begin < t2 & table$end > t1),]
+    rm(d1, d2)
     
     if(nrow(tankpres) < 1){
       # case of vertical motion (like square dive first point)
       tankpres <- table[(table$begin < t2 & table$end > t1),]
       # tank available at all depths and first pressure > 0
-      tankpres[,press_cols[!((tankpres[1,press_cols] > 0) & 
-                      (colSums(tankpres[,press_cols] > 0) == nrow(tankpres)))
-                    ]
-               ] <- 0
+      tankpres[,press_cols[
+        !((tankpres[1,press_cols] > 0) & 
+            (colSums(tankpres[,press_cols] > 0) == nrow(tankpres)))
+      ]
+      ] <- 0
       tankpres <- tankpres[1, ]
       
       if(nrow(tankpres) < 0){
@@ -408,8 +403,6 @@ nconso <- function(dive, tank, cons = 20){
         break
       }
     }
-    # print(tankpres)
-    # cat('total pression :', sum(tankpres[,press_cols]), '\n')
     #### NEXT on empty tanks !  ####
     if(sum(tankpres[,press_cols]) == 0){
       cat('no tank available\n')
@@ -427,102 +420,85 @@ nconso <- function(dive, tank, cons = 20){
       colnames(lcons[[i]]) <- c("vcons","time", as.character(1:(Ltank*3)))
       # print(lcons[[i]])
       i <- i + 1
+      rm(na_press)
       next
     }
-    
-    # print(tmpdtcurve)
-    cat('\n ----------------------------------------- \n')
-    # no more need of point object
-    ll <- nrow(tmpdtcurve) -1
-    print(ll)
+    #### compute consumption here ####
+    # cat('\n ----------------------------------------- \n')
     # init table of cons and press
-    lcons[[i]] <- as.data.frame(matrix(0, nrow = ll, ncol = 2+(Ltank*3)))
+    lcons[[i]] <- as.data.frame(matrix(0, nrow = 1, ncol = 2+(Ltank*3)))
     colnames(lcons[[i]]) <- c("vcons","time", as.character(1:(Ltank*3)))
-    
-    # load("~/git/mn90/prep_round.RData")
-    ii <- 1 # init 
-    while (ii <= ll){ # compute consumption for every cut step
-      # trapeze method
-      lcons[[i]][ii,1] <- tmp_conso <- cons * (tmpdtcurve$pressure[ii] + 
-                                               tmpdtcurve$pressure[ii + 1]) *
-                                              (tmpdtcurve$times[ii + 1] - 
-                                               tmpdtcurve$times[ii]) / 2
-      lcons[[i]][ii,2] <- tmpdtcurve$times[ii + 1]
-      # compute pression in every tank
-      if(ii > 1){
-        tmp_press <- unlist(lcons[[i]][ii-1,-c(1:2)])
+    # trapeze method to compute conso
+    lcons[[i]][1,1] <- tmp_conso <- 
+      cons * (tmpdtcurve$pressure[1] +  tmpdtcurve$pressure[2]) *
+      (tmpdtcurve$times[2] -  tmpdtcurve$times[1]) / 2
+    lcons[[i]][1,2] <- tmpdtcurve$times[2]
+    # compute pression in every tank
+    tmp_press <- unlist(tankpres[press_cols])
+    tmp_press[tankpres[press_cols] == 0] <- NA
+    #### empty tanks in loop ####
+    for(ii in 1:(Ltank*3)){
+      if(is.na(tmp_press[ii])) next 
+      if(tmp_press[ii] == 0) next 
+      # pass if the prev tank not used
+      if(tmp_conso - tmp_press[ii] * init_vols[ii] <= 0 | tmp_conso < 1e-4){
+        tmp_press[ii]<- tmp_press[ii] - tmp_conso / init_vols[ii]
+        tmp_conso <- 0 # no more need to breath
+        break
       } else {
-        tmp_press <- unlist(tankpres[press_cols])
+        # still need to breath, aka tank is not enough
+        neg_press <- tmp_press[ii] - tmp_conso / init_vols[ii]
+        # add a new time for this
+        reg <- lm(c( tmp_press[ii], neg_press) ~ 
+                    c( tmpdtcurve$times[1], tmpdtcurve$times[2]))
+        neg_time <- (0 - reg$coefficients[1]) /reg$coefficients[2]
+        # duplicate line in dtcurve
+        dtcurve <- rbind(dtcurve[1:i,], dtcurve[i,], 
+                         dtcurve[-c(1:i),])
+        l <- l +1 
+        # modify time
+        lcons[[i]][1,2] <- dtcurve[i+1,1] <- neg_time
+        lcons <- c(lcons, 'NULL')
+        
+        tmp_press[tankpres[press_cols] == 0] <- NA
+        tmp_press[ii] <- 0 # so finally this tank is empty
+        rm(neg_press, reg, neg_time)
+        break # because next consumption is for next row
       }
-      tmp_press[tankpres[press_cols] == 0] <- NA
-      tmp_vols <-  unlist(tankpres[press_cols + 1])
-      
-      for(iii in 1:(Ltank*3)){
-        if(is.na(tmp_press[iii])) next 
-        if(tmp_press[iii] == 0) next 
-        # pass if the prev tank not used
-        if(tmp_conso - tmp_press[iii] * tmp_vols[iii] <= 0 | tmp_conso < 1e-4){
-          cat('\nEND of this cut\n')
-          tmp_press[iii]<- tmp_press[iii] - tmp_conso / tmp_vols[iii]
-          tmp_conso <- 0 # no more need to breath
-          break
-        } else {
-            # still need to breath, aka tank is not enough
-            # how much left ?
-            neg_press <- tmp_press[iii] - tmp_conso / tmp_vols[iii]
-            # add a new time for this
-            reg <- lm(c( tmp_press[iii], neg_press) ~ 
-                        c( tmpdtcurve$times[ii], tmpdtcurve$times[ii + 1]))
-            neg_time <- (0 - reg$coefficients[1]) /reg$coefficients[2]
-            # duplicate line in lcons and tmpdtcurve
-            lcons[[i]] <- rbind(lcons[[i]][1:ii,],lcons[[i]][ii,], 
-                                lcons[[i]][-c(1:ii),])
-            tmpdtcurve <- rbind(tmpdtcurve[1:ii,], tmpdtcurve[ii,], 
-                                tmpdtcurve[-c(1:ii),])
-            ll <- ll + 1 # add row in the for loop above
-            cat('\nHERE IS NICE \n')
-            # modify time
-            lcons[[i]][ii,2] <- tmpdtcurve[ii+1,1] <- neg_time
-            
-            tmp_press[tankpres[press_cols] == 0] <- NA
-            tmp_press[iii] <- 0 # so finally this tank is empty
-            break # because next consumption is for next row
-        }
-      }
-      lcons[[i]][ii,-c(1,2)] <- tmp_press
-      ii = ii + 1
     }
-
-    lcons[[i]][,1] <- cumsum(lcons[[i]][,1])
-    # cat('\n ===================================== \n')
-    # print(lcons[[i]])
+    lcons[[i]][1,-c(1,2)] <- tmp_press
     # modify the air availability
     for(ii in 1:(Ltank*3)){
       tmp_col <- press_cols[ii]
       tmp <- max(table[table[,tmp_col] >= 0, tmp_col])
       newpress <- min(lcons[[i]][,2+ ii])
-      # print(tmp)
       if(tmp == 0 | is.na(newpress)) next # in case tank is empty
       # print(newpress)
       # cat('\n ============== \n')
       table[table[,tmp_col] == tmp, tmp_col] <- newpress
     }
+    rm(tmp_col, tmp, newpress)
     i <- i +1
   }
-  a<- do.call(rbind, lcons) ; a
+  rm(i, l, ii, t1, t2, tmp_conso, tmpdtcurve, tmp_press)
   
-  plot(a$time, a[,3], type = 'l', ylim = c(0, 100))
-  for(i in 4 : ncol(a)) lines(a$time, a[,i], col = i - 2)
+  vcons <- do.call(rbind, lcons)
+  vcons <- as.data.frame(apply(vcons, 2, round, 2)) ; vcons
+  
+  plot(vcons$time, vcons[,3], type = 'l', ylim = c(0, 100))
+  for(i in 4 : ncol(vcons)) lines(vcons$time, vcons[,i], col = i - 2)
+  
+  rules <- 
   
   # add init pressure and t = 0
   #' copy this to conserve information about gaps !
   # add column by 3
   #' for i in 1:Ltank
-  #'   t <- a[,machin truc * i]
-  #'   a[,i] <- rowSums(t, na.rm = TRUE)
+  #'   t <- vcons[,machin truc * i]
+  #'   vcons[,i] <- rowSums(t, na.rm = TRUE)
   #'   # les valeurs zero sont des sums que de NA !!!
   #' 
-  #' a <- a[,1:Ltank]
+  #' vcons <- vcons[,1:Ltank]
   # changer either output or plot.
   # make a summary and check for attributes
   
