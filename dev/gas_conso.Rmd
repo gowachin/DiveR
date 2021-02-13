@@ -1,0 +1,120 @@
+---
+title: "Gas consumption"
+author: "Maxime Jaunatre"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Gas consumption}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(DiveR)
+```
+
+**TO REMOVE**
+
+```{r tmp_source}
+source('new_conso.R')
+```
+
+This package provide functions to simulate gas consumption. It does so by using tank object and putting them in link with a dive curve and few parameters. This vignette will demonstrate the workflow to use tanks, for a dive with a single tank to using multiples ones on different setups.
+
+## Tank creation
+
+A tank can basically be set by 2 important parameters : a volume `vol` and a pressure `press`. Other input are to set rules to define when and where the tank can be used to breath.
+
+Volume is set in litre and pressure in bar. 
+
+```{r basic_tank}
+tank1 <- tank(vol = 12, press = 200)
+tank1
+```
+
+We can see that many values are set by default, the principal one being the gas type. At this time only air is used and thus tanks are limited between the surface (0) and 66m of depth.
+
+Default rules are also set, which will message the user when the tank is half empty, 3/4 empty and when there is no gas left in it. You can set them like below, and name the rules too. 
+
+```{r limit_tank}
+# set in percentage
+tank2 <- tank(vol = 12, press = 200, 
+              rules = list(rules = c('mid' = 50, 'quarter' = 25), sys = '%'))
+tank2$carac[c('rule1', 'rule2')]
+tank2$typo[c('rule1', 'rule2')]
+# set in bar
+tank3 <- tank(vol = 12, press = 200, 
+              rules = list(rules = c('return' = 130, 'end' = 80), sys = 'bar'))
+tank3$carac[c('rule1', 'rule2')]
+tank3$typo[c('rule1', 'rule2')]
+```
+
+### Tank types
+
+By default, the tank type is set to *back*, a category to describe back-mounted tanks commonly used by divers. However it is possible to have tanks dedicated to specific usage in a relay or at the end of a dive. 
+
+#### Relay tank
+
+A tank used at the beginning and the end of a dive. Mostly used in cave diving. This type of tank are attributed to tanks where there is an interdiction of usage between 2 times.
+
+The easier way to input this interdiction is to set the two rules at same value. During the dive, the tank will be used to match 120b. Then the diver will use other tanks up to their second rules (ex : back tank reserve at 50b). When done, the diver will get back to the relay tank to finish the dive with it. 
+
+```{r relay_tank}
+relay <- tank(vol = 12, press = 180, typ = 'relay',
+              rules = list(rules = c('gap' = 120, 'end_gap' = 120), sys = 'bar'))
+relay$carac[c('rule1', 'rule2')]
+```
+<!--
+#### Relay tank
+
+A tank used at the end of a dive to desaturate azote during ascent part of the dive. Often limited to a lower depth because it use other gas than air. This type of tank are tanks that divers can't use until he has used other tanks or passed the dive end point.
+
+You can add an interdiction of using a tank by setting the first rule with the same value as the tank pressure.
+
+```{r desat_tank}
+desat <- tank(vol = 12, press = 180, typ = 'relay',
+              rules = list(rules = c('gap' = 100, 'end_gap' = 25), sys = '%'))
+desat$carac[c('rule1', 'rule2')]
+```
+-->
+
+As these tanks are used in combination with a back-mounted tank, their usage will be described in the multiple tank usage part. The algorithm of usage will be described, don't fear not understanding it right now.
+
+<!--
+## Figures
+
+The figure sizes have been customised so that you can easily put two images side-by-side. 
+
+```{r, fig.show='hold'}
+plot(1:10)
+plot(10:1)
+```
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
+```
+
+Also a quote using `>`:
+
+> "He who gives up [code] safety for [code] speed deserves neither."
+([via](https://twitter.com/hadleywickham/status/504368538874703872))
+
+-->
+
+

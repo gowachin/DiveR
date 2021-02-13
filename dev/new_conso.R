@@ -1,20 +1,22 @@
 
-
-#' @param vol tank volume in litre
-#' @param press tank pression in bar
+#'tank
+#'
+#'Creation of tank object for usage in consumption part of a dive.
+#' 
+#' @param vol tank volume in litre.
+#' @param press tank pression in bar.
 #' @param rules tank rules to watch during a dive. A list of two named element :
 #' \describe{
 #'   \item{"rules"}{vector of 2 named integer indicating a percentage 
-#'   or a pression. The named will be used in the plot function later}
-#'   \item{"sys"}{character string, either '%' or 'bar'}
+#'   or a pression. The names will be used in the plot function later}
+#'   \item{"sys"}{character string, either '%' or 'bar'. Percentage must be
+#'   between 0 and 100.}
 #' }
 #' @param gas tank gas, by default "Air"
 #' @param typ tank type, by default "back"
 #' \describe{
 #'   \item{"solo"}{single tank}
-#'   \item{"bi"}{two separated tanks}
 #'   \item{"relay"}{single tank to be dropped at certain time}
-#'   \item{"deco"}{single tank to be used in deco ascent}
 #' }
 #' @param limit a two element vector with times between which the tank 
 #' is not used. Can be used to mimic an accident, or a relay tank.
@@ -22,23 +24,57 @@
 #' by default will be named after the typ and volume.
 #' 
 #' @details 
-#' To set a relai tank, rule1 and rule2 must be the same. Therefore the tank 
-#' won't be usable once pression reach rule2 and until all other tanks are
-#' not used. If mulitple tanks are used, the relai must be the first one in order
+#' To set a relay tank, rule1 and rule2 must be the same. Therefore the tank 
+#' won't be usable once pressure reach rule2 and until all other tanks are
+#' not used. If multiple tanks are used, the relay must be the first one in order
 #' 
-ntank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25), 
+tank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25), 
                                            sys = '%' ), 
-                  gas = "Air", typ = "back", limit = NULL, name = NULL){
+                  gas = c("Air"), typ = c("back", "relay"), limit = NULL, name = NULL){
   
-  # IDIOT PROOF
-  # press numeric >= 0
-  # rules list length = 2 
-  # gas single character string
-  # typ single character string
-  # limit vector of 2 positive numeric, negative value trigger warning !
+  #### IDIOT PROOF ####
+  # vol and press
+  if(all(vol <= 0) | ! is.numeric(vol) | length(vol) > 1){
+    stop('vol must be a single positive numeric value.')
+  }
+  if(all(press < 0) | ! is.numeric(press) | length(press) > 1){
+    stop('press must be a single positive (0 possible) numeric value.')
+  }
+  # rules
+  if(length(rules) != 2 | any(names(rules) != c('rules', 'sys'))){
+    stop(paste('rules must be a list of length 2 with a vector of 2 numeric',
+               'named rules and a single character string being % or bar'))
+  }
+  rules$sys <- match.arg(rules$sys, c('%', 'bar'))
+  if(! is.numeric(rules$rules) | length(rules$rules) != 2){
+    stop('Element rules of rules argument must be a vector of 2 numeric')
+  }
+  for(i in 1:length(rules$rules)){
+    if(rules$rules[i] < 0){
+      warning('negative rules are not possible and therefor set to 0')
+      rules$rules[i] <- 0
+    }
+  }
+  if(is.null(names(rules$rules))){
+    names(rules$rules) <- c('', '')
+    warning('There was no names for rules, consider setting them for later use')
+  }
+  # gas
+  gas <- match.arg(gas)
+  typ <- match.arg(typ)
   
+  # TODO : limit vector of 2 positive numeric, negative value trigger warning !
+  
+  #### function ####
   # modify rules to bar !
   if(rules$sys == "%"){
+    for(i in 1:length(rules$rules)){
+      if(rules$rules[i] > 100){
+        warning(paste('The rule is superior to 100 %',
+                      'Therefore it is changed to the maximum pression'))
+        rules$rules[i] <- 1
+      }
+    }
     rules$rules <- press * rules$rules / 100
   } else if(rules$sys == "bar"){
     for(i in 1:length(rules$rules)){
@@ -48,29 +84,28 @@ ntank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
         rules$rules[i] <- press
       }
     }
-  } else {
-    stop('rules$sys must be a single character string between "%" and "bar" ')
   }
-  
+  # limit in time 
+  # TODO : maybe remove this as it's is poorly defined
   if(is.null(limit)){
     limit <- rep(NA,2)
   } else {
     limit[limit < 0] <- 0
     limit <- sort(limit)
-    stop('Idiot proof of limit not coded yet')
   }
-  
+  # name
   if(is.null(name)){
     name <- paste0(typ, vol)
   }
-  
+  # numeric vector
   carac <- c(vol, press, unlist(rules$rules))
   names(carac) <- c('vol', 'press', 'rule1', 'rule2')
+  # string vector
   typo <- c(gas, typ, names(rules$rules), name)
   names(typo) <- c('gas', 'typ', 'rule1', 'rule2', 'name')
   
   if(gas != 'Air'){
-    stop('Only air is working at this moment')
+    stop('Only air is working at this moment') # TODO : imput other gas
   } else {
     ppo2 <- c(0.21, 1.6)
     dmin <- (ppo2[1] * 70 / 1.47) -10 # assimilé a ppo2 > 0.18
@@ -115,20 +150,17 @@ expand <- function(tank, dive){
       )
     
     # duplicate tank for different step in pression following rules
-    # TODO : REFACTO this when it's sure that rule >= 0 !!!
-    rulepress <- (table[, 6] - tank$carac['rule1'])
-    rulepress[rulepress < 0] <- 0
-    table$press <- rulepress
+    table$press <- (table[, 6] - tank$carac['rule1'])
+
+    table <- cbind(table, table[, 5], 
+                   (tank$carac['rule1'] - tank$carac['rule2']), table[, 7]
+                   )
     
-    rulepress <- (tank$carac['rule1'] - tank$carac['rule2'])
-    rulepress[rulepress < 0] <- 0
-    table <- cbind(table, table[, 5], rulepress, table[, 7])
     colnames(table) <- c(colnames(table[-c((ncol(table)-2):ncol(table))]),
                          paste0('rul1',colnames(table)[5:7]))
     
-    rulepress <- (tank$carac['rule2'])
-    rulepress[rulepress < 0] <- 0
-    table <- cbind(table, table[, 5], rulepress, table[, 7])
+    table <- cbind(table, table[, 5], (tank$carac['rule2']), table[, 7])
+    
     colnames(table) <- c(colnames(table[-c((ncol(table)-2):ncol(table))]),
                          paste0('rul2',colnames(table)[5:7]))
     
@@ -232,14 +264,14 @@ expand <- function(tank, dive){
   return(table)
 }
 
+if(FALSE){
+
 
 dive <- dive(20, 40)
-
-y <- ntank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50), 
+y <- tank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50),
                                  sys = "bar"))
-
-x <- ntank(12, 200, rules = list(rules = c('retour' = 110, 'reserve' = 50), 
-                                 sys = "bar"), typ = 'relai')
+x <- tank(12, 200, rules = list(rules = c('retour' = 110, 'reserve' = 50),
+                                 sys = "bar"), typ = 'relay')
 x$limit['t1'] <- 20
 x$limit['t2'] <- 30
 # x$limit['mind'] <- 10
@@ -262,6 +294,8 @@ nconso(dive, y)
 
 nconso(dive, list(x, y))
 
+}
+
 
 #' conso
 #' 
@@ -276,12 +310,17 @@ nconso(dive, list(x, y))
 #' @export
 nconso <- function(dive, tank, cons = 20){
   
-  # add possible accident here later one ?
-  # checks
-  check_val(cons)
+  #  TODO : add possible accident here later one ?
+  
+  #### IDIOT PROOF ####
+  if(all(cons <= 0) | ! is.numeric(cons) | length(cons) > 1){
+    stop('cons must be a single positive numeric value.')
+  }
   # set values to limit computations
   if(class(tank) == 'tank'){ Ltank <- 1 } else { Ltank <- length(tank) }
-  # expand the tanks possibility
+  
+  #### Cut the dive in parts ####
+  # expand the tanks availability
   table <- expand(tank, dive)
   # extract points to cut dive in time and depths
   times <- unique(c(table$begin, table$end)) # unique(unlist(table[,c(3,4)]))
@@ -289,7 +328,7 @@ nconso <- function(dive, tank, cons = 20){
   for(i in 1:nrow(from_times)) {
     from_times$depths[i] <- depth_at_time(dive, from_times$depths[i])
   }
-  
+  rm(times, i) # to remove later
   depths <- as.list(unique(unlist(table[,1:2])))
   for(i in 1:length(depths)) {
     tmp <- time_at_depth(dive, depths[[i]])
@@ -297,10 +336,11 @@ nconso <- function(dive, tank, cons = 20){
                               depths = rep(depths[[i]], length(tmp)))
   }
   from_depths <- do.call(rbind, depths)
-  
+  rm(i, tmp, depths) # to remove later
   # join dfs and sort unique with time order. 
   point <- unique(rbind(from_depths,from_times))
   point <- point[order(point$times),]
+  rm(from_depths, from_times)
   # remove points with same time and keep first one (vertical motion)
   point <- point[!duplicated(point$times),]
   # adding points to dtcurve for cutting
@@ -308,31 +348,49 @@ nconso <- function(dive, tank, cons = 20){
                         depths = dive$dtcurve$depths), point))
   dtcurve <- dtcurve[order(dtcurve$times),]
   dtcurve$pressure <- dtcurve$depths / 10 + 1 
-
-  # below use table, point, dtcurve
+  
+  #### Loop in cuted dive ####
   l <- nrow(point) -1
+  # TODO : could be easier to loop on dtcurve rather than point....
+  l <- nrow(dtcurve) -1 # *******************************************************
+  
   # init a list of length l
   lcons <- vector(mode = "list", length = l)
   AIR_FAIL <- FALSE
   press_cols <- 6+3*(c(1:(Ltank*3))-1)
   init_press <- apply(table[,press_cols], 2, max )
-  # rm(i, tmp, from_depths, from_times, x, y)
-  # load("~/git/mn90/prep_conso.RData")
-  # compute consumption dive cut by dive cut
-  for (i in 1:l){
-    # cat('\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n')
-    # print(i)
-    #### get tank availables ####
+  
+  rm(list = ls())
+  cons <- 20
+  load("~/git/mn90/prep_conso.RData")
+#  for (i in 1:l){
+  # TODO : refacto in work ******************************************************
+  i <- 1
+  while(i <= l){
+    cat('\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n')
+    print(i)
+    #### get tank availables for this cut ####
     t1 <- point$times[i] ; t2 <- point$times[i +1]
     tmpdtcurve <- dtcurve[(dtcurve$times >=  t1) & (dtcurve$times <=  t2),]
+    # TODO : refacto in work ****************************************************
+    t1 <- dtcurve$times[i] ; t2 <- dtcurve$times[i +1]
+    if(t1 == t2){
+      cat('same time, vertical motion -> next\n')
+      i <- i + 1
+      next
+    }
+    tmpdtcurve <- dtcurve[(dtcurve$times >=  t1) & (dtcurve$times <=  t2),]
+    # TODO : refacto in work ****************************************************
+    tmpdtcurve <- dtcurve[c(i, i+1),]
     d1 <- min(tmpdtcurve$depths) ; d2 <- max(tmpdtcurve$depths)
     tankpres <- table[(table$min_depth <= d1 & table$max_depth >= d2 &
                         table$begin < t2 & table$end > t1),]
-
+    
+    print(tmpdtcurve)
+    
     if(nrow(tankpres) < 1){
       # case of vertical motion (like square dive first point)
       tankpres <- table[(table$begin < t2 & table$end > t1),]
-      # cols <- 6+3*(c(1:Ltank)-1)
       # tank available at all depths and first pressure > 0
       tankpres[,press_cols[!((tankpres[1,press_cols] > 0) & 
                       (colSums(tankpres[,press_cols] > 0) == nrow(tankpres)))
@@ -341,22 +399,25 @@ nconso <- function(dive, tank, cons = 20){
       tankpres <- tankpres[1, ]
       
       if(nrow(tankpres) < 0){
+        # TODO : merge this with the other air failure later.
         # AIR FAILURE HERE /!\
-        warning('No tank is available and you died. Try again !')
+        cat('AIR FAILURE HEHE')
+        warning(paste('No tank is available between', t1, 'and', t2,
+                      'minutes so you died. Try again !'))
         AIR_FAIL <- TRUE
         break
       }
-    } 
+    }
     # print(tankpres)
     # cat('total pression :', sum(tankpres[,press_cols]), '\n')
-    
+    #### NEXT on empty tanks !  ####
     if(sum(tankpres[,press_cols]) == 0){
-      warning('No tank is available and you died. Try again !')
-      # TODO : add a time to check for availability. And longer message
+      cat('no tank available\n')
+      warning(paste('No tank is available between', t1, 'and', t2,
+                    'minutes so you died. Try again !'))
       AIR_FAIL <- TRUE
       lcons[[i]] <- as.data.frame(matrix(0, nrow = 2, ncol = 2+(Ltank*3)))
-      lcons[[i]][,1] <- c(0,0)
-      lcons[[i]][,2] <- c(tmpdtcurve$times[1], tmpdtcurve$times[2])
+      lcons[[i]][,2] <- c(t1, t2)
       
       if(i == 1){ tmp_press <- init_press }
       lcons[[i]][2,-c(1,2)] <- tmp_press
@@ -365,18 +426,21 @@ nconso <- function(dive, tank, cons = 20){
       lcons[[i]][1,-c(1,2)] <- na_press
       colnames(lcons[[i]]) <- c("vcons","time", as.character(1:(Ltank*3)))
       # print(lcons[[i]])
+      i <- i + 1
       next
     }
+    
     # print(tmpdtcurve)
-    # cat('\n ----------------------------------------- \n')
+    cat('\n ----------------------------------------- \n')
     # no more need of point object
     ll <- nrow(tmpdtcurve) -1
+    print(ll)
     # init table of cons and press
     lcons[[i]] <- as.data.frame(matrix(0, nrow = ll, ncol = 2+(Ltank*3)))
     colnames(lcons[[i]]) <- c("vcons","time", as.character(1:(Ltank*3)))
     
     # load("~/git/mn90/prep_round.RData")
-    ii <- 1
+    ii <- 1 # init 
     while (ii <= ll){ # compute consumption for every cut step
       # trapeze method
       lcons[[i]][ii,1] <- tmp_conso <- cons * (tmpdtcurve$pressure[ii] + 
@@ -397,34 +461,37 @@ nconso <- function(dive, tank, cons = 20){
         if(is.na(tmp_press[iii])) next 
         if(tmp_press[iii] == 0) next 
         # pass if the prev tank not used
-        if(tmp_conso - tmp_press[iii] * tmp_vols[iii] > 0){ 
-          # still need to breath, aka tank is not enough
-           # much left ?
-          neg_press <- tmp_press[iii] - tmp_conso / tmp_vols[iii] # 
-          # add a new time for this
-          reg <- lm(c( tmp_press[iii], neg_press) ~ 
-               c( tmpdtcurve$times[ii], tmpdtcurve$times[ii + 1]))
-          neg_time <- (0 - reg$coefficients[1]) /reg$coefficients[2]
-          # duplicate line in lcons and tmpdtcurve
-          lcons[[i]] <- rbind(lcons[[i]][1:ii,],lcons[[i]][ii,], 
-                              lcons[[i]][-c(1:ii),])
-          tmpdtcurve <- rbind(tmpdtcurve[1:ii,], tmpdtcurve[ii,], 
-                              tmpdtcurve[-c(1:ii),])
-          ll <- ll + 1 # add row in the for loop above
-          # modify time
-          lcons[[i]][ii,2] <- tmpdtcurve[ii+1,1] <- neg_time
-          
-          tmp_press[tankpres[press_cols] == 0] <- NA
-          tmp_press[iii] <- 0 # so finally this tank is empty
-          break # because next consumption is for next row
-        } else {
+        if(tmp_conso - tmp_press[iii] * tmp_vols[iii] <= 0 | tmp_conso < 1e-4){
+          cat('\nEND of this cut\n')
           tmp_press[iii]<- tmp_press[iii] - tmp_conso / tmp_vols[iii]
           tmp_conso <- 0 # no more need to breath
+          break
+        } else {
+            # still need to breath, aka tank is not enough
+            # how much left ?
+            neg_press <- tmp_press[iii] - tmp_conso / tmp_vols[iii]
+            # add a new time for this
+            reg <- lm(c( tmp_press[iii], neg_press) ~ 
+                        c( tmpdtcurve$times[ii], tmpdtcurve$times[ii + 1]))
+            neg_time <- (0 - reg$coefficients[1]) /reg$coefficients[2]
+            # duplicate line in lcons and tmpdtcurve
+            lcons[[i]] <- rbind(lcons[[i]][1:ii,],lcons[[i]][ii,], 
+                                lcons[[i]][-c(1:ii),])
+            tmpdtcurve <- rbind(tmpdtcurve[1:ii,], tmpdtcurve[ii,], 
+                                tmpdtcurve[-c(1:ii),])
+            ll <- ll + 1 # add row in the for loop above
+            cat('\nHERE IS NICE \n')
+            # modify time
+            lcons[[i]][ii,2] <- tmpdtcurve[ii+1,1] <- neg_time
+            
+            tmp_press[tankpres[press_cols] == 0] <- NA
+            tmp_press[iii] <- 0 # so finally this tank is empty
+            break # because next consumption is for next row
         }
       }
       lcons[[i]][ii,-c(1,2)] <- tmp_press
       ii = ii + 1
-    } 
+    }
 
     lcons[[i]][,1] <- cumsum(lcons[[i]][,1])
     # cat('\n ===================================== \n')
@@ -440,6 +507,7 @@ nconso <- function(dive, tank, cons = 20){
       # cat('\n ============== \n')
       table[table[,tmp_col] == tmp, tmp_col] <- newpress
     }
+    i <- i +1
   }
   a<- do.call(rbind, lcons) ; a
   
