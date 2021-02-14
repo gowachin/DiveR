@@ -17,12 +17,6 @@ knitr::opts_chunk$set(
 library(DiveR)
 ```
 
-**TO REMOVE**
-
-```{r tmp_source}
-source('new_conso.R')
-```
-
 This package provide functions to simulate gas consumption. It does so by using tank object and putting them in link with a dive curve and few parameters. This vignette will demonstrate the workflow to use tanks, for a dive with a single tank to using multiples ones on different setups.
 
 ## Tank creation

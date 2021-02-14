@@ -12,5 +12,5 @@
 
 * `dtime.conso` have been removed. 
 
-* `depth_at_time` and `time_at_depth` have been slightly modified to fit the `conso` function.
+* `simpl`, `depth_at_time` and `time_at_depth` have been slightly modified to fit the `conso` function.
 

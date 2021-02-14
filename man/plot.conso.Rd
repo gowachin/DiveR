@@ -14,6 +14,7 @@
   depth_print = TRUE,
   time_print = TRUE,
   def_cols = FALSE,
+  legend = TRUE,
   add = FALSE
 )
 }
@@ -44,8 +45,17 @@ at beginning and end of the dive.}
 \item{line_print}{set to \code{TRUE} by default, whether there is lines 
 for depths.}
 
+\item{depth_print}{set to \code{TRUE} by default, whether there is depth 
+values along the dive.}
+
+\item{time_print}{set to \code{TRUE} by default, whether there is time 
+values along the dive.}
+
 \item{def_cols}{set to \code{FALSE} by default, modify plot colors to match
 shinyapp css.}
+
+\item{legend}{set to \code{FALSE} by default, print legend colors for the 
+tank.}
 
 \item{add}{set to \code{FALSE} by default, to add another dive plot 
 on a precedent one.}

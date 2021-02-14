@@ -13,7 +13,7 @@ simpl(dtcurve)
 Remove points of curve when isodepth around
 }
 \examples{
-cons <- conso(dive = dive(20,40), bloc = bloc(10, 230), cons = 20, mid = 100, reserve = 50)
+cons <- conso(dive = dive(20,40), tank(12, 200), cons = 20)
 cons$dtcurve
 simpl(cons$dtcurve)
 

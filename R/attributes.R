@@ -405,7 +405,7 @@ time_at_depth <- function(dive, depth){
 #' @param dtcurve a curve dive list
 #' 
 #' @examples 
-#' cons <- conso(dive = dive(20,40), bloc = bloc(10, 230), cons = 20, mid = 100, reserve = 50)
+#' cons <- conso(dive = dive(20,40), tank(12, 200), cons = 20)
 #' cons$dtcurve
 #' simpl(cons$dtcurve)
 #'

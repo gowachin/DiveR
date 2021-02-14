@@ -21,7 +21,7 @@ tank(
 
 \item{rules}{tank rules to watch during a dive. A list of two named element :
 \describe{
-  \item{"rules"}{vector of 2 named integer indicating a percentage 
+  \item{"rules"}{vector of 2 named integer indicating a percentage
   or a pression. The names will be used in the plot function later}
   \item{"sys"}{character string, either '%' or 'bar'. Percentage must be
   between 0 and 100.}
@@ -35,7 +35,7 @@ tank(
   \item{"relay"}{single tank to be dropped at certain time}
 }}
 
-\item{limit}{a two element vector with times between which the tank 
+\item{limit}{a two element vector with times between which the tank
 is not used. Can be used to mimic an accident, or a relay tank.}
 
 \item{name}{Possibility to name the tank for better understanding after.
@@ -45,7 +45,7 @@ by default will be named after the typ and volume.}
 Creation of tank object for usage in consumption part of a dive.
 }
 \details{
-To set a relay tank, rule1 and rule2 must be the same. Therefore the tank 
+To set a relay tank, rule1 and rule2 must be the same. Therefore the tank
 won't be usable once pressure reach rule2 and until all other tanks are
 not used. If multiple tanks are used, the relay must be the first one in order
 }

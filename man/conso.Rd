@@ -4,23 +4,25 @@
 \alias{conso}
 \title{conso}
 \usage{
-conso(dive, bloc, cons = 20, mid = 100, reserve = 50, rule = NULL)
+conso(dive, tank, cons = 20, failure_label = "AF")
 }
 \arguments{
 \item{dive}{\code{\link[DiveR]{dive}} object}
+
+\item{tank}{\code{\link[DiveR]{tank}} object or a list of tank objects.
+Priority of consumption for tanks is set by their order in list.}
+
+\item{cons}{Litre per minute breathed by diver. Single numeric positive value.
+20 L/min by default}
+
+\item{failure_label}{Label for when a tank is a empty. Single character
+string. 'AF' by default.}
 }
 \value{
 conso, a conso class object.
 }
 \description{
 conso
-}
-\details{
-See \code{\link[DiveR]{tablecheck}} for limit values of depth and time.
-}
-\examples{
-c1 = conso(dive = dive(20,40), bloc = bloc(12, 230), cons = 20, mid = 100, reserve = 50)
-
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
