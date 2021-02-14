@@ -264,43 +264,10 @@ expand <- function(tank, dive){
   return(table)
 }
 
-if(FALSE){
-
-
-dive <- dive(20, 40)
-y <- tank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50),
-                                 sys = "bar"))
-x <- tank(12, 200, rules = list(rules = c('retour' = 110, 'reserve' = 50),
-                                 sys = "bar"), typ = 'relay')
-x$limit['t1'] <- 20
-x$limit['t2'] <- 30
-# x$limit['mind'] <- 10
-# x$limit['maxd'] <- 15
-
-expand(x, dive)
-
-y$limit['mind'] <- 5
-y$limit['maxd'] <- 10
-
-expand(y, dive)
-
-tank <- list(x, y)
-
-expand(tank, dive)
-
-nconso(dive, x)
-
-nconso(dive, y)
-
-nconso(dive, list(x, y))
-
-}
-
-
 #' conso
 #' 
 #' @param dive \code{\link[DiveR]{dive}} object
-#' @param tank \code{\link[DiveR]{ntank}} object or a list of ntank objects. 
+#' @param tank \code{\link[DiveR]{tank}} object or a list of tank objects. 
 #' Priority of consumption for tanks is set by their order in list.
 #'   
 #' @return conso, a conso class object.
@@ -359,10 +326,7 @@ nconso <- function(dive, tank, cons = 20){
   press_cols <- 6+3*(c(1:(Ltank*3))-1)
   init_press <- apply(table[,press_cols], 2, max )
   
-  rm(list = ls())
-  load("~/git/mn90/prep_conso.RData")
   init_vols <- apply(table[,(press_cols + 1)], 2, max )
-  cons <- 20
   i <- 1
   lcons[[1]] <- c(0, 0, init_press)
   # TODO : modify loop so lcons is df and not list
@@ -373,6 +337,7 @@ nconso <- function(dive, tank, cons = 20){
     t1 <- dtcurve$times[i] ; t2 <- dtcurve$times[i +1]
     if(t1 == t2){
       cat('same time, vertical motion -> next\n')
+      if(i == 1){ tmp_press <- init_press }
       i <- i + 1
       next
     }
@@ -393,10 +358,10 @@ nconso <- function(dive, tank, cons = 20){
       ] <- 0
       tankpres <- tankpres[1, ]
       
-      if(nrow(tankpres) < 0){
+      if(nrow(tankpres) < 1){
         # TODO : merge this with the other air failure later.
         # AIR FAILURE HERE /!\
-        cat('AIR FAILURE HEHE')
+        # cat('AIR FAILURE HERE')
         warning(paste('No tank is available between', t1, 'and', t2,
                       'minutes so you died. Try again !'))
         AIR_FAIL <- TRUE
@@ -405,7 +370,7 @@ nconso <- function(dive, tank, cons = 20){
     }
     #### NEXT on empty tanks !  ####
     if(sum(tankpres[,press_cols]) == 0){
-      cat('no tank available\n')
+      # cat('no tank available\n')
       warning(paste('No tank is available between', t1, 'and', t2,
                     'minutes so you died. Try again !'))
       AIR_FAIL <- TRUE
@@ -483,25 +448,97 @@ nconso <- function(dive, tank, cons = 20){
   rm(i, l, ii, t1, t2, tmp_conso, tmpdtcurve, tmp_press)
   
   vcons <- do.call(rbind, lcons)
-  vcons <- as.data.frame(apply(vcons, 2, round, 2)) ; vcons
+  vcons <- as.data.frame(apply(vcons, 2, round, 2)) #; vcons
   
-  plot(vcons$time, vcons[,3], type = 'l', ylim = c(0, 100))
-  for(i in 4 : ncol(vcons)) lines(vcons$time, vcons[,i], col = i - 2)
+  # plot(vcons$time, vcons[,3], type = 'l', ylim = c(0, 100))
+  # for(i in 4 : ncol(vcons)) lines(vcons$time, vcons[,i], col = i - 2)
+
   
-  rules <- 
+  if(class(tank) == "tank"){
+    rules <- data.frame(
+      rule1 = tank$carac['rule1'], name1 = tank$typo['rule1'], temps1 = NA,
+      rule2 = tank$carac['rule1'], name2 = tank$typo['rule2'], temps2 = NA
+      )
+  } else {
+    rules <- data.frame(rule1 = unlist(lapply(lapply(tank, '[[', 1), '[', 3)),
+                        name1 = unlist(lapply(lapply(tank, '[[', 2), '[', 3)),
+                        temps1 = c(NA, NA),
+                        rule2 = unlist(lapply(lapply(tank, '[[', 1), '[', 4)),
+                        name2 = unlist(lapply(lapply(tank, '[[', 2), '[', 4)),
+                        temps2 = c(NA, NA))
+  } # check for list of tank or single tank is made in expand
+
   
-  # add init pressure and t = 0
-  #' copy this to conserve information about gaps !
-  # add column by 3
-  #' for i in 1:Ltank
-  #'   t <- vcons[,machin truc * i]
-  #'   vcons[,i] <- rowSums(t, na.rm = TRUE)
-  #'   # les valeurs zero sont des sums que de NA !!!
-  #' 
-  #' vcons <- vcons[,1:Ltank]
-  # changer either output or plot.
-  # make a summary and check for attributes
+  for(i in 3:(Ltank+2)){
+    # add the columns of same tank
+    tmp <- vcons[,c(i, i+Ltank, i+2*Ltank)]
+    tmp <- rowSums(tmp, na.rm = T)
+    # tmp[tmp == 0] <- NA 
+    # TODO : maybe more difficult than just 0 -> NA...more checks
+    # example with x without modifications
+    l <- length(tmp)
+    for(ii in 1:l){ # correction for NA values
+      if(ii > 2){
+        if(is.na(tmp[ii-2]) & is.na(tmp[ii-1]) & !is.na(tmp[ii])){
+          tmp[ii-1] <- min(tmp[1:(ii-1)], na.rm = TRUE)
+        }
+      }
+      if(!is.na(tmp[ii])){
+        if(tmp[ii] == rules[i-2, 1]) {
+          cat('mid\n')
+          rules[i-2, 3] <- vcons[ii, 2]
+        }
+        if(tmp[ii] == rules[i-2, 4]) {
+          cat('res\n')
+          rules[i-2, 6] <- vcons[ii, 2]
+        }
+      }
+    }
+    vcons[,i] <- tmp
+  }
+  rm(l, tmp, i , ii )
+  vcons <- vcons[,1:(2+Ltank)]
+  colnames(vcons)[2] <- 'times'
+
+  # plot(vcons$time, vcons[,4], type = 'l', ylim = c(0, 230))
+  # for(i in 5 : ncol(vcons)) lines(vcons$time, vcons[,i], col = i - 2)
   
-  return(a)
+  conso <- list(vcons = vcons, rules = rules, 
+                dtcurve = dtcurve, hour = dive$hour)
+  
+  return(conso)
 }
 
+if(FALSE){
+  
+  
+  dive <- dive(20, 40)
+  y <- tank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50),
+                                  sys = "bar"))
+  x <- tank(12, 200, rules = list(rules = c('retour' = 110, 'reserve' = 50),
+                                  sys = "bar"), typ = 'relay')
+  x$limit['t1'] <- 20
+  x$limit['t2'] <- 30
+  # x$limit['mind'] <- 10
+  # x$limit['maxd'] <- 15
+  
+  expand(x, dive)
+  
+  y$limit['mind'] <- 5
+  y$limit['maxd'] <- 10
+  
+  expand(y, dive)
+
+  expand(list(x, y), dive)
+  
+  nconso(dive, x)
+  
+  a <- nconso(dive, y)
+  a
+  nconso(dive, list(x, y))
+  
+}
+
+
+plot(vcons$time, vcons[,4], type = 'l', ylim = c(0, 230))
+for(i in 5 : ncol(vcons)) lines(vcons$time, vcons[,i], col = i - 2)
