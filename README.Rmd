@@ -57,17 +57,19 @@ You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-da
 ## Disclaimer 
 This application is intended for use in education about scubadiving planification and academic interest only. It is not designed for actual use in scuba diving and underwater activity. It is emphatically not suitable for use in actual diving. Scuba diving is a dangerous activity with risks of death and serious injury. No-one should attempt scuba diving without training, certification, supervision and regular medical assessment. It is also dangerous for trained scuba divers to exceed the limitations of their training. 
 
-This application will provide planinfication about dive profile and air consumption, without giving any warning if the activity would be dangerous or fatal. In doing so, it does not take account of safety restrictions, other physical laws, or other important information. 
+This application will provide planification about dive profile and air consumption, without giving any warning if the activity would be dangerous or fatal. In doing so, it does not take account of safety restrictions, other physical laws, or other important information. 
 Despite using diving table as base for computation, no output from this application should be misconstrued as a diving table. The author does not warrant that the application is correct in any sense whatsoever. Even if correctly computed, the predictions of a theoretical physical model may not be correct predictions.
 
 Note here that all dives simulated will also being at sea level.
 
 ## Actual in work part
 
-Refactorisation of Consumption, plot.conso for multi tank dives.
+Refactorisation of Consumption graphics and attributes.
+Redaction of vignette about consumption
 
 ## To do : 
 
+- Refactorisation of dive for other saturation models
 - Complete README with examples
 - Redaction of vignettes
 - doc on new conso and dive functions

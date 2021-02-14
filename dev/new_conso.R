@@ -12,7 +12,7 @@
 #'   \item{"sys"}{character string, either '%' or 'bar'. Percentage must be
 #'   between 0 and 100.}
 #' }
-#' @param gas tank gas, by default "Air"
+#' @param gas tank gas, by default "Air". Parameter is here for future dev.
 #' @param typ tank type, by default "back"
 #' \describe{
 #'   \item{"solo"}{single tank}
@@ -30,7 +30,8 @@
 #' 
 tank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25), 
                                            sys = '%' ), 
-                  gas = c("Air"), typ = c("back", "relay"), limit = NULL, name = NULL){
+                  gas = c("Air"), typ = c("back", "relay"), 
+                 limit = NULL, name = NULL){
   
   #### IDIOT PROOF ####
   # vol and press
@@ -38,7 +39,7 @@ tank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
     stop('vol must be a single positive numeric value.')
   }
   if(all(press < 0) | ! is.numeric(press) | length(press) > 1){
-    stop('press must be a single positive (0 possible) numeric value.')
+    stop('press must be a single positive, 0 possible, numeric value.')
   }
   # rules
   if(length(rules) != 2 | any(names(rules) != c('rules', 'sys'))){
@@ -72,7 +73,7 @@ tank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25),
       if(rules$rules[i] > 100){
         warning(paste('The rule is superior to 100 %',
                       'Therefore it is changed to the maximum pression'))
-        rules$rules[i] <- 1
+        rules$rules[i] <- 100
       }
     }
     rules$rules <- press * rules$rules / 100
@@ -446,52 +447,51 @@ nconso <- function(dive, tank, cons = 20){
     i <- i +1
   }
   rm(i, l, ii, t1, t2, tmp_conso, tmpdtcurve, tmp_press)
+  rm(init_press, init_vols, cons, tankpres)
   
   vcons <- do.call(rbind, lcons)
   vcons <- as.data.frame(apply(vcons, 2, round, 2)) #; vcons
   
-  # plot(vcons$time, vcons[,3], type = 'l', ylim = c(0, 100))
-  # for(i in 4 : ncol(vcons)) lines(vcons$time, vcons[,i], col = i - 2)
-
-  
   if(class(tank) == "tank"){
     rules <- data.frame(
       rule1 = tank$carac['rule1'], name1 = tank$typo['rule1'], temps1 = NA,
-      rule2 = tank$carac['rule1'], name2 = tank$typo['rule2'], temps2 = NA
+      rule2 = tank$carac['rule2'], name2 = tank$typo['rule2'], temps2 = NA,
+      AF = NA
       )
+    rownames(rules) <- tank$typo['name']
   } else {
     rules <- data.frame(rule1 = unlist(lapply(lapply(tank, '[[', 1), '[', 3)),
                         name1 = unlist(lapply(lapply(tank, '[[', 2), '[', 3)),
                         temps1 = c(NA, NA),
                         rule2 = unlist(lapply(lapply(tank, '[[', 1), '[', 4)),
                         name2 = unlist(lapply(lapply(tank, '[[', 2), '[', 4)),
-                        temps2 = c(NA, NA))
+                        temps2 = c(NA, NA), 
+                        AF = c(NA, NA))
+    rownames(rules) <- unlist(lapply(lapply(tank, '[[', 2), '[', 5))
   } # check for list of tank or single tank is made in expand
-
   
+  # simplify vcons
   for(i in 3:(Ltank+2)){
     # add the columns of same tank
     tmp <- vcons[,c(i, i+Ltank, i+2*Ltank)]
+    empty_row <- apply(is.na(tmp), 1, all)
     tmp <- rowSums(tmp, na.rm = T)
-    # tmp[tmp == 0] <- NA 
-    # TODO : maybe more difficult than just 0 -> NA...more checks
-    # example with x without modifications
+    if(any(empty_row)){ # once tank empty, he is NA
+      tmp[which(empty_row)[1]:length(tmp)] <- NA
+      rules[i-2, 7] <- vcons$time[which(empty_row)[1]-1]
+    }
     l <- length(tmp)
-    for(ii in 1:l){ # correction for NA values
+    for(ii in 1:l){ # correction for NA values when absent tank
       if(ii > 2){
         if(is.na(tmp[ii-2]) & is.na(tmp[ii-1]) & !is.na(tmp[ii])){
           tmp[ii-1] <- min(tmp[1:(ii-1)], na.rm = TRUE)
         }
       }
-      if(!is.na(tmp[ii])){
-        if(tmp[ii] == rules[i-2, 1]) {
-          cat('mid\n')
-          rules[i-2, 3] <- vcons[ii, 2]
-        }
-        if(tmp[ii] == rules[i-2, 4]) {
-          cat('res\n')
-          rules[i-2, 6] <- vcons[ii, 2]
-        }
+      if(!is.na(tmp[ii])){ # complete times for rules pressure.
+        if(tmp[ii] == rules[i-2, 1] & is.na(rules[i-2, 3]) ){
+          rules[i-2, 3] <- vcons[ii, 2] } # rule 1
+        if(tmp[ii] == rules[i-2, 4] & is.na(rules[i-2, 6]) ){
+          rules[i-2, 6] <- vcons[ii, 2] } # rule 2
       }
     }
     vcons[,i] <- tmp
@@ -499,10 +499,8 @@ nconso <- function(dive, tank, cons = 20){
   rm(l, tmp, i , ii )
   vcons <- vcons[,1:(2+Ltank)]
   colnames(vcons)[2] <- 'times'
+  colnames(vcons)[-c(1:2)] <- rownames(rules)
 
-  # plot(vcons$time, vcons[,4], type = 'l', ylim = c(0, 230))
-  # for(i in 5 : ncol(vcons)) lines(vcons$time, vcons[,i], col = i - 2)
-  
   conso <- list(vcons = vcons, rules = rules, 
                 dtcurve = dtcurve, hour = dive$hour)
   
@@ -513,9 +511,9 @@ if(FALSE){
   
   
   dive <- dive(20, 40)
-  y <- tank(12, 200, rules = list(rules = c('retour' = 100, 'reserve' = 50),
+  y <- tank(12, 200, rules = list(rules = c('retour' = 150, 'reserve' = 100),
                                   sys = "bar"))
-  x <- tank(12, 200, rules = list(rules = c('retour' = 110, 'reserve' = 50),
+  x <- tank(12, 200, rules = list(rules = c('retour' = 120, 'reserve' = 120),
                                   sys = "bar"), typ = 'relay')
   x$limit['t1'] <- 20
   x$limit['t2'] <- 30

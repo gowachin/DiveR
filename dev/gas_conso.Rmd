@@ -84,6 +84,37 @@ desat$carac[c('rule1', 'rule2')]
 
 As these tanks are used in combination with a back-mounted tank, their usage will be described in the multiple tank usage part. The algorithm of usage will be described, don't fear not understanding it right now.
 
+
+<!-- 
+## Tank attributes
+
+The parameters of a tank can be retrieved with specified function.
+
+```{r summary.tank, include = FALSE}
+
+pressure <- function(x){
+  x$carac$press
+}
+
+volume <- function(x){
+  x$carac$vol
+}
+
+summary_conso <- function(object, ...){
+  # parameters volume and pressure
+  cat(paste("Tank :",volume(object), "litre at",pressure(object),"bar\n"))
+  # dtr
+  dtr <- dtr(object)
+  cat('Total dive time is',dtime(object)+dtr,'with a dive ascent of',dtr,'minutes\n')
+  # palier & maj
+}
+
+```
+
+
+--> 
+
+
 <!--
 ## Figures
 
