@@ -197,15 +197,6 @@ dtime.dive <- function(object) {
 #' @rdname dtime
 #' 
 #' @export
-dtime.conso <- function(object) {
-  t <- object$dtcurve$times
-  dt <- min(t[t > 0])
-  return(dt)
-}
-
-#' @rdname dtime
-#' 
-#' @export
 dtime.ndive <- function(object) {
   d1 <- dtime(object$dive1)
   d2 <- dtime(object$dive2)
@@ -349,8 +340,8 @@ minute_to_time <- function(time, sec = TRUE, sep = c(':', 'h'), day = TRUE){
 #'
 #' @export
 depth_at_time <- function(dive, time){
-  time <- time + dive$hour[1]
-  times <- dive$dtcurve$times + dive$hour[1]
+  time <- time #+ dive$hour[1]
+  times <- dive$dtcurve$times #+ dive$hour[1]
   depths <- dive$dtcurve$depths
   if(time > max(times) | time <= 0){return(0)}
   
@@ -382,7 +373,7 @@ depth_at_time <- function(dive, time){
 #'
 #' @export
 time_at_depth <- function(dive, depth){
-  times <- dive$dtcurve$times + dive$hour[1]
+  times <- dive$dtcurve$times #+ dive$hour[1]
   depths <- dive$dtcurve$depths
   res <- c()
   
@@ -422,14 +413,18 @@ time_at_depth <- function(dive, depth){
 #'
 #' @export
 simpl <- function(dtcurve){
-  rm <- c()
+  to_rm <- c()
   for(i in c(2: (length(dtcurve$depths)-1))){
     if (dtcurve$depths[i] == dtcurve$depths[i-1] & dtcurve$depths[i] == dtcurve$depths[i+1]){
-      rm <- append(rm, i)
+      to_rm <- append(to_rm, i)
     }
   }
-  if(is.null(rm)) return(dtcurve)
-  dtcurve$depths <- dtcurve$depths[-rm]
-  dtcurve$times <- dtcurve$times[-rm]
+  if(is.null(to_rm)) return(dtcurve)
+  if(class(dtcurve) == "data.frame"){
+    dtcurve <- dtcurve[-to_rm,]
+  } else {
+    dtcurve$depths <- dtcurve$depths[-to_rm]
+    dtcurve$times <- dtcurve$times[-to_rm]
+  }
   return(dtcurve)
 }

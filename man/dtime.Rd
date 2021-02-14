@@ -3,15 +3,12 @@
 \name{dtime}
 \alias{dtime}
 \alias{dtime.dive}
-\alias{dtime.conso}
 \alias{dtime.ndive}
 \title{dtime}
 \usage{
 dtime(object)
 
 \method{dtime}{dive}(object)
-
-\method{dtime}{conso}(object)
 
 \method{dtime}{ndive}(object)
 }

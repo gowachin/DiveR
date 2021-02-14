@@ -1,129 +1,4 @@
 
-#'tank
-#'
-#'Creation of tank object for usage in consumption part of a dive.
-#' 
-#' @param vol tank volume in litre.
-#' @param press tank pression in bar.
-#' @param rules tank rules to watch during a dive. A list of two named element :
-#' \describe{
-#'   \item{"rules"}{vector of 2 named integer indicating a percentage 
-#'   or a pression. The names will be used in the plot function later}
-#'   \item{"sys"}{character string, either '%' or 'bar'. Percentage must be
-#'   between 0 and 100.}
-#' }
-#' @param gas tank gas, by default "Air". Parameter is here for future dev.
-#' @param typ tank type, by default "back"
-#' \describe{
-#'   \item{"solo"}{single tank}
-#'   \item{"relay"}{single tank to be dropped at certain time}
-#' }
-#' @param limit a two element vector with times between which the tank 
-#' is not used. Can be used to mimic an accident, or a relay tank.
-#' @param name Possibility to name the tank for better understanding after.
-#' by default will be named after the typ and volume.
-#' 
-#' @details 
-#' To set a relay tank, rule1 and rule2 must be the same. Therefore the tank 
-#' won't be usable once pressure reach rule2 and until all other tanks are
-#' not used. If multiple tanks are used, the relay must be the first one in order
-#' 
-tank <- function(vol, press, rules = list(rules = c('mid' = 50,'res' = 25), 
-                                           sys = '%' ), 
-                  gas = c("Air"), typ = c("back", "relay"), 
-                 limit = NULL, name = NULL){
-  
-  #### IDIOT PROOF ####
-  # vol and press
-  if(all(vol <= 0) | ! is.numeric(vol) | length(vol) > 1){
-    stop('vol must be a single positive numeric value.')
-  }
-  if(all(press < 0) | ! is.numeric(press) | length(press) > 1){
-    stop('press must be a single positive, 0 possible, numeric value.')
-  }
-  # rules
-  if(length(rules) != 2 | any(names(rules) != c('rules', 'sys'))){
-    stop(paste('rules must be a list of length 2 with a vector of 2 numeric',
-               'named rules and a single character string being % or bar'))
-  }
-  rules$sys <- match.arg(rules$sys, c('%', 'bar'))
-  if(! is.numeric(rules$rules) | length(rules$rules) != 2){
-    stop('Element rules of rules argument must be a vector of 2 numeric')
-  }
-  for(i in 1:length(rules$rules)){
-    if(rules$rules[i] < 0){
-      warning('negative rules are not possible and therefor set to 0')
-      rules$rules[i] <- 0
-    }
-  }
-  if(is.null(names(rules$rules))){
-    names(rules$rules) <- c('', '')
-    warning('There was no names for rules, consider setting them for later use')
-  }
-  # gas
-  gas <- match.arg(gas)
-  typ <- match.arg(typ)
-  
-  # TODO : limit vector of 2 positive numeric, negative value trigger warning !
-  
-  #### function ####
-  # modify rules to bar !
-  if(rules$sys == "%"){
-    for(i in 1:length(rules$rules)){
-      if(rules$rules[i] > 100){
-        warning(paste('The rule is superior to 100 %',
-                      'Therefore it is changed to the maximum pression'))
-        rules$rules[i] <- 100
-      }
-    }
-    rules$rules <- press * rules$rules / 100
-  } else if(rules$sys == "bar"){
-    for(i in 1:length(rules$rules)){
-      if(rules$rules[i] > press){
-        warning(paste('The rule is superior to the pression in the tank.',
-                'Therefore it is changed to the maximum pression'))
-        rules$rules[i] <- press
-      }
-    }
-  }
-  # limit in time 
-  # TODO : maybe remove this as it's is poorly defined
-  if(is.null(limit)){
-    limit <- rep(NA,2)
-  } else {
-    limit[limit < 0] <- 0
-    limit <- sort(limit)
-  }
-  # name
-  if(is.null(name)){
-    name <- paste0(typ, vol)
-  }
-  # numeric vector
-  carac <- c(vol, press, unlist(rules$rules))
-  names(carac) <- c('vol', 'press', 'rule1', 'rule2')
-  # string vector
-  typo <- c(gas, typ, names(rules$rules), name)
-  names(typo) <- c('gas', 'typ', 'rule1', 'rule2', 'name')
-  
-  if(gas != 'Air'){
-    stop('Only air is working at this moment') # TODO : imput other gas
-  } else {
-    ppo2 <- c(0.21, 1.6)
-    dmin <- (ppo2[1] * 70 / 1.47) -10 # assimilé a ppo2 > 0.18
-    dmax <- (ppo2[2] * 70 / 1.47) -10 # assimilé a ppo2 < 1.6
-    # round them
-    dmin <- ceiling(dmin)
-    dmax <- floor(dmax)
-  }
-  
-  limit <- c(dmin,dmax,limit)
-  names(limit) <- c('mind', 'maxd', 't1', 't2')
-  
-  tank <- list(carac = carac, typo = typo, limit = limit)
-  class(tank) <- "tank"
-  return(tank)
-}
-
 #' expand
 #' 
 #' @param tank \code{\link[DiveR]{ntank}} object or a list of ntank objects. 
@@ -270,13 +145,17 @@ expand <- function(tank, dive){
 #' @param dive \code{\link[DiveR]{dive}} object
 #' @param tank \code{\link[DiveR]{tank}} object or a list of tank objects. 
 #' Priority of consumption for tanks is set by their order in list.
+#' @param cons Litre per minute breathed by diver. Single numeric positive value.
+#' 20 L/min by default
+#' @param failure_label Label for when a tank is a empty. Single character 
+#' string. 'AF' by default.
 #'   
 #' @return conso, a conso class object.
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
 #' @export
-nconso <- function(dive, tank, cons = 20){
+nconso <- function(dive, tank, cons = 20, failure_label = 'AF'){
   
   #  TODO : add possible accident here later one ?
   
@@ -337,7 +216,7 @@ nconso <- function(dive, tank, cons = 20){
     #### get tank availables for this cut ####
     t1 <- dtcurve$times[i] ; t2 <- dtcurve$times[i +1]
     if(t1 == t2){
-      cat('same time, vertical motion -> next\n')
+      # cat('same time, vertical motion -> next\n')
       if(i == 1){ tmp_press <- init_press }
       i <- i + 1
       next
@@ -456,17 +335,19 @@ nconso <- function(dive, tank, cons = 20){
     rules <- data.frame(
       rule1 = tank$carac['rule1'], name1 = tank$typo['rule1'], temps1 = NA,
       rule2 = tank$carac['rule2'], name2 = tank$typo['rule2'], temps2 = NA,
-      AF = NA
+      empty = 0, nameE = failure_label, tempsE = NA
       )
     rownames(rules) <- tank$typo['name']
   } else {
     rules <- data.frame(rule1 = unlist(lapply(lapply(tank, '[[', 1), '[', 3)),
                         name1 = unlist(lapply(lapply(tank, '[[', 2), '[', 3)),
-                        temps1 = c(NA, NA),
+                        temps1 = rep(NA, Ltank),
                         rule2 = unlist(lapply(lapply(tank, '[[', 1), '[', 4)),
                         name2 = unlist(lapply(lapply(tank, '[[', 2), '[', 4)),
-                        temps2 = c(NA, NA), 
-                        AF = c(NA, NA))
+                        temps2 = rep(NA, Ltank), 
+                        Empty = rep(0, Ltank), 
+                        nameE = rep(failure_label, Ltank), 
+                        tempsE = rep(NA, Ltank))
     rownames(rules) <- unlist(lapply(lapply(tank, '[[', 2), '[', 5))
   } # check for list of tank or single tank is made in expand
   
@@ -478,7 +359,7 @@ nconso <- function(dive, tank, cons = 20){
     tmp <- rowSums(tmp, na.rm = T)
     if(any(empty_row)){ # once tank empty, he is NA
       tmp[which(empty_row)[1]:length(tmp)] <- NA
-      rules[i-2, 7] <- vcons$time[which(empty_row)[1]-1]
+      rules[i-2, 9] <- vcons$time[which(empty_row)[1]-1]
     }
     l <- length(tmp)
     for(ii in 1:l){ # correction for NA values when absent tank
@@ -503,6 +384,7 @@ nconso <- function(dive, tank, cons = 20){
 
   conso <- list(vcons = vcons, rules = rules, 
                 dtcurve = dtcurve, hour = dive$hour)
+  class(conso) <- 'conso'
   
   return(conso)
 }
@@ -535,8 +417,7 @@ if(FALSE){
   a
   nconso(dive, list(x, y))
   
+  plot(vcons$time, vcons[,4], type = 'l', ylim = c(0, 230))
+  for(i in 5 : ncol(vcons)) lines(vcons$time, vcons[,i], col = i - 2)
+
 }
-
-
-plot(vcons$time, vcons[,4], type = 'l', ylim = c(0, 230))
-for(i in 5 : ncol(vcons)) lines(vcons$time, vcons[,i], col = i - 2)
