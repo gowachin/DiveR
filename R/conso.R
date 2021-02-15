@@ -320,10 +320,29 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
 
   #  TODO : add possible accident here later one ?
 
+  
+  
   #### IDIOT PROOF ####
+  
+  if(class(tank) != 'tank' & !(
+    class(tank) == "list" & all(unique(unlist(lapply(tank, class))) == "tank")
+  )){
+    stop('tank must be a single tank object or a list of tanks')
+  }
+  
+  if(class(dive) != 'dive'){
+    stop('dive must to be a dive object')
+  }
+  
   if (all(cons <= 0) | !is.numeric(cons) | length(cons) > 1) {
     stop("cons must be a single positive numeric value.")
   }
+  
+  if (!is.character(failure_label) | length(failure_label) > 1) {
+    stop("failure_label must be a single character string")
+  }
+  
+  
   # set values to limit computations
   if (class(tank) == "tank") {
     Ltank <- 1

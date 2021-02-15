@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 <!-- [![R build status](https://github.com/gowachin/DiveR/workflows/R-CMD-check/badge.svg)](https://github.com/gowachin/DiveR/actions) -->
-[![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)](https://github.com/gowachin/DiveR)
+[![](https://img.shields.io/badge/devel%20version-0.2.0-blue.svg)](https://github.com/gowachin/DiveR)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end --> R package for dive planification tools. It contains
@@ -65,7 +65,7 @@ diving without training, certification, supervision and regular medical
 assessment. It is also dangerous for trained scuba divers to exceed the
 limitations of their training.
 
-This application will provide planinfication about dive profile and air
+This application will provide planification about dive profile and air
 consumption, without giving any warning if the activity would be
 dangerous or fatal. In doing so, it does not take account of safety
 restrictions, other physical laws, or other important information.
@@ -79,21 +79,21 @@ Note here that all dives simulated will also being at sea level.
 
 ## Actual in work part
 
-Refactorisation of Consumption, plot.conso for multi tank dives.
+-   Consumption attributes.
+-   Redaction of vignette about consumption.
+-   Tests about Consumption
 
 ## To do :
 
+-   Refactorisation of dive for other saturation models
 -   Complete README with examples
 -   Redaction of vignettes
--   doc on new conso and dive functions
 -   make a beautiful doc for every functions
 -   desaturation with complex models
 
 ## Doc in work (mostly missing examples) :
 
 -   attributes summary.dive
-
--   conso bloc press\_time conso
 
 -   deco majoration dtcurve
 

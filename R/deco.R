@@ -194,6 +194,9 @@ majoration <- function(depth, group = "Z", inter = 16) {
 #' Is a list of depth and time for every deco stage.
 #' @param vup 10 m/min max speed up to the deco. 
 #' Speed between deco is fixed to 6
+#' @param dist a distance vector
+#' @param speed speed of the diver
+#' @param way if the dive is one way or the diver return by the same depth
 #' 
 #' @details 
 #' This function will stop if the depth > 65 or time > 180 because the table 

@@ -28,6 +28,12 @@ dive(
 \item{maj}{0 by default}
 
 \item{hour}{NULL not implemented yet}
+
+\item{dist}{a distance vector}
+
+\item{speed}{speed of the diver}
+
+\item{way}{if the dive is one way or the diver return by the same depth}
 }
 \value{
 dive, a dive class object.

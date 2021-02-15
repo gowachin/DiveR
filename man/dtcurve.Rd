@@ -24,6 +24,12 @@ Is a list of depth and time for every deco stage.}
 
 \item{vup}{10 m/min max speed up to the deco. 
 Speed between deco is fixed to 6}
+
+\item{dist}{a distance vector}
+
+\item{speed}{speed of the diver}
+
+\item{way}{if the dive is one way or the diver return by the same depth}
 }
 \value{
 a list, with a vector of depths, a vector of time and the dtr value.

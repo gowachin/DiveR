@@ -1,7 +1,7 @@
 Package: DiveR
 Type: Package
 Title: DiveR
-Version: 0.1.0
+Version: 0.2.0
 Author: Maxime Jaunatre 
 Maintainer: Maxime Jaunatre <maxime.jaunatre@yahoo.fr>
 Description: Package for scubadiving planification.

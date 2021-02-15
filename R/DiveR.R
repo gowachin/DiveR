@@ -48,6 +48,10 @@ check_val <- function(val, zero = FALSE) {
 #' @param vup 10 m/min by default
 #' @param maj 0 by default
 #' @param hour NULL not implemented yet
+#' @param dist a distance vector
+#' @param speed speed of the diver
+#' @param way if the dive is one way or the diver return by the same depth
+#' 
 #' 
 #' @details 
 #' See \code{\link[DiveR]{tablecheck}} for limit values of depth and time.

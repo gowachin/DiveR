@@ -101,6 +101,64 @@ test_that("err_expand", {
   expect_error(expand(list(t1, t2), list("A", "B")), err )
 })
 
+test_that("expand_output", {
+  t1 <- tank(vol = 10, press = 200)
+  t2 <- tank(vol = 12, press = 200)
+  dive <- dive(20, 40)
+  
+  expect_snapshot_value(expand(t1, dive), style = "deparse")
+  expect_snapshot_value(expand(list(t1, t2), dive), style = "deparse")
+})
 
+
+#### Test conso function ####
+
+test_that("err_conso", {
+  
+  t1 <- tank(vol = 10, press = 200)
+  t2 <- tank(vol = 12, press = 200)
+  dive <- dive(20, 40)
+  failure <- 'AF'
+  
+  err <- 'dive must to be a dive object'
+  expect_error(conso(list("A", "B"), list(t1, t2)), err )
+  
+  err <- 'tank must be a single tank object or a list of tanks'
+  expect_error(conso(dive, list("A", "B")), err )
+  expect_error(conso(dive, list(t1, "B")), err )
+  
+  err <- "cons must be a single positive numeric value."
+  expect_error(conso(dive, list(t1, t2), cons = -5), err )
+  expect_error(conso(dive, list(t1, t2), cons = '20'), err )
+  expect_error(conso(dive, list(t1, t2), cons = c(10, 20)), err )
+  
+  err <- "failure_label must be a single character string"
+  expect_error(conso(dive, list(t1, t2), failure_label = 0), err )
+  expect_error(conso(dive, list(t1, t2), 
+                     failure_label = c('Death', "not proud")), err )
+})
+
+# test_that("conso_output", {
+#   back <- tank(12, 200, 
+#                rules = list(rules = c('retour' = 150, 'reserve' = 100),
+#                             sys = "bar"))
+#   back15 <- tank(15, 200, 
+#                  rules = list(rules = c('retour' = 150, 'reserve' = 100),
+#                               sys = "bar"))
+#   relay <- tank(12, 200, 
+#                 rules = list(rules = c('retour' = 120, 'reserve' = 120),
+#                              sys = "bar"), typ = 'relay')
+#   dive <- dive(20, 40)
+#   
+#   expect_snapshot_value(conso(dive, back), style = "deparse") # TODO : expect warning
+#   expect_snapshot_value(conso(dive, back15), style = "deparse")
+#   expect_snapshot_value(conso(dive, list(relay, back)), style = "deparse")
+# 
+#   dive <- dive(20, 40, hour = 67)
+# 
+#   expect_snapshot_value(conso(dive, back), style = "deparse") # TODO : expect warning
+#   expect_snapshot_value(conso(dive, back15), style = "deparse")
+#   expect_snapshot_value(conso(dive, list(relay, back)), style = "deparse")
+# })
 
 
