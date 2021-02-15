@@ -10,7 +10,7 @@
 
 * Consumption functions (`bloc`, `press_time`, `conso`, `plot.conso`) have been trough total refactorisation. 
 
-* `dtime.conso` have been removed. 
+* `dtime.conso` and `press_time` have been removed. 
 
 * `simpl`, `depth_at_time` and `time_at_depth` have been slightly modified to fit the `conso` function.
 

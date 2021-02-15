@@ -84,5 +84,23 @@ test_that("tank_output", {
   expect_equal(unname(t$typo[c('rule1','rule2')]), c("return", "end"))
 })
 
+#### Test expand function ####
+
+test_that("err_expand", {
+
+  t1 <- tank(vol = 10, press = 200)
+  t2 <- tank(vol = 12, press = 200)
+  dive <- dive(20, 40)
+
+  # Errors
+  err <- 'tank must be a single tank object or a list of tanks'
+  expect_error(expand(list("A", "B"), dive), err )
+  expect_error(expand(list(t1, "B"), dive), err )
+
+  err <- 'dive must to be a dive object'
+  expect_error(expand(list(t1, t2), list("A", "B")), err )
+})
+
+
 
 

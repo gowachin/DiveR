@@ -64,15 +64,15 @@ Note here that all dives simulated will also being at sea level.
 
 ## Actual in work part
 
-Refactorisation of Consumption graphics and attributes.
-Redaction of vignette about consumption
+- Consumption attributes.
+- Redaction of vignette about consumption.
+- Tests about Consumption
 
 ## To do : 
 
 - Refactorisation of dive for other saturation models
 - Complete README with examples
 - Redaction of vignettes
-- doc on new conso and dive functions
 - make a beautiful doc for every functions
 - desaturation with complex models
 
@@ -80,11 +80,6 @@ Redaction of vignette about consumption
 
 - attributes
 summary.dive
-
-- conso
-bloc
-press_time
-conso
 
 - deco
 majoration

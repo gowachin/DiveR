@@ -69,6 +69,7 @@ tank <- function(vol, press, rules = list(
   }
   # gas
   gas <- match.arg(gas)
+  # stop("Only air is working at this moment")
   typ <- match.arg(typ)
 
   # TODO : limit vector of 2 positive numeric, negative value trigger warning !
@@ -116,7 +117,7 @@ tank <- function(vol, press, rules = list(
   names(typo) <- c("gas", "typ", "rule1", "rule2", "name")
 
   if (gas != "Air") {
-    stop("Only air is working at this moment") # TODO : imput other gas
+    # TODO : imput other gas
   } else {
     ppo2 <- c(0.21, 1.6)
     dmin <- (ppo2[1] * 70 / 1.47) - 10 # assimilé a ppo2 > 0.18
@@ -135,25 +136,6 @@ tank <- function(vol, press, rules = list(
 }
 
 
-#' press_time
-#'
-#' compute the time at which a pression is obtained. Allow to find mid pression
-#' time or reserve time.
-#'
-#' @param vpress a vector of pression at different times.
-#' @param times a vector of times values that match the vpress vector
-#' @param press an unique value of pression to be reached.
-#'
-#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
-#'
-#' @export
-press_time <- function(vpress, times, press = 100) {
-  part <- c(max(which(vpress > press)), min(which(vpress < press)))
-  tmp <- lm(vpress[part] ~ times[part])
-  timing <- (press - tmp$coefficients[1]) / tmp$coefficients[2]
-  return(timing)
-}
-
 #' expand
 #'
 #' @param tank \code{\link[DiveR]{tank}} object or a list of tank objects.
@@ -164,6 +146,17 @@ press_time <- function(vpress, times, press = 100) {
 #'
 #' @export
 expand <- function(tank, dive) {
+  
+  if(class(tank) != 'tank' & !(
+    class(tank) == "list" & all(unique(unlist(lapply(tank, class))) == "tank")
+    )){
+    stop('tank must be a single tank object or a list of tanks')
+  }
+  
+  if(class(dive) != 'dive'){
+    stop('dive must to be a dive object')
+  }
+  
   dtime <- max(dive$dtcurve$times)
   depth <- depth(dive)
 
@@ -301,8 +294,6 @@ expand <- function(tank, dive) {
         6 + 3 * (i - 1) + 6 * length(tank)
       ] <- tank[[i]]$carac["rule2"]
     }
-  } else {
-    stop("tank must be a single tank object or a list of tanks")
   }
   # trim same time rows,
   table <- table[!table$begin == table$end, ]
