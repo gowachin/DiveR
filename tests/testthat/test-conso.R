@@ -34,6 +34,12 @@ test_that("err_tank_rules", {
 
 test_that("war_tank_rules", {
   # Warnings
+  war <- 'NA values in rules are set to 0 with empty names'
+  expect_warning(t <- tank(vol = 12, press = 200, 
+                      rules = list(rules= c('mid' = 50, 'res' = NA), sys = '%')),
+                 war )
+  expect_equal(unname(t$carac['rule2']), 0)
+  
   war <- 'negative rules are not possible and therefor set to 0'
   expect_warning(t <- tank(vol = 12, press = 200, 
                     rules = list(rules= c('mid' = 50, 'res' = -10), sys = '%')),
@@ -49,16 +55,23 @@ test_that("war_tank_rules", {
   war <- paste('The rule is superior to 100 % Therefore it is changed to',
                'the maximum pression')
   expect_warning(t <- tank(vol = 12, press = 200, 
-                      rules=list(rules= c('mid' = 50, 'res' = 110), sys = '%')),
+                      rules=list(rules= c('mid' = 110, 'res' = 50), sys = '%')),
                  war )
-  expect_equal(unname(t$carac['rule2']), 200)
+  expect_equal(unname(t$carac['rule1']), 200)
   
   war <- paste('The rule is superior to the pression in the tank.',
                'Therefore it is changed to the maximum pression')
   expect_warning(t <- tank(vol = 12, press = 20, 
-                      rules=list(rules= c('mid' = 10, 'res' = 30), sys ='bar')),
+                      rules=list(rules= c('mid' = 30, 'res' = 10), sys ='bar')),
                  war )
-  expect_equal(unname(t$carac['rule2']), 20)
+  expect_equal(unname(t$carac['rule1']), 20)
+  
+  war <- 'Rule 1 must be superior to rule 2, the order is therefor inversed'
+  expect_warning(t <- tank(vol = 12, press = 200, 
+                           rules=list(rules= c('mid' = 50, 'res' = 100), 
+                                      sys ='bar')),
+                 war )
+  expect_equal(t$carac[c('rule1','rule2')], c('rule1' = 100, 'rule2' = 50))
 })
 
 # Test for correct output

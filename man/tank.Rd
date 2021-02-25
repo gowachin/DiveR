@@ -47,5 +47,6 @@ Creation of tank object for usage in consumption part of a dive.
 \details{
 To set a relay tank, rule1 and rule2 must be the same. Therefore the tank
 won't be usable once pressure reach rule2 and until all other tanks are
-not used. If multiple tanks are used, the relay must be the first one in order
+not used. If multiple tanks are used, the relay must be the first one in 
+order.
 }
