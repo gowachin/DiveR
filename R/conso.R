@@ -28,7 +28,9 @@ NULL
 #' @details
 #' To set a relay tank, rule1 and rule2 must be the same. Therefore the tank
 #' won't be usable once pressure reach rule2 and until all other tanks are
-#' not used. If multiple tanks are used, the relay must be the first one in order
+#' not used. If multiple tanks are used, the relay must be the first one in 
+#' order.
+#' 
 #'
 #' @export
 tank <- function(vol, press, rules = list(
@@ -57,7 +59,14 @@ tank <- function(vol, press, rules = list(
   if (!is.numeric(rules$rules) | length(rules$rules) != 2) {
     stop("Element rules of rules argument must be a vector of 2 numeric")
   }
+  if( any(is.na(rules$rules))){
+    warning('NA values in rules are set to 0 with empty names')
+    names(rules$rules)[is.na(rules$rules)] <- ""
+    rules$rules[is.na(rules$rules)] <- 0
+  }
+  
   for (i in 1:length(rules$rules)) {
+    # TODO : add a check for NA values too...
     if (rules$rules[i] < 0) {
       warning("negative rules are not possible and therefor set to 0")
       rules$rules[i] <- 0
@@ -96,6 +105,10 @@ tank <- function(vol, press, rules = list(
         rules$rules[i] <- press
       }
     }
+  }
+  if (rules$rules[1] < rules$rules[2]){
+    warning('Rule 1 must be superior to rule 2, the order is therefor inversed')
+    rules$rules <- rev(rules$rules)
   }
   # limit in time
   # TODO : maybe remove this as it's is poorly defined
@@ -166,7 +179,8 @@ expand <- function(tank, dive) {
     table <- data.frame(
       min_depth = tank$limit["mind"],
       max_depth = tank$limit["maxd"],
-      begin = 0, end = dtime,
+      begin = 0, 
+      end = dtime,
       type = tank$typo["typ"],
       press = tank$carac["press"],
       vol = tank$carac["vol"]

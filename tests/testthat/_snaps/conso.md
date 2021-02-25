@@ -1,9 +1,10 @@
 # expand_output
 
     structure(list(min_depth = 0, max_depth = 20, begin = 0, end = 45.2, 
-        type = "back", press = 100, vol = 10, rul1type = "back", 
-        rul1press = 50, rul1vol = 10, rul2type = "back", rul2press = 50, 
-        rul2vol = 10), row.names = "mind", class = "data.frame")
+        type = structure(1L, .Label = "back", class = "factor"), 
+        press = 100, vol = 10, rul1type = structure(1L, .Label = "back", class = "factor"), 
+        rul1press = 50, rul1vol = 10, rul2type = structure(1L, .Label = "back", class = "factor"), 
+        rul2press = 50, rul2vol = 10), row.names = "mind", class = "data.frame")
 
 ---
 

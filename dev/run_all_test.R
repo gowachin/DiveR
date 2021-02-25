@@ -1,4 +1,7 @@
 
+devtools::test()
+
+
 covr::package_coverage()
 
 library(covr)
