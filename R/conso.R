@@ -58,6 +58,7 @@ tank <- function(vol, press, rules = list(
     stop("Element rules of rules argument must be a vector of 2 numeric")
   }
   for (i in 1:length(rules$rules)) {
+    # TODO : add a check for NA values too...
     if (rules$rules[i] < 0) {
       warning("negative rules are not possible and therefor set to 0")
       rules$rules[i] <- 0
@@ -96,6 +97,10 @@ tank <- function(vol, press, rules = list(
         rules$rules[i] <- press
       }
     }
+  }
+  if (rules$rules[1] < rules$rules[2]){
+    warning('Rule 1 must be superior to rule 2, the order is therefor inversed')
+    rules$rules <- rev(rules$rules)
   }
   # limit in time
   # TODO : maybe remove this as it's is poorly defined
