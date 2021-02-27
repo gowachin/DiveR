@@ -109,6 +109,39 @@ summary_conso <- function(object, ...){
 --> 
 
 
+## Tank consumption
+
+Once the tanks are defined, you can combine them with a dive. The `cons` function will then compute how many gas the diver will consume by following the dive curve and report pressure at different times of the dive. The function will also catch times where the rules of a tank are met. Note here that a new rules about air failure is added to each tank to report when a tank is empty. 
+
+If no available (pressure > 0) tanks are available at some time, the function will return warnings.
+
+For the following examples, we will use a single dive of 40 minutes at 20 meter. There is one desat stop if 3min at 3m.
+
+```{r ex_dive}
+simp_dive <- dive(depth = 20, time = 40, secu = TRUE)
+summary(simp_dive)
+```
+
+For mutliple dives you need to choose one of the two dives. A special case for consecutive dives is at work.
+
+
+### Single Tank
+
+```{r death_conso}
+Tank_12L <- tank(vol = 12, press = 200)
+death <- conso(dive = simp_dive, tank = Tank_12L, 
+               cons = 20, failure_label = 'Air failure')
+plot(death)
+```
+
+
+```{r viable_conso}
+Tank_15L <- tank(vol = 15, press = 200)
+viable <- conso(dive = simp_dive, tank = Tank_15L, 
+               cons = 20, failure_label = 'Air failure')
+plot(viable)
+```
+
 <!--
 ## Figures
 
