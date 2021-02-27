@@ -62,35 +62,8 @@ Despite using diving table as base for computation, no output from this applicat
 
 Note here that all dives simulated will also being at sea level.
 
-## Actual in work part
+## Want to help ?
 
-- Consumption attributes.
-- Redaction of vignette about consumption.
-- Tests about Consumption
-
-## To do : 
-
-- Refactorisation of dive for other saturation models
-- Complete README with examples
-- Redaction of vignettes
-- make a beautiful doc for every functions
-- desaturation with complex models
-
-## Doc in work (mostly missing examples) :
-
-- attributes
-summary.dive
-
-- deco
-majoration
-dtcurve
-
-- graphics
-plot.dive
-
-- mn90
-mn90
-dive
-ndive
+Go check the projects of this repository !
 
 Feel free to fork this, and use it. Any recommendation is welcome :) 
