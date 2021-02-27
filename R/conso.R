@@ -358,7 +358,8 @@ expand <- function(tank, dive) {
 conso <- function(dive, tank, cons = 20, failure_label = "AF") {
 
   #  TODO : add possible accident here later one ?
-
+  # can work by modification of t1 and t2 limits of the tanks !
+  # maybe write a outside function to modify the tanks !
   
   
   #### IDIOT PROOF ####
@@ -391,7 +392,7 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
 
   #### Cut the dive in parts ####
   # expand the tanks availability
-  table <- expand(tank, dive)
+  table <- DiveR:::expand(tank, dive)
   # extract points to cut dive in time and depths
   times <- unique(c(table$begin, table$end)) # unique(unlist(table[,c(3,4)]))
   from_times <- data.frame(times = times, depths = times)
@@ -458,13 +459,6 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
     if (nrow(tankpres) < 1) {
       # case of vertical motion (like square dive first point)
       tankpres <- table[(table$begin < t2 & table$end > t1), ]
-      # tank available at all depths and first pressure > 0
-      tankpres[, press_cols[
-        !((tankpres[1, press_cols] > 0) &
-          (colSums(tankpres[, press_cols] > 0) == nrow(tankpres)))
-      ]] <- 0
-      tankpres <- tankpres[1, ]
-
       if (nrow(tankpres) < 1) {
         # TODO : merge this with the other air failure later.
         # AIR FAILURE HERE /!\
@@ -475,6 +469,14 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
         AIR_FAIL <- TRUE
         break
       }
+      
+      # tank available at all depths and first pressure > 0
+      tankpres[, press_cols[
+        !((tankpres[1, press_cols] > 0) &
+          (colSums(tankpres[, press_cols] > 0) == nrow(tankpres)))
+      ]] <- 0
+      tankpres <- tankpres[1, ]
+      
     }
     #### NEXT on empty tanks !  ####
     if (sum(tankpres[, press_cols]) == 0) {
@@ -559,6 +561,7 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
   rm(i, l, ii, t1, t2, tmp_conso, tmpdtcurve, tmp_press)
   rm(init_press, init_vols, cons, tankpres)
 
+  lcons <- lcons[lcons != 'NULL']
   vcons <- do.call(rbind, lcons)
   vcons <- as.data.frame(apply(vcons, 2, round, 2))
 
