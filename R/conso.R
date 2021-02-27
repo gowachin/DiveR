@@ -6,7 +6,7 @@ NULL
 #' Creation of tank object for usage in consumption part of a dive.
 #'
 #' @param vol tank volume in litre.
-#' @param press tank pression in bar.
+#' @param press tank pressure in bar.
 #' @param rules tank rules to watch during a dive. A list of two named element :
 #' \describe{
 #'   \item{"rules"}{vector of 2 named integer indicating a percentage
@@ -14,6 +14,7 @@ NULL
 #'   \item{"sys"}{character string, either '%' or 'bar'. Percentage must be
 #'   between 0 and 100.}
 #' }
+#' You can set them to 0 if you don't want to use them
 #' @param gas tank gas, by default "Air". Parameter is here for future dev.
 #' @param typ tank type, by default "back"
 #' \describe{
@@ -31,6 +32,12 @@ NULL
 #' not used. If multiple tanks are used, the relay must be the first one in 
 #' order.
 #' 
+#' @examples 
+#' tank(vol = 12, press = 200)
+#' tank(vol = 12, press = 200, 
+#'      rules = list(rules = c('retour' = 120, 'reserve' = 120), 
+#'                   sys = "bar"), 
+#'      typ = 'relay')
 #'
 #' @export
 tank <- function(vol, press, rules = list(
@@ -153,20 +160,19 @@ tank <- function(vol, press, rules = list(
 #'
 #' @param tank \code{\link[DiveR]{tank}} object or a list of tank objects.
 #' Priority of consumption for tanks is set by their order in list.
-#' @param dive \code{\link[DiveR]{dive}} object
+#' @param dive \code{\link[DiveR]{dive}} object.
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
-#' @export
 expand <- function(tank, dive) {
   
-  if(class(tank) != 'tank' & !(
+  if( ! inherits(tank,'tank') & !(
     class(tank) == "list" & all(unique(unlist(lapply(tank, class))) == "tank")
     )){
     stop('tank must be a single tank object or a list of tanks')
   }
   
-  if(class(dive) != 'dive'){
+  if(! inherits(dive, 'dive')){
     stop('dive must to be a dive object')
   }
   
@@ -174,7 +180,7 @@ expand <- function(tank, dive) {
   depth <- depth(dive)
 
   #### Single tank ####
-  if (class(tank) == "tank") {
+  if (inherits(tank,'tank')) {
     # init table
     table <- data.frame(
       min_depth = tank$limit["mind"],
@@ -183,7 +189,7 @@ expand <- function(tank, dive) {
       end = dtime,
       type = tank$typo["typ"],
       press = tank$carac["press"],
-      vol = tank$carac["vol"]
+      vol = tank$carac["vol"], stringsAsFactors = FALSE
     )
 
     # duplicate tank for different step in pression following rules
@@ -191,7 +197,8 @@ expand <- function(tank, dive) {
 
     table <- cbind(
       table, table[, 5],
-      (tank$carac["rule1"] - tank$carac["rule2"]), table[, 7]
+      (tank$carac["rule1"] - tank$carac["rule2"]), table[, 7],
+      stringsAsFactors = FALSE
     )
 
     colnames(table) <- c(
@@ -199,7 +206,8 @@ expand <- function(tank, dive) {
       paste0("rul1", colnames(table)[5:7])
     )
 
-    table <- cbind(table, table[, 5], (tank$carac["rule2"]), table[, 7])
+    table <- cbind(table, table[, 5], (tank$carac["rule2"]), table[, 7],
+                   stringsAsFactors = FALSE)
 
     colnames(table) <- c(
       colnames(table[-c((ncol(table) - 2):ncol(table))]),
@@ -250,8 +258,7 @@ expand <- function(tank, dive) {
     table
 
     #### list of tank ####
-  } else if (class(tank) == "list" &
-    unique(unlist(lapply(tank, class))) == "tank") {
+  } else {
     # create a table per tank
     tank_list <- lapply(tank, expand, dive)
     name <- lapply(lapply(tank, "[[", 2), "[", 5)
@@ -317,7 +324,7 @@ expand <- function(tank, dive) {
 
 #' conso
 #'
-#' @param dive \code{\link[DiveR]{dive}} object
+#' @param dive \code{\link[DiveR]{dive}} object.
 #' @param tank \code{\link[DiveR]{tank}} object or a list of tank objects.
 #' Priority of consumption for tanks is set by their order in list.
 #' @param cons Litre per minute breathed by diver. Single numeric positive value.
@@ -326,6 +333,24 @@ expand <- function(tank, dive) {
 #' string. 'AF' by default.
 #'
 #' @return conso, a conso class object.
+#' 
+#' back <- tank(12, 200, 
+#'              rules = list(rules = c('retour' = 150, 'reserve' = 100),
+#'                           sys = "bar"))
+#' back15 <- tank(15, 200,
+#'                rules = list(rules = c('retour' = 150, 'reserve' = 100),
+#'                             sys = "bar"))
+#'relay <- tank(12, 200,
+#'              rules = list(rules = c('retour' = 120, 'reserve' = 120),
+#'                           sys = "bar"), typ = 'relay')
+#' dive <- dive(20, 40)
+#' 
+#' # Deadly dive as warnings will tell
+#' conso(dive, back)
+#' # Safe dive here
+#' conso(dive, back15)
+#' # Multiple tank dive
+#' conso(dive, list(relay, back)
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -344,7 +369,7 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
     stop('tank must be a single tank object or a list of tanks')
   }
   
-  if(class(dive) != 'dive'){
+  if(! inherits(dive, 'dive')){
     stop('dive must to be a dive object')
   }
   
@@ -357,8 +382,8 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
   }
   
   
-  # set values to limit computations
-  if (class(tank) == "tank") {
+  # set variable to limite redondant call
+  if (inherits(tank,'tank')) {
     Ltank <- 1
   } else {
     Ltank <- length(tank)
@@ -537,11 +562,13 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
   vcons <- do.call(rbind, lcons)
   vcons <- as.data.frame(apply(vcons, 2, round, 2))
 
-  if (class(tank) == "tank") {
+  if (inherits(tank,'tank')) {
     rules <- data.frame(
       rule1 = tank$carac["rule1"], name1 = tank$typo["rule1"], temps1 = NA,
       rule2 = tank$carac["rule2"], name2 = tank$typo["rule2"], temps2 = NA,
-      empty = 0, nameE = failure_label, tempsE = NA
+      empty = 0, nameE = failure_label, tempsE = NA,
+      
+      stringsAsFactors = FALSE
     )
     rownames(rules) <- tank$typo["name"]
   } else {
@@ -554,7 +581,9 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
       temps2 = rep(NA, Ltank),
       Empty = rep(0, Ltank),
       nameE = rep(failure_label, Ltank),
-      tempsE = rep(NA, Ltank)
+      tempsE = rep(NA, Ltank),
+      
+      stringsAsFactors = FALSE
     )
     rownames(rules) <- unlist(lapply(lapply(tank, "[[", 2), "[", 5))
   } # check for list of tank or single tank is made in expand

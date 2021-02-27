@@ -97,10 +97,11 @@ test_that("tank_output", {
   expect_equal(unname(t$typo[c('rule1','rule2')]), c("return", "end"))
 })
 
+
 #### Test expand function ####
 
 test_that("err_expand", {
-
+  # definition of common tanks and dive parameters
   t1 <- tank(vol = 10, press = 200)
   t2 <- tank(vol = 12, press = 200)
   dive <- dive(20, 40)
@@ -115,23 +116,49 @@ test_that("err_expand", {
 })
 
 test_that("expand_output", {
+  # definition of common tanks and dive parameters
   t1 <- tank(vol = 10, press = 200)
   t2 <- tank(vol = 12, press = 200)
   dive <- dive(20, 40)
+
+  exp <- structure(list(
+    min_depth = 0, max_depth = 20, begin = 0, end = 45.2, type = "back",
+    press = 100, vol = 10, rul1type = "back", rul1press = 50, 
+    rul1vol = 10, rul2type = "back", rul2press = 50, rul2vol = 10
+  ), row.names = "mind", class = "data.frame")
+  expect_identical(expand(t1, dive), exp)
   
-  expect_snapshot_value(expand(t1, dive), style = "deparse")
-  expect_snapshot_value(expand(list(t1, t2), dive), style = "deparse")
+  exp <- structure(
+    list(0, 20, 0, 45.2, "back", 100, 10, "back", 100, 12, "back",
+         50, 10, "back", 50, 12, "back", 50, 10, "back", 50, 12), 
+  .Names = c("min_depth", "max_depth", "begin", "end", "back10", "back10_press",
+             "back10_vol", "back12", "back12_press", "back12_vol", rep(NA, 12)),
+  row.names = 1L, class = "data.frame")
+  expect_identical(expand(list(t1, t2), dive), exp)
+  # expect_snapshot_value(expand(list(t1, t2), dive), style = "deparse")
+  
+  # modify for depth limitation
+  t1$limit['mind'] <- 5
+  t1$limit['maxd'] <- 15
+  exp <- structure(
+    list(min_depth = c(0, 5, 15), max_depth = c(5, 15, 20), begin = rep(0, 3), 
+         end = rep(45.2, 3), type = rep("back", 3), press = c(0,100, 0), 
+         vol = rep(10, 3), rul1type = rep("back", 3), rul1press = c(0, 50, 0), 
+         rul1vol = rep(10, 3), rul2type = rep("back", 3), rul2press = c(0, 50, 0),
+         rul2vol = rep(10, 3)),
+    row.names = c("mind", "mind1", "mind2"), class = "data.frame")
+  expect_identical(expand(t1, dive), exp)
+  
 })
 
 
 #### Test conso function ####
 
 test_that("err_conso", {
-  
+  # definition of common tanks and dive parameters
   t1 <- tank(vol = 10, press = 200)
   t2 <- tank(vol = 12, press = 200)
   dive <- dive(20, 40)
-  failure <- 'AF'
   
   err <- 'dive must to be a dive object'
   expect_error(conso(list("A", "B"), list(t1, t2)), err )
@@ -151,27 +178,40 @@ test_that("err_conso", {
                      failure_label = c('Death', "not proud")), err )
 })
 
-# test_that("conso_output", {
-#   back <- tank(12, 200, 
-#                rules = list(rules = c('retour' = 150, 'reserve' = 100),
-#                             sys = "bar"))
-#   back15 <- tank(15, 200, 
-#                  rules = list(rules = c('retour' = 150, 'reserve' = 100),
-#                               sys = "bar"))
-#   relay <- tank(12, 200, 
-#                 rules = list(rules = c('retour' = 120, 'reserve' = 120),
-#                              sys = "bar"), typ = 'relay')
-#   dive <- dive(20, 40)
-#   
-#   expect_snapshot_value(conso(dive, back), style = "deparse") # TODO : expect warning
-#   expect_snapshot_value(conso(dive, back15), style = "deparse")
-#   expect_snapshot_value(conso(dive, list(relay, back)), style = "deparse")
-# 
-#   dive <- dive(20, 40, hour = 67)
-# 
-#   expect_snapshot_value(conso(dive, back), style = "deparse") # TODO : expect warning
-#   expect_snapshot_value(conso(dive, back15), style = "deparse")
-#   expect_snapshot_value(conso(dive, list(relay, back)), style = "deparse")
-# })
+
+test_that("conso_output", {
+  back <- tank(12, 200,
+               rules = list(rules = c('retour' = 150, 'reserve' = 100),
+                            sys = "bar"))
+  back15 <- tank(15, 200,
+                 rules = list(rules = c('retour' = 150, 'reserve' = 100),
+                              sys = "bar"))
+  relay <- tank(12, 200,
+                rules = list(rules = c('retour' = 120, 'reserve' = 120),
+                             sys = "bar"), typ = 'relay')
+  dive <- dive(20, 40)
+  
+  # deadly dive
+  war1 <- 'No tank is available between 40 and 41.7 minutes so you died. Try again !'
+  war2 <- 'No tank is available between 41.7 and 44.7 minutes so you died. Try again !'
+  war3 <- 'No tank is available between 44.7 and 45.2 minutes so you died. Try again !'
+  w <- capture_warnings(c <- conso(dive, back))
+  expect_match(w, war1, all = FALSE)
+  expect_match(w, war2, all = FALSE)
+  expect_match(w, war3, all = FALSE)
+  expect_snapshot(c)
+  # safe dive
+  expect_snapshot(conso(dive, back15))
+  # multiple tank dive
+  expect_snapshot(conso(dive, list(relay, back)))
+
+  dive <- dive(20, 40, hour = 67)
+  # safe dive now
+  expect_snapshot(conso(dive, back))
+  # safe dive
+  expect_snapshot(conso(dive, back15))
+  # multiple tank dive
+  expect_snapshot(conso(dive, list(relay, back)))
+})
 
 

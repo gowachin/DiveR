@@ -17,7 +17,7 @@ tank(
 \arguments{
 \item{vol}{tank volume in litre.}
 
-\item{press}{tank pression in bar.}
+\item{press}{tank pressure in bar.}
 
 \item{rules}{tank rules to watch during a dive. A list of two named element :
 \describe{
@@ -25,7 +25,8 @@ tank(
   or a pression. The names will be used in the plot function later}
   \item{"sys"}{character string, either '%' or 'bar'. Percentage must be
   between 0 and 100.}
-}}
+}
+You can set them to 0 if you don't want to use them}
 
 \item{gas}{tank gas, by default "Air". Parameter is here for future dev.}
 
@@ -49,4 +50,12 @@ To set a relay tank, rule1 and rule2 must be the same. Therefore the tank
 won't be usable once pressure reach rule2 and until all other tanks are
 not used. If multiple tanks are used, the relay must be the first one in 
 order.
+}
+\examples{
+tank(vol = 12, press = 200)
+tank(vol = 12, press = 200, 
+     rules = list(rules = c('retour' = 120, 'reserve' = 120), 
+                  sys = "bar"), 
+     typ = 'relay')
+
 }

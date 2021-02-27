@@ -10,7 +10,7 @@ expand(tank, dive)
 \item{tank}{\code{\link[DiveR]{tank}} object or a list of tank objects.
 Priority of consumption for tanks is set by their order in list.}
 
-\item{dive}{\code{\link[DiveR]{dive}} object}
+\item{dive}{\code{\link[DiveR]{dive}} object.}
 }
 \description{
 expand
