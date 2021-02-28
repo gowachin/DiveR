@@ -9,10 +9,18 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<style>
+body {
+text-align: justify}
+</style>
+
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.height = 6.1,
+  fig.width = 8.5,
+  dpi = 96
 )
 ```
 
@@ -38,13 +46,11 @@ Default rules are also set, which will message the user when the tank is half em
 # set in percentage
 tank2 <- tank(vol = 12, press = 200, 
               rules = list(rules = c('mid' = 50, 'quarter' = 25), sys = '%'))
-tank2$carac[c('rule1', 'rule2')] # values
-tank2$typo[c('rule1', 'rule2')] # names
+rules(tank2)
 # set in bar
 tank3 <- tank(vol = 12, press = 200, 
               rules = list(rules = c('return' = 130, 'end' = 80), sys = 'bar'))
-tank3$carac[c('rule1', 'rule2')] # values
-tank3$typo[c('rule1', 'rule2')] # names
+rules(tank3)
 ```
 
 ### Tank types
@@ -60,7 +66,6 @@ The easier way to input this interdiction is to set the two rules at same value.
 ```{r relay_tank}
 relay <- tank(vol = 12, press = 180, typ = 'relay',
               rules = list(rules = c('gap' = 120, 'end_gap' = 120), sys = 'bar'))
-relay$carac[c('rule1', 'rule2')]
 ```
 <!-- Other gas not yet included.
 
@@ -87,13 +92,11 @@ The parameters of a tank can be retrieved with specified function. We can find t
 ```{r attribute_tank}
 pressure(relay)
 volume(relay)
+rules(relay)
 ```
 
 <!-- 
 ```{r tmp_attribute_tank, include = FALSE}
-rules <- function(x){
-
-}
 
 summary_conso <- function(object, ...){
   # parameters volume and pressure
@@ -130,7 +133,7 @@ First we try to use a tank with a volume of 12L at 200 bar. The diver will breat
 
 A rapid observation of the consumption if possible by ploting the consumption object. We can easily see when the pressure met the rules and when the diver died (40min). This was also printed in warnings with specified times with missing gas.
 
-```{r death_conso}
+```{r death_conso, dev='png', out.width="100%"}
 Tank_12L <- tank(vol = 12, press = 200)
 death <- conso(dive = simp_dive, tank = Tank_12L, 
                cons = 20, failure_label = 'Air failure')
@@ -140,7 +143,7 @@ Once we observed this, we can solve the issue by using a different tank for exam
 
 This solution work and the diver get to the end of the dive alive ! Hourra ! 
 
-```{r viable_conso}
+```{r viable_conso, dev='png', out.width="100%"}
 Tank_15L <- tank(vol = 15, press = 200)
 viable <- conso(dive = simp_dive, tank = Tank_15L, 
                cons = 20, failure_label = 'Air failure')
@@ -157,23 +160,16 @@ First we can check the pressure at the end of the dive. This can be helpful to s
 pressure(death)
 ```
 
-<!-- 
+However this does not tell us when this happened. To find out when, we can check when the rules have been met with the `rules` function. This will help us check the dive instructor interdiction to use the reserve of the tank (here 50bar) in both simulations.
 
-However this does not tell us when this happened. To find out when, we can check when the rules have been met with the `rules` function. This will help us check if the dive instructor interdiction to use the reserve of the tank (here 50bar) in both simulations.
-
-```{r rules_conso, include = FALSE}
-
-rules <- function(conso, tankn, n){
-  # check if any rules are crossed for every tank.
-  # tank n  being the number of the tank used, by default 0 will show all the tanks
-  # n is the number of the rule 1 rule1, 2 rule2, 3 AF, 0 all (default), 
-  # print('hello')
-}
-
+```{r rules_conso}
 rules(death)
 rules(viable)
-
 ```
+
+So, here, despite the diver in `viable` make it alive to the end of the dive, he didn't respect the second rule of ending the dive with 50 bar at the end.
+
+<!-- 
 
 Finally we can find all information in a summary. 
 

@@ -19,8 +19,8 @@
       12     0  45.2     NA
       
       $rules
-             rule1  name1 temps1 rule2   name2 temps2 empty nameE tempsE
-      back12   150 retour     10   100 reserve     20     0    AF     40
+             rule1  name1 time1 rule2   name2 time2 empty nameE timeE
+      back12   150 retour    10   100 reserve    20     0    AF    40
       
       $dtcurve
            times depths pressure
@@ -56,8 +56,8 @@
       7   11.5  45.2  29.16
       
       $rules
-             rule1  name1 temps1 rule2   name2 temps2 empty nameE tempsE
-      back15   150 retour   12.5   100 reserve     25     0    AF     NA
+             rule1  name1 time1 rule2   name2 time2 empty nameE timeE
+      back15   150 retour  12.5   100 reserve    25     0    AF    NA
       
       $dtcurve
           times depths pressure
@@ -93,9 +93,9 @@
       8   11.5  45.2   86.45    100
       
       $rules
-              rule1  name1 temps1 rule2   name2 temps2 Empty nameE tempsE
-      relay12   120 retour     16   120 reserve     16     0    AF     NA
-      back12    150 retour     26   100 reserve     36     0    AF     NA
+              rule1  name1 time1 rule2   name2 time2 Empty nameE timeE
+      relay12   120 retour    16   120 reserve    16     0    AF    NA
+      back12    150 retour    26   100 reserve    36     0    AF    NA
       
       $dtcurve
            times depths pressure
@@ -144,8 +144,8 @@
       12     0  45.2     NA
       
       $rules
-             rule1  name1 temps1 rule2   name2 temps2 empty nameE tempsE
-      back12   150 retour     10   100 reserve     20     0    AF     40
+             rule1  name1 time1 rule2   name2 time2 empty nameE timeE
+      back12   150 retour    10   100 reserve    20     0    AF    40
       
       $dtcurve
            times depths pressure
@@ -181,8 +181,8 @@
       7   11.5  45.2  29.16
       
       $rules
-             rule1  name1 temps1 rule2   name2 temps2 empty nameE tempsE
-      back15   150 retour   12.5   100 reserve     25     0    AF     NA
+             rule1  name1 time1 rule2   name2 time2 empty nameE timeE
+      back15   150 retour  12.5   100 reserve    25     0    AF    NA
       
       $dtcurve
           times depths pressure
@@ -218,9 +218,9 @@
       8   11.5  45.2   86.45    100
       
       $rules
-              rule1  name1 temps1 rule2   name2 temps2 Empty nameE tempsE
-      relay12   120 retour     16   120 reserve     16     0    AF     NA
-      back12    150 retour     26   100 reserve     36     0    AF     NA
+              rule1  name1 time1 rule2   name2 time2 Empty nameE timeE
+      relay12   120 retour    16   120 reserve    16     0    AF    NA
+      back12    150 retour    26   100 reserve    36     0    AF    NA
       
       $dtcurve
            times depths pressure

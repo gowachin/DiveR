@@ -569,9 +569,9 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
 
   if (inherits(tank,'tank')) {
     rules <- data.frame(
-      rule1 = tank$carac["rule1"], name1 = tank$typo["rule1"], temps1 = NA,
-      rule2 = tank$carac["rule2"], name2 = tank$typo["rule2"], temps2 = NA,
-      empty = 0, nameE = failure_label, tempsE = NA,
+      rule1 = tank$carac["rule1"], name1 = tank$typo["rule1"], time1 = NA,
+      rule2 = tank$carac["rule2"], name2 = tank$typo["rule2"], time2 = NA,
+      empty = 0, nameE = failure_label, timeE = NA,
       
       stringsAsFactors = FALSE
     )
@@ -580,13 +580,13 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
     rules <- data.frame(
       rule1 = unlist(lapply(lapply(tank, "[[", 1), "[", 3)),
       name1 = unlist(lapply(lapply(tank, "[[", 2), "[", 3)),
-      temps1 = rep(NA, Ltank),
+      time1 = rep(NA, Ltank),
       rule2 = unlist(lapply(lapply(tank, "[[", 1), "[", 4)),
       name2 = unlist(lapply(lapply(tank, "[[", 2), "[", 4)),
-      temps2 = rep(NA, Ltank),
+      time2 = rep(NA, Ltank),
       Empty = rep(0, Ltank),
       nameE = rep(failure_label, Ltank),
-      tempsE = rep(NA, Ltank),
+      timeE = rep(NA, Ltank),
       
       stringsAsFactors = FALSE
     )

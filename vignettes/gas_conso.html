@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Maxime Jaunatre" />
+
+<meta name="date" content="2021-02-28" />
+
+<title>Gas consumption</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Gas consumption</h1>
+<h4 class="author">Maxime Jaunatre</h4>
+<h4 class="date">2021-02-28</h4>
+
+
+
+<style>
+body {
+text-align: justify}
+</style>
+<p>The package <code>{DiveR}</code> provide functions to simulate gas consumption. It does so by using tank object and putting them in link with a dive curve and few parameters. This vignette will demonstrate the workflow to use tanks, for a dive with a single tank to using multiples ones on different setups.</p>
+<div id="tank-creation" class="section level2">
+<h2>Tank creation</h2>
+<p>A tank can basically be set by 2 important parameters : a volume <code>vol</code> and a pressure <code>press</code>. Other input are used to set rules to define when and where the tank can be used to breath.</p>
+<p>Volume is set in litre and pressure in bar.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DiveR)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>tank1 <span class="ot">&lt;-</span> <span class="fu">tank</span>(<span class="at">vol =</span> <span class="dv">12</span>, <span class="at">press =</span> <span class="dv">200</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>tank1</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $carac</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   vol press rule1 rule2 </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    12   200   100    50 </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $typo</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      gas      typ    rule1    rule2     name </span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &quot;Air&quot;   &quot;back&quot;    &quot;mid&quot;    &quot;res&quot; &quot;back12&quot; </span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $limit</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mind maxd   t1   t2 </span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0   66   NA   NA </span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;tank&quot;</span></span></code></pre></div>
+<p>We can see that many values are set by default, the principal one being the gas type. At this time only air is used and thus tanks are limited between the surface (0) and 66m of depth.</p>
+<p>Default rules are also set, which will message the user when the tank is half empty, 3/4 empty and when there is no gas left in it. You can set them like below, and name the rules too.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set in percentage</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>tank2 <span class="ot">&lt;-</span> <span class="fu">tank</span>(<span class="at">vol =</span> <span class="dv">12</span>, <span class="at">press =</span> <span class="dv">200</span>, </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">rules =</span> <span class="fu">list</span>(<span class="at">rules =</span> <span class="fu">c</span>(<span class="st">&#39;mid&#39;</span> <span class="ot">=</span> <span class="dv">50</span>, <span class="st">&#39;quarter&#39;</span> <span class="ot">=</span> <span class="dv">25</span>), <span class="at">sys =</span> <span class="st">&#39;%&#39;</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rules</span>(tank2)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     mid quarter </span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     100      50</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># set in bar</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>tank3 <span class="ot">&lt;-</span> <span class="fu">tank</span>(<span class="at">vol =</span> <span class="dv">12</span>, <span class="at">press =</span> <span class="dv">200</span>, </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">rules =</span> <span class="fu">list</span>(<span class="at">rules =</span> <span class="fu">c</span>(<span class="st">&#39;return&#39;</span> <span class="ot">=</span> <span class="dv">130</span>, <span class="st">&#39;end&#39;</span> <span class="ot">=</span> <span class="dv">80</span>), <span class="at">sys =</span> <span class="st">&#39;bar&#39;</span>))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">rules</span>(tank3)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; return    end </span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    130     80</span></span></code></pre></div>
+<div id="tank-types" class="section level3">
+<h3>Tank types</h3>
+<p>By default, the tank type is set to <em>back</em>, a category to describe back-mounted tanks commonly used by divers. However it is possible to have tanks dedicated to specific usage in a relay or at the end of a dive.</p>
+<div id="relay-tank" class="section level4">
+<h4>Relay tank</h4>
+<p>A tank used at the beginning and the end of a dive. Mostly used in cave diving. This type is attributed to tanks where there is an interdiction of usage between 2 times.</p>
+<p>The easier way to input this interdiction is to set the two rules at same value. During the dive, the tank will be used until pressure match 120b. Then the diver will use other tanks up to their second rules (ex : back tank reserve at 50b). When done, the diver will get back to the relay tank to finish the dive with it.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>relay <span class="ot">&lt;-</span> <span class="fu">tank</span>(<span class="at">vol =</span> <span class="dv">12</span>, <span class="at">press =</span> <span class="dv">180</span>, <span class="at">typ =</span> <span class="st">&#39;relay&#39;</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">rules =</span> <span class="fu">list</span>(<span class="at">rules =</span> <span class="fu">c</span>(<span class="st">&#39;gap&#39;</span> <span class="ot">=</span> <span class="dv">120</span>, <span class="st">&#39;end_gap&#39;</span> <span class="ot">=</span> <span class="dv">120</span>), <span class="at">sys =</span> <span class="st">&#39;bar&#39;</span>))</span></code></pre></div>
+<!-- Other gas not yet included.
+
+#### Desat tank
+
+A tank used at the end of a dive to desaturate azote during ascent part of the dive. Often limited to a lower depth because it use other gas than air. This type of tank are tanks that divers can't use until he has used other tanks or passed the dive end point.
+
+You can add an interdiction of using a tank by setting the first rule with the same value as the tank pressure.
+
+
+```r
+desat <- tank(vol = 12, press = 180, typ = 'relay',
+              rules = list(rules = c('gap' = 100, 'end_gap' = 25), sys = '%'))
+desat$carac[c('rule1', 'rule2')]
+#> rule1 rule2 
+#>   180    45
+```
+-->
+<p>As these tanks are used in combination with a back-mounted tank, their usage will be described in the multiple tank usage part. The algorithm of usage will be described, don’t fear not understanding it right now.</p>
+</div>
+</div>
+</div>
+<div id="tank-attributes" class="section level2">
+<h2>Tank attributes</h2>
+<p>The parameters of a tank can be retrieved with specified function. We can find the pressure of any tank.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pressure</span>(relay)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 180</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">volume</span>(relay)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 12</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rules</span>(relay)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     gap end_gap </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     120     120</span></span></code></pre></div>
+<!-- 
+
+
+
+-->
+</div>
+<div id="tank-consumption" class="section level2">
+<h2>Tank consumption</h2>
+<p>Once the tanks are defined, you can combine them with a dive. The <code>conso</code> function will then compute how many gas the diver will consume by following the dive depth curve and report pressure at different times of the dive. The function will also catch times where the rules of a tank are met. Note here that a new rules about air failure is added to each tank to report when a tank is empty.</p>
+<p>If no tanks are available (pressure &gt; 0) at some time, the function will return warnings to highlight these times.</p>
+<p>For the following examples, we will use a single dive of 40 minutes at 20 meter. There is one desaturation stop for 3min at 3m.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>simp_dive <span class="ot">&lt;-</span> <span class="fu">dive</span>(<span class="at">depth =</span> <span class="dv">20</span>, <span class="at">time =</span> <span class="dv">40</span>, <span class="at">secu =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(simp_dive)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Dive for : 40 minutes at 20 meters</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Total dive time is 45.2 with a dive ascent of 5.2 minutes</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 stops :   3 minutes at 3 meters </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; The dive group is H</span></span></code></pre></div>
+<p>For mutliple dives you need to choose one of the two dives. A special case for consecutive dives is at work.</p>
+<div id="single-tank" class="section level3">
+<h3>Single Tank</h3>
+<p>First we try to use a tank with a volume of 12L at 200 bar. The diver will breathe 20L/min, which is the default value of the function.</p>
+<p>A rapid observation of the consumption if possible by ploting the consumption object. We can easily see when the pressure met the rules and when the diver died (40min). This was also printed in warnings with specified times with missing gas.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Tank_12L <span class="ot">&lt;-</span> <span class="fu">tank</span>(<span class="at">vol =</span> <span class="dv">12</span>, <span class="at">press =</span> <span class="dv">200</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>death <span class="ot">&lt;-</span> <span class="fu">conso</span>(<span class="at">dive =</span> simp_dive, <span class="at">tank =</span> Tank_12L, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">cons =</span> <span class="dv">20</span>, <span class="at">failure_label =</span> <span class="st">&#39;Air failure&#39;</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in conso(dive = simp_dive, tank = Tank_12L, cons = 20, failure_label =</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &quot;Air failure&quot;): No tank is available between 40 and 41.7 minutes so you died.</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Try again !</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in conso(dive = simp_dive, tank = Tank_12L, cons = 20, failure_label =</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &quot;Air failure&quot;): No tank is available between 41.7 and 44.7 minutes so you died.</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Try again !</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in conso(dive = simp_dive, tank = Tank_12L, cons = 20, failure_label =</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &quot;Air failure&quot;): No tank is available between 44.7 and 45.2 minutes so you died.</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Try again !</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(death)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAzAAAAJJCAMAAABCjCKUAAAACVBMVEUAAABpaWn///9+Kjz1AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAYgklEQVR4nO2djZriKgxAqe//0PfuaGurbSUQSALnfOtUnQqacDb0b0wPAMgmWb8BgEggDIAAhAEQgDAAAhAGQADCAAhAGAABCAMgAGEABCAMgACEARCAMAACEAZAAMIACEAYAAEIAyAAYQAEIAyAAIQBEIAwAAIQBkAAwgAIQBgAAQgDIABhAAQgDIAAhAEQgDAAAhAGQADCAAhAGAABCAMgAGEABCAMgACEARCAMAACEAZAAMIACEAYAAEIAyAAYQAEIAyAAIQBEIAwAAIQBkAAwgAIQBgAAQgDIABhAAQgDIAAhAEQgDAAAhAGQADCAAhAGAABCAMgAGEABCAMgACEARCAMAACEAZAAMIACEAYAAEIAyAAYQAEIAyAAIQBEIAwAAIQBkAAwgAIQBgAAQgDIABhAAQgDIAAhAEQgDAAAhAGQICyMAkgJFbC6DY3DXpxIwNFIEwsEMYYhIkFwhiDMLFAGGMQJhYIYwzCxAJhjEGYWCCMMQgTC4QxBmFigTDGIEwsruJ2/nz6uLc/Uk0GikCYWJQJ8/IkHZ7TfFvzgDCxqKowCFMPwsTiWphnFVknXc9l2l7xOTkjA4UgTCwuhUl/t9die7i94HvThQwUgTCxuJ2SveXY7n3Wk+9KAyIQJha/hEnvudjjWWgOr0sfrwApCBOLH8Kk11bLRYVJn68AKQgTi1/CvO6/H6bD7zNaglsQJhbijf59bUGYehAmFhm7lV+2pLTXZNvXvG3WkIEiECYWenEjA0UgTCwQxhiEiQXCGIMwsUAYYyIJs22wHv6cmuTZ+CDMGRfZ3j17GBtn62Z3pb5is+a2faTvnaXCZwcAYU64yPZ22DZ9r148MhAmFghzgkyY3bVBBUGII8z2CQ//QWQ/OwgI8835GDhJ/8sUhEEY05as+SnMurXyXXAmE0b47AggzDfXY+B8ayWd3BN2prliq+YQ5h8G39vgnl/C7J893C0JAcJAdE6zvdtQeZzfLfsvA2EgOufCfNTRL2EKB0UjYX4W/cLZYzrckT4LY3KZ7V2Z+RSmdFA0EeZ9hFWlud1L0umdnGdhXM7HwGPvyteznoQ5nzkWN/d+zecJEEnwLAzM+RjYba18P1u65yOSMADmIAyAgEDbMAD2BNpLBmBPnOMwACVYDVyEgYho7yRlSgZDo31YYYCN/hHPJwQl1EfFCLuV8QWuUB8XCAMDoz8uOgvzdUWGylK7PZajLFPa31Fp93LYfw713BV3rfY6cLmFBWBP0h8ZY+wlQxg4ISV9YxoJ0725Z9nVbRSCgzDXzT1jgjHwwaLcXhthNqe77CXbtUeRgSMhhEnb+t2E2eKCMrAngjA7V/oLgzGwJ44w95fTtxMGZWAHwpxziAvGwEoEYXbG2AiDMrASQph1vN7sAG8sDMbAkxjCdG/uJC4oA/q+DCwMxgDCXHIaGJSZHoS54DwwGDM74wijfP3DotweyzGW+uMie4TnrmjS3PX/JBSZqRmnwug2dxcYlJkYhLngLjAYMy8Ic8F9YFBmUtR9mUQYjJkUhLniZ2RQZkYQ5orfkcGYCUGYK3IigzLTgTBXZEUGY2YDYa7IjAzKjMmyLH8/v55X72kyYfQ7BgcszxvC5JMfGYrMcCzrz89RoO/LhMJQZIYDYeSIQkORGZCzETCSMLancSfr085Zqi7/3+g/e35p0F/2CM9d0aQ58f8lFJnRGL3C6DZXEBqMGYyTIYAwlxSEhiIzCsvu58kvVJlYGIrMKCCMnLLQUGTG4HXg8uxpbeYWhiIzCMv3Qf4HwtxRHBuKzLggzDUVsUGZUfk68H9ah2QgDMYMy/L9sNoYhPkHygzJcvKo1hiE+QNjRuRWmOU5Q5NO0xDmBcqMx+2e5vclZ7ITd9VXNGlOYYcIxozG9+Vk+2qyHH/kgjBvUGYs7g/NIEw9GDMU782VXWk53gkkjPJ1Ckpfa5AaXa/BUnm55HB83fK33K6bWf6uo/n360XUf/YIz13RpDm1g7oUmRgU5PtrL9kjVIXRbU7xLAiUiUBJvo97xBBGC4wJQFG+2Uv2RvU8O5RxT4vzKrNAmDMwxjsIU4l2AFHGNwhTif5Xs2GMY8x8QZhrUMYvCFNLk4vrMMYrCFNLmwiijFMQppZWEcQYlyBMLc0iSJHxCMLU0jCCGOMPhKmlZQQpMu5AmFraRhBjnDGhMNrXR7S9/iL1us6DZdZyses/e4TnrmjSXPv/cigynpiwwug21yGCbMk4Yjhh0lrCdJr7TY8IYowbBhNmVeVGmYjCUGTcMJYw6fRucXNZdIogxrjAzheEEUKR8QDCVNMvhChjz2DCDLsN8wRjzBlNmEH3km2gjDHjCdO7uc4hxBhbEKaa3iFEGUsGE+a56v2cLLowGGPJiMK8f9Q2l4VBCFHGjAGFSe+7tc1lYRFCjLECYaqxCSHK2DCaMP+Powth0oH1CYVl4+thuE7G1XIx7P9u5B+Geu6Kz7XT+NswTygyBgxWYXJeM4wwGNMfQ184DqMAynQGYeqxjCHGdAZh6jEVBmX6gjD1GAuDMT0ZTZi0Q6G5LKyFQZmOjCZMzsrjCYMx3RhPmN9rDygMyvRiQGF6N+dDGP2PBWcgTD1OhKHI9ABh6vEiDEWmAwhTjx9hKDLNQZh6HAlDkWnNlMIon3ZtdHr/xfJ9EIql/nIx7T97hOeuaNKcrwrzoMi0xPa8QfUVTZpzJwxbMu1AGAXcCUORaQbCKOBQGIpMIxBGAY/CUGTagDAK+BSGItMChFHAqTAo0wCEUcCtMBijDsIo4FcYlNEGYRTwLAzG6IIwCrgWBmVUQRgFnAuDMYoEEya96NRvJt6FQRk9IgmzE6XOmfmEwRglbFMtEyadPNe430wCCIMyOkQSRrFf5esUfF0Pc7V8z2ZZFi8X2/6zR/jHspIpK8yDIqNAsAqDMHVgTC3BhFEa6tMKgzK1BBMmrXTqN5NAwmBMHcGE6d1vJpGEQZkqggpDhakBY8qJJgxTMhVQppRgwqTn3dp0Ty8MxpQSTxgNYxAGZQpBGA0iCqMfhSlAGA1iCkORkWP99b/SFRFGF4wREk2Yx+tUtF79ZhJWGIqMkHDCdO43k7jCUGRkIIwKkYWhyEiIJ4zCYUv96xRiXA9zuUzK7Q28XIz7zx7hxztsw+hCkcklWoX5XLbuN5PowrAlkwvCqBBfGIpMHgijwgDCUGSyiCYM2zANocj8JpQwaUenfjMZQxiU+U0oYQz6zWQUYTDmFwijwjDCoMwPEEaFgYTBmDusEy3chil8cUW/mVjHUReUucQ60cIKs9vYr9vuR5hbMOYK60QX7FZmL1kPUOYc60SzDeMVjDnFOtEI4xeUOcE60QjjGIz5xjrRZsIoX6cQ/HoYrpPJXS7W7yN7hOeuaNKc+X88raDIfGCdaITxDsocsE50I2HSWsJ0mvuNdRwbgjF7rBNdIMw/E+5ftqb4JtUIIwBl3lgnuuDA5fovp83L1RBGAsZsWCdaLEza3X63iTBKoMwT8zwjTBAw5g/zPLcQhm2YJqDMw0GeW2zDPNhL1gSMcZDnsr1k9alDmBJQxjzPHLiMxezGmOe5aBsmY22mZI2YvMiY57mJMGz0t2RqY8zzXLTRn98mu5UbMHORMc+zvMKsZLX5uVY68NBbLsrt9V0+hLdkf5q90dL+Mo6fplwM/bxVqTBNSNMWGfM8N9lLxjZMY34fCBsV8zy3mJJta2n0m4l5IMspDMWcRcY8z6UVpjZbCLNREIpU+sLo2Ke5eEpWmS2EqeH3lHdQ7NOMMBER7OMfC/s0I4w5VaGYrMjYp7mFMGlHdb+Z2EeymOJtmOKXx8U+zcV7ySpbRZgaDtGbqcjYp7nJcZiMtRFGQrpYnj8cGPs0NxKmd3MOIllMRiguRHn/fhZl7NMsF+Z5OhPHYdQoOOno+yWTGGOfZvk2zOsHe8lak7bTLR+v0//uKs0cRcY+zUXCpAfCtGc7O/n5L+2kOI3eDMbYpxlhzLncMHnf1or+6wQ+3TfmEPs0lwiTkbvfzQ13nUT58ibiF8JcXQ/z3uU/6HKxfx8X2TpN3/POYXJQChXmJ7fCXL1m8CJjn2a5MJ37zcQ+kuqUCDO4Mg6yjDDmZE7Jcuv6yMY4yHLJlOzBcRhN8oT5tVt5/8JhlXGQZbEw69SgMikIU8OP6A1rjIMsFwmTHghjys/oDaqMgywjjDlNxvaYxjjIcokwhx02rfvNxEEoSykIxawb/w6yzHGYiGRFb0BjHGSZ3coRyYzecMo4yDLCmNNwVI9mjIMsFwizPyDQvt9MHISylEbbMK81h1LGQZYLtmE0DsMgTBWC6A1ljIMss1s5IqLoDaSMgywjjDnbhWKCm7iDIfCQZDNhlK9TiHw9jHwp/X6YlHy878rl4uF9ZI/w3R22YYwRR2+MIuMhyXJhNtn69JuJh1i6ZgRlPCS5QJi+/WbiIZa+GcAYD0ku2obp2W8mHmLZj7LohVfGQ5IRJiKF0YtujIckF2309+w3Ew+xDEBsZTwkWV5hVjr1m4mHWEYgtDEeksxGf0RqohdYGQ9JRpiIVEUvrjEekiwVRivaCGNIVGU8JFkojMIxfmG/mXiIZRyCGuMhyTJh3j+69ZuJh1j2oz56IZXxkGSEiYhC9AIa4yLHCDMt4ZRxkWOEmZdoxrjIsZkwytcpcD1MUTvJx+fJWy4u3kf2CN+G+TvKFVBhalCLXqgi4yLHwt3K/fvNxEUwIxJIGRc5RpjZiWOMixwjTER0oxdFGRc5RpiIaCcjhjEucoww8AiijIscIwz8I4IxLnKMMBFpMbr9K+MixwgTkSZj270xLnKMMLDhWxkfKUYYeOPaGB8pRpiItBvXjpXxkWKEiUjDUe3XGB8pRhj4wKsyPlJsJozyaddznd7feJmcvI/jcvHxPrJHeO6KJs05+e+nF61rgMsi4yPFCBOR9uPZoTE+UowwcIq/IuMjxQgDF3gzxkeKESYifcaysyLjI8UIE5FeI9mVMT5SjDBwg6ci4yPFjYRZd+crNfcbH9EcEDfGOMlwE2FWVW6UQZgaeo5iL0XGSYZbCJNO7xY3l4WTcHai7xj2YYyTDCMM/MRFkXGSYYSBDBwY4yTDbMNEpP/4tS8yTjLMXrKIWIxea2OcZJjjMJCJcZFxkuHOwqQDD73lotzeFMv0tEB2S0bXoSzW1+O0ux4mbW6oNJeFk/9/OmH0f/1tRlvjJMPNhHn/qG0uCyfh7ISVMJZbMk4y3EqY9L5b21wWTsIZCnEOZHMSZZxkGGHmpUgYsyLjJMNNhPm3WfnjVQhTg92U7G9h0r2TDLc7DnP/IoSpwVYYk/69JLjpbmX2krmmcEr2d6+7Ml4SzIHLeakQpn+R8ZJghImI9ZTs70HfN+ElwQgTEQ/CdH4XXhKMMPNSNSX7e9xRGS8JRph5qRamZ5HxkmCEiUjbcZq20yz/Hr3ryEm33YqMlwQjTEQaC7OeApPS4bSN8247GeMlwQgzL1c5OJw8uy8h5y/oU2S8JNhMGOXrFPh+mLLlaW62BL3W3P3itJ31CpuW73fxEa8m18MYNOfmP6A+tN6GOXaxDZLLbjsUGS8JRpiI9BXmfhvm9avWynhJMMLMy48pWeZG//q7tsa4yS/CzMutMJm7lfcva6mMm/wiTES67JcSd9vSGDf5RZiI+BSmpTJu8osw8yLOwe8XNDPGTX4RZl4aCNNMGTf5RZiIeJ2S/a3U5M25yS/CRMSzMG2UcZNfhJmXJlOyv/X0jXGTX4SZl2bCNFDGTX4RJiK+p2R/qyq/RTf5RZiI+BdGWxk3+UWYedlOFxPchM2r4Sa/ZsIoX6fA9TAOl4rXyfjJb/YIz13RpDk//wN1IcKU7O8FWm/UT3oRJiJRhFFTxk96EQaaomOMn/QiDDRGQxk/6UWYiMSZkv29rP7t+kkvwkQkljAKyvhJL8JAB2qN8ZNehIEu1CnjJ70IE5FoU7K/F9e82k96ESYiEYWpUsZPehEGulFujJ/0Igx0pFQZP+lFmIjEnJL9NVHWhp/0IkxE4gpTpoyj7JoJo3zatZ/Tv1nqLxcn70OiOxUGtBAXGUfZRZiIRJ6S/TUkbMlRdhEmItGFkSrjKLsIAyaIjHGUXYQBIwTKOMouwkQk/pTsr7ns9hxlF2EiMoYw+co4yi7CgCGZxjjKLsKAKVnKOMouwoRieX7OtPzdWTp/6iYzwRxjHGUXYSKxvD7n8rwNIUyOMo6yizCR+BBmlE/9yxhPHxNhArG8PudyeDQC98p4+pgIE4hNmPR61JmGe7NvjfGUXISJwzYJG1CYW2U8JddMGOXrFGa4HmZZP+fy93ixfj/dlouT9/HIP9RKhbFnOf4Y8CNfjUZPnxRhwrC8GHRKdtODp+QiTCyOu5U7016Y8yLjKbkIEwtTYbpwMjI8fVSEicXrcy69D/J35LvIePqsCBORDnMjy24/+/GUXISJyODCfBYZT8lFGPDIYXx4Si7CgEv2RcZTchEmIqNPyY69ucotwkRkCmG2IuMqt42ESeu5NzrN/cZVUEGJ5yhxldsmwqyq3CiDMJDB88Ra63exp4Uw6fRucXNZuApqc+aYkq19usotwkRkImEez8sa3NBZmHTgobdcFm7Wt3/zpya3deC4WDYQxmIbBuxplVNXY2WUvWRz4XNKhjBFK5o0Nxk+hRms23MQBrzjaqwgDGjBlKxoRZPmJsPn3AhhilY0aW4yfAozWLfnBBZmu0x35Ot1AWGUmnv/HcjHbAf6ncKUrGjFTs0N+Wfsc/E5N7r5dfpeYXeYLt03jTAazX38Bfvl/fzzb90NPU3zKczNC5927F//cR9h+jR3Isz21VwjGxOM9J3vdPsw+3fdiS3M24tl/9T+LxBDN+7OHFwrTHpNxd6nNK7Pr6uk10mX7ykbwmg1d/aXuacQxueU7PLX6X3bNFhP/U3pU5j9b3K67UtAYZbX9smyVwVhHHe7F+arrS9htt8ijGpzy2E5lzCx2HaRfQnzOqf9RJj92e4Io9Hccrh3fIQwJlzldL3M70uY4wbMV4X51a4JCBMRn1OyS2HWn1/CHJ5HmKbNbd8u9HHMBWG8dfueWZ1VmN2U7Hl7TcnY6G/aHPjlWpjH8+8xrM//PVrrEbuVmzYHDmiVU1djBWEi4nNKhjBFK5o0Nxk+hRms23MQBrzjaqwgDGjBlKxoRZPmJsPn3AhhilY0aW4yfAozWLfnIAx4x9VYQRjQgilZ0YomzU2Gz7kRwhStaNLcZPgUZndymOrN1VhBGAABCAMgAGEi4nVKNlS35yBMROYaua7GCsIACEAYAAEIE5G55kauxgrCRGSuketqrCAMgACEARCAMBGZa27kaqwgTETmGrmuxgrCAAhAGAABCBORueZGrsaKmTAAITESRpuKt1fzyeh23G4rQRi6navbShCGbufqthKEodu5uq0EYeh2rm4rQRi6navbShCGbufqthKEodu5uq1kXGHolm4bEPNdAxiBMAACEAZAAMIACEAYAAEIAyAAYQAEIAyAAIQBEIAwAAIQBkAAwgAI8CbM6+93pK9nHr2+d7dvb2unnT+kSbffuX3YfOwanL3PtLsdn/l4uu1b6Nfbu8+uH9Ki2+/c/n/XItpVOHub9sIkgxQeuxy1W4TRZwtferz+uNrumfcKTd/BbtrQKzi9P6RJt9+53bru+7Hr8PUu30E9BLTrWDJLYXdhts46C7OfMCBMFd96zCNMt5G77zP1+7TnKUWYKiYWZnhPEaYB0wqT9h2OORP8yuQ70AhTyqzCpMOyV7d9Y/stzPZ38xGmmLS7fTx6P93+LfTrbdelUbfHkDfu7msCaBDtOpy9TYTpOhF89IwtwrTge7/NBKfG7L7TZ5pTYw7CcGoMwJggDIAAhAEQgDAAAhAGQADCAAhAGAABCAMgAGEABCAMgACEARCAMAACEAZAAMIACEAYAAEIAyAAYQAEIAyAAIQBEIAwAAIQBkAAwgAIQBgAAQgDIABhAAQgDIAAhAEQgDD2pM8vfrhb9/YZstkcQuyD49/m/rXa5VOkszVE2AeZeSgQClQhwj7YVZj0/PKH9RsgDt8Esfv2rvU3af02r10z0Awi7IO9MO8fu9thrf0a6bH7Im/y2RoC7INDhdn9OHz70GFLZ7dG+ngW2kGAfYAwQSDAPrgU5v1tfg+EcQAB9sF9hTlZC2FsIMA+YEoWBALsgythzveS7X8gTFcIsA8uhTkch0EYcwhwKH6li3S2hgiHAmGsIcKhQBhriHAs7vNFNptDiAEEIAyAAIQBEIAwAAIQBkAAwgAIQBgAAQgDIABhAAQgDIAAhAEQgDAAAhAGQADCAAhAGAABCAMgAGEABCAMgACEARCAMAACEAZAwH/Jdh1Ev4UQtwAAAABJRU5ErkJggg==" width="100%" /> Once we observed this, we can solve the issue by using a different tank for example. Here we will increase the volume to 15L to get more air during the dive. Note that we could also increase the pressure of the precedent tank. Another solution could be to breath less and using a diver using <code>cons = 15</code>.</p>
+<p>This solution work and the diver get to the end of the dive alive ! Hourra !</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Tank_15L <span class="ot">&lt;-</span> <span class="fu">tank</span>(<span class="at">vol =</span> <span class="dv">15</span>, <span class="at">press =</span> <span class="dv">200</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>viable <span class="ot">&lt;-</span> <span class="fu">conso</span>(<span class="at">dive =</span> simp_dive, <span class="at">tank =</span> Tank_15L, </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">cons =</span> <span class="dv">20</span>, <span class="at">failure_label =</span> <span class="st">&#39;Air failure&#39;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(viable)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" width="100%" /></p>
+</div>
+</div>
+<div id="consumption-attributes" class="section level2">
+<h2>Consumption attributes</h2>
+<p>Now that we have simulated both consumption on the same dive, we may want to find more information about the simulations, which will help us dive safely.</p>
+<p>First we can check the pressure at the end of the dive. This can be helpful to see if the diver can still be alive. Here we see that effectively in the death simulation, the tank was empty at the end of the dive.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pressure</span>(death)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; back12 </span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      0</span></span></code></pre></div>
+<p>However this does not tell us when this happened. To find out when, we can check when the rules have been met with the <code>rules</code> function. This will help us check the dive instructor interdiction to use the reserve of the tank (here 50bar) in both simulations.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rules</span>(death)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        rule1 name1 time1 rule2 name2 time2 empty       nameE timeE</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; back12   100   mid    20    50   res    30     0 Air failure    40</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rules</span>(viable)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        rule1 name1 time1 rule2 name2 time2 empty       nameE timeE</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; back15   100   mid    25    50   res  37.5     0 Air failure    NA</span></span></code></pre></div>
+<p>So, here, despite the diver in <code>viable</code> make it alive to the end of the dive, he didn’t respect the second rule of ending the dive with 50 bar at the end.</p>
+<!-- 
+
+Finally we can find all information in a summary. 
+
+```{r sum
+_conso, include = FALSE}
+
+summary_conso <- function(conso){
+  # print('hello')
+}
+
+summary(death)
+summary(viable)
+
+```
+-->
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

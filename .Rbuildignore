@@ -2,6 +2,7 @@
 ^\.Rproj\.user$
 ^README\.Rmd$
 ^LICENCE-CECILL-2.1.txt$
+^CODE_OF_CONDUCT.md$
 
 data_prep.R
 biblio
@@ -9,3 +10,6 @@ manuscrit
 raw_data
 
 dev
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

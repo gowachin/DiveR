@@ -24,3 +24,7 @@ file_coverage('R/methods_conso.R', 'tests/testthat/test-methods_conso.R')
 # If run within RStudio, `zero_coverage()` will open a marker pane with the
 # uncovered lines.
 # zero_coverage(cov)
+
+
+# Update the doc part of the github with pkgdown
+# pkgdown::build_site()
