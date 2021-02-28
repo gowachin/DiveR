@@ -57,5 +57,8 @@ tank(vol = 12, press = 200,
      rules = list(rules = c('retour' = 120, 'reserve' = 120), 
                   sys = "bar"), 
      typ = 'relay')
-
+     
+}
+\author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

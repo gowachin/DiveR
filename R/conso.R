@@ -38,6 +38,8 @@ NULL
 #'      rules = list(rules = c('retour' = 120, 'reserve' = 120), 
 #'                   sys = "bar"), 
 #'      typ = 'relay')
+#'      
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
 #' @export
 tank <- function(vol, press, rules = list(
@@ -392,7 +394,7 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
 
   #### Cut the dive in parts ####
   # expand the tanks availability
-  table <- DiveR:::expand(tank, dive)
+  table <- expand(tank, dive)
   # extract points to cut dive in time and depths
   times <- unique(c(table$begin, table$end)) # unique(unlist(table[,c(3,4)]))
   from_times <- data.frame(times = times, depths = times)
@@ -482,7 +484,7 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
     if (sum(tankpres[, press_cols]) == 0) {
       # cat('no tank available\n')
       warning(paste(
-        "No tank is available between", t1, "and", t2,
+        "No tank is available between", round(t1,2), "and", round(t2,2),
         "minutes so you died. Try again !"
       ))
       AIR_FAIL <- TRUE

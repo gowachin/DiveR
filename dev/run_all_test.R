@@ -1,5 +1,8 @@
 
 # Run all tests
+rm(list = ls())
+devtools::document('.')
+devtools::load_all('.')
 devtools::test()
 
 library(covr)
@@ -15,6 +18,7 @@ report()
 # df_cov[df_cov$functions=='tank',]
 
 file_coverage('R/conso.R', 'tests/testthat/test-conso.R')
+file_coverage('R/methods_conso.R', 'tests/testthat/test-methods_conso.R')
 
 # zero_coverage() shows only uncovered lines.
 # If run within RStudio, `zero_coverage()` will open a marker pane with the
