@@ -5,16 +5,19 @@
 
 <!-- badges: start -->
 
-<!-- [![R build status](https://github.com/gowachin/DiveR/workflows/R-CMD-check/badge.svg)](https://github.com/gowachin/DiveR/actions) -->
-[![](https://img.shields.io/badge/devel%20version-0.2.0-blue.svg)](https://github.com/gowachin/DiveR)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-<!-- badges: end --> R package for dive planification tools. It contains
-functions and methods to represent dive curves, desaturation time and
-gas consumption. At this day, only mn90 tables models are coded for
-single, consecutive or successive dives. This mean all profile are
-square ones and only maximum depth and dive time are used to compute
-desaturation.
+[![](https://img.shields.io/badge/devel%20version-0.2.0-blue.svg)](https://github.com/gowachin/DiveR)
+[![R build
+status](https://github.com/gowachin/DiveR/workflows/R-CMD-check/badge.svg)](https://github.com/gowachin/DiveR/actions)
+
+<!-- badges: end -->
+
+R package for dive planification tools. It contains functions and
+methods to represent dive curves, desaturation time and gas consumption.
+At this day, only mn90 tables models are coded for single, consecutive
+or successive dives. This mean all profile are square ones and only
+maximum depth and dive time are used to compute desaturation.
 
 **The shiny application is not yet in production.**
 
@@ -81,4 +84,4 @@ Note here that all dives simulated will also being at sea level.
 
 Go check the projects of this repository !
 
-Feel free to fork this, and use it. Any recommendation is welcome :)
+Feel free to fork this, and use it. Any recommendation is welcome ! :)

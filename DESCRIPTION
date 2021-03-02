@@ -1,6 +1,6 @@
 Package: DiveR
 Type: Package
-Title: DiveR
+Title: Simulation Tool for Scuba Diving and Gas Desaturation
 Version: 0.2.0
 Author: Maxime Jaunatre 
 Maintainer: Maxime Jaunatre <maxime.jaunatre@yahoo.fr>
