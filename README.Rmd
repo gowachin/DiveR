@@ -67,4 +67,4 @@ Note here that all dives simulated will also being at sea level.
 
 Go check the projects of this repository !
 
-Feel free to fork this, and use it. Any recommendation is welcome ! :) 
+Feel free to fork this, and use it. Any recommendation is welcome :) 
