@@ -199,19 +199,79 @@ test_that("conso_output", {
   expect_match(w, war1, all = FALSE)
   expect_match(w, war2, all = FALSE)
   expect_match(w, war3, all = FALSE)
-  expect_snapshot(c)
+  exp_back <- structure(list(
+    vcons = data.frame(vcons = c(0, 2400, 1800, 1200, rep(0, 8)), 
+                           times = c(0, 10, 20, rep(40, 4), 41.7, 41.7, 
+                                     44.7, 44.7, 45.2), 
+                           back12 = c(200, 150, 100, 0, rep(NA, 8))), 
+    rules = structure(list(rule1 = 150, name1 = "retour", time1 = 10, 
+                           rule2 = 100, name2 = "reserve", time2 = 20, 
+                           empty = 0, nameE = "AF", timeE = 40),
+                      row.names = "back12", class = "data.frame"),
+    dtcurve = structure(list(times = c(0, 0, 10, 20, 40, 40, 41.7, 44.7, 45.2), 
+                             depths = c(0, 20, 20, 20, 20, 20, 3, 3,   0), 
+                             pressure = c(1, 3, 3, 3, 3, 3, 1.3, 1.3, 1)), 
+                             row.names = c("1", "2", "21", "211", "2111", "3", 
+                                           "4", "5", "6"), 
+                                          class = "data.frame"), 
+    hour = c(0, 45.2)), class = "conso")
+  expect_equal(c, exp_back)
+  # expect_snapshot(c)
+  
   # safe dive
-  expect_snapshot(conso(dive, back15))
+  exp_back15  <- structure(list(
+    vcons = data.frame(vcons = c(0, 2400, 1650, 900, 73.1, 78, 11.5), 
+                       times = c(0, 12.5, 25, 40, 41.7, 44.7, 45.2), 
+                       back15 = c(200, 150, 100, 40, 35.13, 29.93, 29.16)), 
+    rules = structure(list(rule1 = 150, name1 = "retour", time1 = 12.5, 
+                           rule2 = 100, name2 = "reserve", time2 = 25, 
+                           empty = 0, nameE = "AF", timeE = NA),
+                      row.names = "back15", class = "data.frame"),
+    dtcurve = structure(list(times = c(0, 0, 12.5, 25, 40, 41.7, 44.7, 45.2), 
+                             depths = c(0, 20, 20, 20, 20, 3, 3, 0), 
+                             pressure = c(1, 3, 3, 3, 3, 1.3, 1.3, 1)), 
+                        row.names = c("1", "2", "21", "211", "3", "4", "5", "6"), 
+                        class = "data.frame"), 
+    hour = c(0, 45.2)), class = "conso")
+  expect_equal(conso(dive, back15), exp_back15)
+  # expect_snapshot(conso(dive, back15))
+  
   # multiple tank dive
-  expect_snapshot(conso(dive, list(relay, back)))
+  
+  exp_bi <- structure(list(
+    vcons = structure(list(vcons = c(0, 2400, 1440, 840, 240, 73.1, 78, 11.5), 
+                           times = c(0, 16, 26, 36, 40, 41.7, 44.7, 45.2), 
+                           relay12 = c(200, 120, 120, 120, 100, 93.91, 87.41, 86.45),
+                           back12 = c(200, 200, 150, 100, 100, 100, 100, 100)), 
+                      class = "data.frame", row.names = c(NA, -8L)), 
+    rules = structure(list(rule1 = c(120, 150), name1 = c("retour", "retour"), 
+                           time1 = c(16, 26), rule2 = c(120, 100), 
+                           name2 = c("reserve", "reserve"), time2 = c(16, 36), 
+                           Empty = c(0, 0), nameE = c("AF", "AF"), 
+                           timeE = c(NA, NA)), 
+                      row.names = c("relay12", "back12"), class = "data.frame"),
+    dtcurve = structure(list(times = c(0, 0, 16, 26, 36, 40, 41.7, 44.7, 45.2), 
+                             depths = c(0, 20, 20, 20, 20, 20, 3, 3, 0), 
+                             pressure = c(1, 3, 3, 3, 3, 3, 1.3, 1.3, 1)), 
+                        row.names = c("1", "2", "21", "211", "2111", "3","4",
+                                      "5", "6"), class = "data.frame"),
+    hour = c(0, 45.2)), class = "conso")
+  expect_equal(conso(dive, list(relay, back)), exp_bi)
+  # expect_snapshot(conso(dive, list(relay, back)))
 
   dive <- dive(20, 40, hour = 67)
   # safe dive now
-  expect_snapshot(conso(dive, back))
+  exp_back$hour <- exp_back15$hour <- exp_bi$hour <- c(67.0, 112.2)
+  
+  suppressWarnings(c <- conso(dive, back))
+  expect_equal(c, exp_back)
+  # expect_snapshot(conso(dive, back))
   # safe dive
-  expect_snapshot(conso(dive, back15))
+  expect_equal(conso(dive, back15), exp_back15)
+  # expect_snapshot(conso(dive, back15))
   # multiple tank dive
-  expect_snapshot(conso(dive, list(relay, back)))
+  expect_equal(conso(dive, list(relay, back)), exp_bi)
+  # expect_snapshot(conso(dive, list(relay, back)))
 })
 
 
