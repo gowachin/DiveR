@@ -1,7 +1,7 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height=200px/>
+DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height=200px/>
+==========================================================================================================================================
 
 <!-- badges: start -->
 
@@ -29,18 +29,17 @@ supported for consumption.
 Intended to be used by french dive student, traduction of the lexic is
 on it’s way.
 
-## Installation
+Installation
+------------
 
 You can install the development version of `{DiveR}` from
 [github](https://github.com/gowachin/DiveR) with:
 
-``` r
-# install.packages("devtools")
-devtools::install_github('https://github.com/gowachin/DiveR')
-# or 
-# install.packages("remotes")
-remotes::install_github("gowachin/DiveR")
-```
+    # install.packages("devtools")
+    devtools::install_github('https://github.com/gowachin/DiveR')
+    # or 
+    # install.packages("remotes")
+    remotes::install_github("gowachin/DiveR")
 
 <!--
 ## Usage
@@ -57,7 +56,8 @@ A second dive depends heavily on the first one as the desaturation is not perfec
 
 You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/master/examples>. -->
 
-## Disclaimer
+Disclaimer
+----------
 
 This application is intended for use in education about scubadiving
 planification and academic interest only. It is not designed for actual
@@ -80,8 +80,9 @@ model may not be correct predictions.
 
 Note here that all dives simulated will also being at sea level.
 
-## Want to help ?
+Want to help ?
+--------------
 
 Go check the projects of this repository !
 
-Feel free to fork this, and use it. Any recommendation is welcome ! :)
+Feel free to fork this, and use it. Any recommendation is welcome :)
