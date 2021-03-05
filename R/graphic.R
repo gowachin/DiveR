@@ -735,7 +735,7 @@ plot.ndive <- function(x,
 #' creations.
 #' }
 #' 
-#' @importFrom viridis viridis
+#' @importFrom viridisLite viridis
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
