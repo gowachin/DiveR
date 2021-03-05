@@ -10,6 +10,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![](https://img.shields.io/badge/devel%20version-0.2.0-blue.svg)](https://github.com/gowachin/DiveR)
 [![R build
 status](https://github.com/gowachin/DiveR/workflows/R-CMD-check/badge.svg)](https://github.com/gowachin/DiveR/actions)
+[![Coverage
+status](https://codecov.io/gh/gowachin/DiveR/branch/master/graph/badge.svg)](https://codecov.io/github/gowachin/DiveR?branch=master)
 
 <!-- badges: end -->
 
@@ -84,4 +86,4 @@ Note here that all dives simulated will also being at sea level.
 
 Go check the projects of this repository !
 
-Feel free to fork this, and use it. Any recommendation is welcome ! :)
+Feel free to fork this, and use it. Any recommendation is welcome :)

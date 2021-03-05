@@ -9,7 +9,6 @@ License: CeCILL-2
 Encoding: UTF-8
 LazyData: true
 Imports: graphics,
-         R.utils,
          stats,
          viridis
 RoxygenNote: 7.1.1
