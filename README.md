@@ -1,7 +1,7 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height=200px/>
+DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height=200px/>
+==========================================================================================================================================
 
 <!-- badges: start -->
 
@@ -31,24 +31,20 @@ supported for consumption.
 Intended to be used by french dive student, traduction of the lexic is
 on it’s way.
 
-## Installation
+Installation
+------------
 
 You can install the development version of `{DiveR}` from
 [github](https://github.com/gowachin/DiveR) with:
 
-``` r
-# install.packages("devtools")
-devtools::install_github('https://github.com/gowachin/DiveR')
-#> Skipping install of 'DiveR' from a github remote, the SHA1 (c1711a61) has not changed since last install.
-#>   Use `force = TRUE` to force installation
-# or 
-# install.packages("remotes")
-remotes::install_github("gowachin/DiveR")
-#> Skipping install of 'DiveR' from a github remote, the SHA1 (c1711a61) has not changed since last install.
-#>   Use `force = TRUE` to force installation
-```
+    # install.packages("devtools")
+    devtools::install_github('https://github.com/gowachin/DiveR')
+    # or 
+    # install.packages("remotes")
+    remotes::install_github("gowachin/DiveR")
 
-## Usage
+Usage
+-----
 
 ### Dive planification
 
@@ -72,7 +68,8 @@ Read [Gas
 Consumption](https://gowachin.github.io/DiveR/articles/gas_conso.html)
 Vignette to learn how to simulate the use of gas during a dive.
 
-## Disclaimer
+Disclaimer
+----------
 
 This application is intended for use in education about scubadiving
 planification and academic interest only. It is not designed for actual
@@ -95,7 +92,8 @@ model may not be correct predictions.
 
 Note here that all dives simulated will also being at sea level.
 
-## Want to help ?
+Want to help ?
+--------------
 
 Go check the projects of this repository !
 
