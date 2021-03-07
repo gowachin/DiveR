@@ -41,9 +41,13 @@ devtools::install_github('https://github.com/gowachin/DiveR')
 # install.packages("remotes")
 remotes::install_github("gowachin/DiveR")
 ```
-<!--
+
 ## Usage
 
+### Dive planification
+
+**A vignette need to be written**
+<!--
 ### Planning a single dive
 
 Apart from default/advanced settings, a dive can be resumed by it's maximum depth and duration. For example, here is the default dive for this pacakge, a maximum depth at 20 meters for 40 minutes. Note here that despite going underwater at an altitude of -20, we use positive numeric values.
@@ -53,8 +57,10 @@ dive(20,40)
 ### Planning a second dive
 
 A second dive depends heavily on the first one as the desaturation is not perfect and residual azote will impact the second saturation. 
-
  -->
+### Gas Consumption
+
+Read [Gas Consumption](https://gowachin.github.io/DiveR/articles/gas_conso.html) Vignette to learn how to simulate the use of gas during a dive.
 
 ## Disclaimer 
 This application is intended for use in education about scubadiving planification and academic interest only. It is not designed for actual use in scuba diving and underwater activity. It is emphatically not suitable for use in actual diving. Scuba diving is a dangerous activity with risks of death and serious injury. No-one should attempt scuba diving without training, certification, supervision and regular medical assessment. It is also dangerous for trained scuba divers to exceed the limitations of their training. 
