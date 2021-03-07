@@ -8,7 +8,7 @@ dtcurve(
   time,
   depth,
   palier,
-  vup = 10,
+  ascent_speed = 10,
   dist = NULL,
   speed = NULL,
   way = c("AR", "AS")
@@ -22,7 +22,7 @@ dtcurve(
 \item{palier}{a object palier computed with the palier function. 
 Is a list of depth and time for every deco stage.}
 
-\item{vup}{10 m/min max speed up to the deco. 
+\item{ascent_speed}{10 m/min max speed up to the deco. 
 Speed between deco is fixed to 6}
 
 \item{dist}{a distance vector}

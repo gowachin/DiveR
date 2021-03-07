@@ -8,8 +8,8 @@ dive(
   depth = 20,
   time = 40,
   secu = TRUE,
-  vup = 10,
-  maj = 0,
+  ascent_speed = 10,
+  maj = NULL,
   hour = NULL,
   dist = NULL,
   speed = NULL,
@@ -17,15 +17,21 @@ dive(
 )
 }
 \arguments{
-\item{depth}{in meter}
+\item{depth}{Depth of the dive in meter. Need to be positive values.
+A single value is needed for square dive, however if a vector is provided
+a decompression model need to be selected. Default is 20 meter}
 
-\item{time}{in minute}
+\item{time}{Duration of the dive in minute. Need to be positive values.
+A single value is needed for square dive, however if a vector is provided
+a decompression model need to be selected. Default is 40 minutes}
 
-\item{secu}{true by default, secu deco stage 3 min at 3 meter}
+\item{secu}{security decompression stop of 3 min at 3 m. FALSE by default.}
 
-\item{vup}{10 m/min by default}
+\item{ascent_speed}{Ascent_speed in meter/minute. 10 m/min by default. 
+Most dive table advice to limite this speed to 20M/min maximum.}
 
-\item{maj}{0 by default}
+\item{maj}{Time majoration for the dive. 
+Only used by table decompression model.}
 
 \item{hour}{NULL not implemented yet}
 
@@ -45,7 +51,7 @@ dive
 See \code{\link[DiveR]{tablecheck}} for limit values of depth and time.
 }
 \examples{
-dive = dive(depth = 39, time = 22, secu = TRUE, vup = 10)
+dive = dive(depth = 39, time = 22, secu = TRUE, ascent_speed = 10)
 
 }
 \author{

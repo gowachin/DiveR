@@ -23,11 +23,11 @@ It can be retrieved from a dive object.
 }
 \examples{
 # Dive with default parameters
-speed(dive(20,40, vup = 10, secu = TRUE))
-# different vup
-speed(dive(20,40, vup = 15, secu = TRUE))
+speed(dive(20,40, ascent_speed = 10, secu = TRUE))
+# different ascent_speed
+speed(dive(20,40, ascent_speed = 15, secu = TRUE))
 # No desat stop induce NA for plt speed (between desat stop speed)
-speed(dive(20,40, vup = 10, secu = FALSE))
+speed(dive(20,40, ascent_speed = 10, secu = FALSE))
 
 }
 \author{

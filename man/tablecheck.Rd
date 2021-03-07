@@ -12,7 +12,8 @@ max_depth_t(depth)
 \arguments{
 \item{depth}{in meter. Max is 65m see Detail !}
 
-\item{time}{in minute. Max is 180' see Detail !}
+\item{time}{time in minute. Must be a single positive value 
+with a maximum is 180 min}
 
 \item{force}{FALSE by default, if TRUE don't stop the function but 
 return a TRUE/FALSE value}

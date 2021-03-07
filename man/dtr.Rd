@@ -10,7 +10,7 @@ dtr(object, ...)
 
 \method{dtr}{dive}(object, ...)
 
-\method{dtr}{palier}(object, ..., vup = 10)
+\method{dtr}{palier}(object, ..., ascent_speed = 10)
 }
 \arguments{
 \item{object}{is a DiveR object. There are methods for 
@@ -19,10 +19,10 @@ dtr(object, ...)
 \item{...}{other arguments passed to the dtr.palier method.
 \describe{
   \item{depth}{a numeric in meter}
-  \item{vup}{10 meter/minute by default.}
+  \item{ascent_speed}{10 meter/minute by default.}
 }}
 
-\item{vup}{speed of ascent, 10 m/min by default}
+\item{ascent_speed}{speed of ascent, 10 m/min by default}
 }
 \value{
 It returns a numeric with the duration of the ascent and deco.
@@ -35,10 +35,10 @@ a palier object.
 }
 \examples{
 dtr(dive(20,40))
-# absurd slowness with vup = 1
-dtr(dive(20,40, vup = 1))
+# absurd slowness with ascent_speed = 1
+dtr(dive(20,40, ascent_speed = 1))
 # from a palier object
-dtr(palier(20, 40), depth = 20, vup = 10)
+dtr(palier(20, 40), depth = 20, ascent_speed = 10)
 
 }
 \author{

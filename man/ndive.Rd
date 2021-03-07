@@ -27,8 +27,8 @@ See \code{\link[DiveR]{tablecheck}} for limit values of depth and time
 of a dive.
 }
 \examples{
-dive1 = dive(depth = 39, time = 22, secu = TRUE, vup = 10)
-dive2 = dive(depth = 20, time = 40, secu = TRUE, vup = 10)
+dive1 = dive(depth = 39, time = 22, secu = TRUE, ascent_speed = 10)
+dive2 = dive(depth = 20, time = 40, secu = TRUE, ascent_speed = 10)
 divet = ndive(dive1, dive2, inter = 30)
 
 }
