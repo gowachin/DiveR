@@ -64,7 +64,7 @@ rules(viable)
 summary(death)
 summary(viable)
 
-## ----mult_tank----------------------------------------------------------------
+## ----mult_tank, dev='png', out.width="100%"-----------------------------------
 A_10L <- tank(vol = 10, press = 200, name = 'A_10L')
 B_10L <- tank(vol = 10, press = 200, name = 'B_10L')
 bi_conso <- conso(dive = simp_dive, tank = list(A_10L, B_10L), 
@@ -72,7 +72,7 @@ bi_conso <- conso(dive = simp_dive, tank = list(A_10L, B_10L),
 plot(bi_conso)
 pressure(bi_conso)
 
-## ----mult_relay---------------------------------------------------------------
+## ----mult_relay, dev='png', out.width="100%"----------------------------------
 Relay <- tank(vol = 10, press = 200, typ = 'relay', rules = list(
   rules = c(' ' = 66, 'drop relay' = 66),
   sys = '%'), name = "Relay"
@@ -89,43 +89,43 @@ relay_conso <- conso(dive = simp_dive,
 plot(relay_conso)
 summary(relay_conso)
 
-## ----mult_mrelay--------------------------------------------------------------
-Relay1 <- tank(vol = 10, press = 200, typ = 'relay', rules = list(
-  rules = c(' ' = 66, 'drop relay' = 66),
-  sys = '%'), name = "Relay1"
-  )
-Relay1$limit['maxd'] = 10
+## ----mult_mrelay, eval = FALSE, include = FALSE-------------------------------
+#  Relay1 <- tank(vol = 10, press = 200, typ = 'relay', rules = list(
+#    rules = c(' ' = 66, 'drop relay' = 66),
+#    sys = '%'), name = "Relay1"
+#    )
+#  Relay1$limit['maxd'] = 10
+#  
+#  Relay2 <- tank(vol = 10, press = 200, typ = 'relay', rules = list(
+#    rules = c(' ' = 66, 'drop relay' = 66),
+#    sys = '%'), name = "Relay2"
+#    )
+#  
+#  Tank_10L <- tank(vol = 10, press = 200, rules = list(
+#    rules = c('Return' = 100, "Reserve" = 50),
+#    sys = "bar"), name = "Back"
+#    )
+#  
+#  relay_conso <- conso(dive = dive(40, 35),
+#                       tank = list(Relay1, Relay2, Tank_10L),
+#                       cons = 20, failure_label = 'Air failure')
+#  plot(relay_conso)
+#  pressure(relay_conso)
 
-Relay2 <- tank(vol = 10, press = 200, typ = 'relay', rules = list(
-  rules = c(' ' = 66, 'drop relay' = 66),
-  sys = '%'), name = "Relay2"
-  )
-
-Tank_10L <- tank(vol = 10, press = 200, rules = list(
-  rules = c('Return' = 100, "Reserve" = 50), 
-  sys = "bar"), name = "Back"
-  )
-
-relay_conso <- conso(dive = dive(40, 35), 
-                     tank = list(Relay1, Relay2, Tank_10L), 
-                     cons = 20, failure_label = 'Air failure')
-plot(relay_conso)
-pressure(relay_conso)
-
-## ----mult_deco----------------------------------------------------------------
-Deco <- tank(vol = 6, press = 200, typ = 'relay', rules = list(
-  rules = c(' ' = 200, ' ' = 200),
-  sys = '%'), name = "Deco"
-  )
-
-Tank_15L <- tank(vol = 15, press = 200, rules = list(
-  rules = c('Return' = 100, "Reserve" = 50), 
-  sys = "bar"), name = "Back"
-  )
-
-relay_conso <- conso(dive = simp_dive, 
-                     tank = list(Deco, Tank_15L), 
-                     cons = 20, failure_label = 'Air failure')
-plot(relay_conso)
-pressure(relay_conso)
+## ----mult_deco, eval = FALSE, include = FALSE---------------------------------
+#  Deco <- tank(vol = 6, press = 200, typ = 'relay', rules = list(
+#    rules = c(' ' = 200, ' ' = 200),
+#    sys = '%'), name = "Deco"
+#    )
+#  
+#  Tank_15L <- tank(vol = 15, press = 200, rules = list(
+#    rules = c('Return' = 100, "Reserve" = 50),
+#    sys = "bar"), name = "Back"
+#    )
+#  
+#  relay_conso <- conso(dive = simp_dive,
+#                       tank = list(Deco, Tank_15L),
+#                       cons = 20, failure_label = 'Air failure')
+#  plot(relay_conso)
+#  pressure(relay_conso)
 

@@ -17,7 +17,8 @@
 }
 \arguments{
 \item{object}{is a DiveR object. There are methods for 
-\code{\link[DiveR]{dive}}, \code{\link[DiveR]{tank}} and \code{\link[DiveR]{palier}} objects.}
+\code{\link[DiveR]{dive}}, \code{\link[DiveR]{tank}},
+ \code{\link[DiveR]{conso}} and \code{\link[DiveR]{palier}} objects.}
 
 \item{...}{other arguments passed to the dtr.palier method.
 \describe{

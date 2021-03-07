@@ -124,7 +124,7 @@ A rapid observation of the consumption if possible by plotting the consumption o
 Tank_12L <- tank(vol = 12, press = 200)
 death <- conso(dive = simp_dive, tank = Tank_12L, 
                cons = 20, failure_label = 'Air failure')
-plot(death)
+plot(death, line_print = FALSE)
 ```
 
 Once we observed this, we can solve the issue by using a different tank for example. Here we will increase the volume to 15L to get more air during the dive. Note that we could also increase the pressure of the precedent tank. Another solution could be to breath less and using a diver using `cons = 15`.
@@ -135,7 +135,7 @@ This solution work and the diver get to the end of the dive alive ! Hourra !
 Tank_15L <- tank(vol = 15, press = 200)
 viable <- conso(dive = simp_dive, tank = Tank_15L, 
                cons = 20, failure_label = 'Air failure')
-plot(viable)
+plot(viable, line_print = FALSE)
 ```
 
 ## Consumption attributes
@@ -163,7 +163,7 @@ summary(death)
 summary(viable)
 ```
 
-### Multiple Tank
+## Multiple Tank
 
 To respect all rules broken before in this vignette we could use even larger tank or dive a shorter time. An other option could be to use multiple tanks.
 
@@ -171,12 +171,12 @@ This is done by simply giving a list of tanks to the `conso` function.
 
 Below is an example of 2 independant 10L tanks used by the function. **For better understanding, it is better name them.**
 
-```{r mult_tank}
+```{r mult_tank, dev='png', out.width="100%"}
 A_10L <- tank(vol = 10, press = 200, name = 'A_10L')
 B_10L <- tank(vol = 10, press = 200, name = 'B_10L')
 bi_conso <- conso(dive = simp_dive, tank = list(A_10L, B_10L), 
                cons = 20, failure_label = 'Air failure')
-plot(bi_conso)
+plot(bi_conso, line_print = FALSE)
 pressure(bi_conso)
 ```
 
@@ -196,7 +196,7 @@ By using these simple rules, you can set diverse multiple tanks configurations.
 
 We want to design a dive where we start on a relay tank (named Relay) up to a third of the pressure, then consume our back tank (named Tank_10L). Once the latter cross the second rule (or reserve), we finish the dive with the Relay. 
 
-```{r mult_relay}
+```{r mult_relay, dev='png', out.width="100%"}
 Relay <- tank(vol = 10, press = 200, typ = 'relay', rules = list(
   rules = c(' ' = 66, 'drop relay' = 66),
   sys = '%'), name = "Relay"
@@ -210,7 +210,7 @@ Tank_10L <- tank(vol = 10, press = 200, rules = list(
 relay_conso <- conso(dive = simp_dive, 
                      tank = list(Relay, Tank_10L), 
                      cons = 20, failure_label = 'Air failure')
-plot(relay_conso)
+plot(relay_conso, line_print = FALSE)
 summary(relay_conso)
 ```
 
@@ -221,7 +221,7 @@ With this configuration we still have our reserve on our back tank, and lot of g
 
 A second configuration could be to use multiple relay
 
-```{r mult_mrelay}
+```{r mult_mrelay, eval = FALSE, include = FALSE}
 Relay1 <- tank(vol = 10, press = 200, typ = 'relay', rules = list(
   rules = c(' ' = 66, 'drop relay' = 66),
   sys = '%'), name = "Relay1"
@@ -252,7 +252,7 @@ pressure(relay_conso)
 
 We want to design a dive where we dive with our back tank (named Tank_15L). Once the latter cross the second rule (or reserve), we finish the dive with a tank waiting for us. This is to mimic a desaturation tank despite other gas than air are not yet implemented
 
-```{r mult_deco}
+```{r mult_deco, eval = FALSE, include = FALSE}
 Deco <- tank(vol = 6, press = 200, typ = 'relay', rules = list(
   rules = c(' ' = 200, ' ' = 200),
   sys = '%'), name = "Deco"

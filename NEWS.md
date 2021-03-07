@@ -14,6 +14,10 @@
 
 * viridis has been remplaced by viridisLite
 
+## Documentation
+
+* Usage of `pkgdown` package for documentation
+
 # DiveR 0.2.0
 
 ## Major improvements
