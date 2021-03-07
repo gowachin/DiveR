@@ -1,3 +1,9 @@
+# DiveR 0.4.0
+
+## Historic Modifications
+
+* `max_depth_t` has been renamed to `max_depth_time`
+
 # DiveR 0.3.0
 
 ## Major improvements
