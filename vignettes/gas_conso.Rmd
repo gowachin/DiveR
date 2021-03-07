@@ -88,34 +88,17 @@ desat$carac[c('rule1', 'rule2')]
 
 As these tanks are used in combination with a back-mounted tank, their usage will be described in the multiple tank usage part. The algorithm of usage will be described, don't fear not understanding it right now.
 
-## Tank attributes
+## Tank methods
 
-The parameters of a tank can be retrieved with specified function. We can find the pressure of any tank.
+The parameters of a tank can be retrieved with specified function. We can find the volume, pressure and rules of any tank. All these informations are grouped in a summary function
 
 ```{r attribute_tank}
 pressure(relay)
 volume(relay)
 rules(relay)
+summary(relay)
 ```
 
-```{=html}
-<!-- 
-```{r tmp_attribute_tank, include = FALSE}
-
-summary_conso <- function(object, ...){
-  # parameters volume and pressure
-  cat(paste("Tank :",volume(object), "litre at",pressure(object),"bar\n"))
-  # dtr
-  dtr <- dtr(object)
-  cat('Total dive time is',dtime(object)+dtr,'with a dive ascent of',dtr,'minutes\n')
-  # palier & maj
-}
-
-```
-
-
--->
-```
 ## Tank consumption
 
 Once the tanks are defined, you can combine them with a dive. The `conso` function will then compute how many gas the diver will consume by following the dive depth curve and report pressure at different times of the dive. The function will also catch times where the rules of a tank are met. Note here that a new rules about air failure is added to each tank to report when a tank is empty.
@@ -174,24 +157,12 @@ rules(viable)
 
 So, here, despite the diver in `viable` make it alive to the end of the dive, he didn't respect the second rule of ending the dive with 50 bar at the end.
 
-```{=html}
-<!-- 
-
 Finally we can find all information in a summary. 
-
-```{r sum
-_conso, include = FALSE}
-
-summary_conso <- function(conso){
-  # print('hello')
-}
-
+```{r sum_conso}
 summary(death)
 summary(viable)
+```
 
-```
--->
-```
 ### Multiple Tank
 
 To respect all rules broken before in this vignette we could use even larger tank or dive a shorter time. An other option could be to use multiple tanks.
@@ -240,7 +211,7 @@ relay_conso <- conso(dive = simp_dive,
                      tank = list(Relay, Tank_10L), 
                      cons = 20, failure_label = 'Air failure')
 plot(relay_conso)
-pressure(relay_conso)
+summary(relay_conso)
 ```
 
 With this configuration we still have our reserve on our back tank, and lot of gas in our relay. Note that because the relay is still available between it's drop and the back tank reserve, a full line is drawn
