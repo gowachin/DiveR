@@ -18,7 +18,7 @@ library(badger)
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-`badge_devel("gowachin/DiveR", "blue")`
+`r badge_devel("gowachin/DiveR", "blue")`
 [![R build status](https://github.com/gowachin/DiveR/workflows/R-CMD-check/badge.svg)](https://github.com/gowachin/DiveR/actions)
 [![Coverage status](https://codecov.io/gh/gowachin/DiveR/branch/master/graph/badge.svg)](https://codecov.io/github/gowachin/DiveR?branch=master)
 
@@ -48,6 +48,7 @@ remotes::install_github("gowachin/DiveR")
 ### Dive planification
 
 **A vignette need to be written** 
+
 <!--
 ### Planning a single dive
 
@@ -59,6 +60,7 @@ dive(20,40)
 
 A second dive depends heavily on the first one as the desaturation is not perfect and residual azote will impact the second saturation. 
  -->
+ 
 ### Gas Consumption
 
 Read [Gas Consumption](https://gowachin.github.io/DiveR/articles/gas_conso.html) Vignette to learn how to simulate the use of gas during a dive.

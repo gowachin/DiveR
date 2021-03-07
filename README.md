@@ -1,3 +1,4 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height=200px/>
@@ -6,7 +7,8 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-`badge_devel("gowachin/DiveR", "blue")` [![R build
+[![](https://img.shields.io/badge/devel%20version-0.3.0-blue.svg)](https://github.com/gowachin/DiveR)
+[![R build
 status](https://github.com/gowachin/DiveR/workflows/R-CMD-check/badge.svg)](https://github.com/gowachin/DiveR/actions)
 [![Coverage
 status](https://codecov.io/gh/gowachin/DiveR/branch/master/graph/badge.svg)](https://codecov.io/github/gowachin/DiveR?branch=master)
@@ -34,21 +36,25 @@ on it’s way.
 You can install the development version of `{DiveR}` from
 [github](https://github.com/gowachin/DiveR) with:
 
-    # install.packages("devtools")
-    devtools::install_github('https://github.com/gowachin/DiveR')
-    #> Skipping install of 'DiveR' from a github remote, the SHA1 (55ddb63d) has not changed since last install.
-    #>   Use `force = TRUE` to force installation
-    # or 
-    # install.packages("remotes")
-    remotes::install_github("gowachin/DiveR")
-    #> Skipping install of 'DiveR' from a github remote, the SHA1 (55ddb63d) has not changed since last install.
-    #>   Use `force = TRUE` to force installation
+``` r
+# install.packages("devtools")
+devtools::install_github('https://github.com/gowachin/DiveR')
+#> Skipping install of 'DiveR' from a github remote, the SHA1 (c1711a61) has not changed since last install.
+#>   Use `force = TRUE` to force installation
+# or 
+# install.packages("remotes")
+remotes::install_github("gowachin/DiveR")
+#> Skipping install of 'DiveR' from a github remote, the SHA1 (c1711a61) has not changed since last install.
+#>   Use `force = TRUE` to force installation
+```
 
 ## Usage
 
 ### Dive planification
 
-**A vignette need to be written** <!--
+**A vignette need to be written**
+
+<!--
 ### Planning a single dive
 
 Apart from default/advanced settings, a dive can be resumed by it's maximum depth and duration. For example, here is the default dive for this pacakge, a maximum depth at 20 meters for 40 minutes. Note here that despite going underwater at an altitude of -20, we use positive numeric values.
@@ -58,7 +64,9 @@ dive(20,40)
 ### Planning a second dive
 
 A second dive depends heavily on the first one as the desaturation is not perfect and residual azote will impact the second saturation. 
- --> \#\#\# Gas Consumption
+ -->
+
+### Gas Consumption
 
 Read [Gas
 Consumption](https://gowachin.github.io/DiveR/articles/gas_conso.html)
