@@ -71,3 +71,10 @@ pressure(death)
 rules(death)
 rules(viable)
 
+## ----mult_tank----------------------------------------------------------------
+A_10L <- tank(vol = 10, press = 200, name = 'A_10L')
+B_10L <- tank(vol = 10, press = 200, name = 'A_10L')
+bi_conso <- conso(dive = simp_dive, tank = list(A_10L, B_10L), 
+               cons = 20, failure_label = 'Air failure')
+plot(bi_conso)
+

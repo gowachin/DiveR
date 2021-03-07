@@ -1,4 +1,20 @@
-# shinyDiveR 0.2.0
+# DiveR 0.3.0
+
+## Major improvements
+
+* Consumption functions work on single tank dive, multiple tanks dive.
+
+* End of the gas consumption vignette
+
+* testthat is set for consumption functions.
+
+## Minor improvements
+
+* R.utils dependance was not used and removed
+
+* viridis has been remplaced by viridisLite
+
+# DiveR 0.2.0
 
 ## Major improvements
 

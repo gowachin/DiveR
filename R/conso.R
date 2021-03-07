@@ -590,7 +590,17 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
       
       stringsAsFactors = FALSE
     )
-    rownames(rules) <- unlist(lapply(lapply(tank, "[[", 2), "[", 5))
+    tmp_names <- unlist(lapply(lapply(tank, "[[", 2), "[", 5))
+    
+    n <- 1
+    while (any (duplicated(tmp_names))){
+      tmp_names[duplicated(tmp_names)][1] <- paste0(tmp_names[duplicated(tmp_names)][1],'_',n)
+      n <- n+1
+    }
+    tmp_names
+    
+    rownames(rules) <- tmp_names
+    rm(tmp_names, n)
   } # check for list of tank or single tank is made in expand
 
   # simplify vcons
