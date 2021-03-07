@@ -7,9 +7,11 @@
 palier(depth, time, secu = TRUE)
 }
 \arguments{
-\item{depth}{in meter. Max is 65m see Detail !}
+\item{depth}{depth in meter. Must be a single positive value 
+with a maximum is 65m.}
 
-\item{time}{in minute. Max is 180' see Detail !}
+\item{time}{time in minute. Must be a single positive value 
+with a maximum is 180 min}
 
 \item{secu}{true by default, add a secu deco 3 min at 3 meter}
 }

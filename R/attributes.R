@@ -10,18 +10,18 @@
 #' @param ... other arguments passed to the dtr.palier method.
 #' \describe{
 #'   \item{depth}{a numeric in meter}
-#'   \item{vup}{10 meter/minute by default.}
+#'   \item{ascent_speed}{10 meter/minute by default.}
 #' }
-#' @param vup speed of ascent, 10 m/min by default
+#' @param ascent_speed speed of ascent, 10 m/min by default
 #'
 #' @return It returns a numeric with the duration of the ascent and deco.
 #' 
 #' @examples 
 #' dtr(dive(20,40))
-#' # absurd slowness with vup = 1
-#' dtr(dive(20,40, vup = 1))
+#' # absurd slowness with ascent_speed = 1
+#' dtr(dive(20,40, ascent_speed = 1))
 #' # from a palier object
-#' dtr(palier(20, 40), depth = 20, vup = 10)
+#' dtr(palier(20, 40), depth = 20, ascent_speed = 10)
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -40,7 +40,7 @@ dtr.dive <- function(object, ...) {
 #' @rdname dtr
 #' 
 #' @export
-dtr.palier <- function(object, ..., vup = 10) {
+dtr.palier <- function(object, ..., ascent_speed = 10) {
   palier <- object
 
   call_par <- list(...)
@@ -57,7 +57,7 @@ dtr.palier <- function(object, ..., vup = 10) {
 
   maxpal <- sum(3 * (palier$time > 0))
   # time to deco
-  up <- (depth - maxpal) / vup
+  up <- (depth - maxpal) / ascent_speed
   # time between deco
   vpal <- maxpal / 6
 
@@ -79,11 +79,11 @@ dtr.palier <- function(object, ..., vup = 10) {
 #' 
 #' @examples 
 #' # Dive with default parameters
-#' speed(dive(20,40, vup = 10, secu = TRUE))
-#' # different vup
-#' speed(dive(20,40, vup = 15, secu = TRUE))
+#' speed(dive(20,40, ascent_speed = 10, secu = TRUE))
+#' # different ascent_speed
+#' speed(dive(20,40, ascent_speed = 15, secu = TRUE))
 #' # No desat stop induce NA for plt speed (between desat stop speed)
-#' speed(dive(20,40, vup = 10, secu = FALSE))
+#' speed(dive(20,40, ascent_speed = 10, secu = FALSE))
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -203,53 +203,6 @@ dtime.ndive <- function(object) {
   d2 <- dtime(object$dive2)
   return(c(d1,d2))
 }
-
-#' depth
-#'
-#' \code{depth} retrieve the maximum depth of a singular or multiple dive sequence.
-#'
-#' @param object is a DiveR object. There are methods for 
-#' \code{\link[DiveR]{dive}} and \code{\link[DiveR]{ndive}} objects.
-#' 
-#' @return It returns a numeric with the depth of the dive. 
-#' Is a vector if working on ndive object
-#' 
-#' @examples 
-#' # Simple dive
-#' depth(dive(20,40))
-#' # Multiple dives
-#' depth(ndive(dive(20,40), dive(15, 80), inter = 540))
-#'
-#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
-#'
-#' @export
-depth <- function(object) {
-  UseMethod("depth")
-}
-
-#' @rdname depth
-#' 
-#' @export
-depth.dive <- function(object) {
-  return(max(object$dtcurve$depths))
-}
-
-#' @rdname depth
-#' 
-#' @export
-depth.conso <- function(object) {
-  return(max(object$dtcurve$depths))
-}
-
-#' @rdname depth
-#' 
-#' @export
-depth.ndive <- function(object) {
-  d1 <- depth(object$dive1)
-  d2 <- depth(object$dive2)
-  return(c(d1,d2))
-}
-
 
 #' secu
 #'

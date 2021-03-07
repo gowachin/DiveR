@@ -42,11 +42,17 @@ check_val <- function(val, zero = FALSE) {
 
 #' dive
 #' 
-#' @param depth in meter
-#' @param time in minute
-#' @param secu true by default, secu deco stage 3 min at 3 meter
-#' @param vup 10 m/min by default
-#' @param maj 0 by default
+#' @param depth Depth of the dive in meter. Need to be positive values.
+#' A single value is needed for square dive, however if a vector is provided
+#' a decompression model need to be selected. Default is 20 meter
+#' @param time Duration of the dive in minute. Need to be positive values.
+#' A single value is needed for square dive, however if a vector is provided
+#' a decompression model need to be selected. Default is 40 minutes
+#' @param secu security decompression stop of 3 min at 3 m. FALSE by default.
+#' @param ascent_speed Ascent_speed in meter/minute. 10 m/min by default. 
+#' Most dive table advice to limite this speed to 20M/min maximum.
+#' @param maj Time majoration for the dive. 
+#' Only used by table decompression model.
 #' @param hour NULL not implemented yet
 #' @param dist a distance vector
 #' @param speed speed of the diver
@@ -57,7 +63,7 @@ check_val <- function(val, zero = FALSE) {
 #' See \code{\link[DiveR]{tablecheck}} for limit values of depth and time.
 #' 
 #' @examples 
-#' dive = dive(depth = 39, time = 22, secu = TRUE, vup = 10)
+#' dive = dive(depth = 39, time = 22, secu = TRUE, ascent_speed = 10)
 #' 
 #' @return dive, a dive class object.
 #' 
@@ -65,12 +71,30 @@ check_val <- function(val, zero = FALSE) {
 #' 
 #' @export
 dive <- function(depth = 20, time = 40, secu = TRUE,
-                 vup = 10, maj = 0, hour = NULL,
+                 ascent_speed = 10, maj = NULL, hour = NULL,
                  dist = NULL,  speed = NULL, way = c('AS','AR')) {
-  # depth = 39; time = 22; secu = TRUE; vup = 10
-  # checks
-  check_val(vup)
-  check_val(maj, zero = TRUE)
+  #### IDIOT PROOF ####
+  if (any(depth < 0) | !is.numeric(depth) ) {
+    stop("depth must be positive numeric value(s).")
+  }
+  if (any(time < 0) | !is.numeric(time) ) {
+    stop("time must be positive numeric value(s).")
+  }
+  if( !is.logical(secu) | is.na(secu) ){
+    stop('secu must be TRUE or FALSE')
+  }
+  if (any(ascent_speed <= 0) | !is.numeric(ascent_speed) | 
+      length(ascent_speed) > 1 ) {
+    stop("ascent_speed must be a single positive numeric value(s).")
+  }
+  if(!is.null(maj)){
+    if (any(maj < 0) | !is.numeric(maj) | length(maj) > 1 ) {
+      stop("maj must be a single positive numeric value.")
+    }
+  } else {
+    maj <- 0
+  }
+  
   way <- match.arg(way)
   
   if (length(depth) > 1){
@@ -89,7 +113,6 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     
     vdepth <- depth
     depth <- max(vdepth)
-    check_val(depth)
     
     if (way == 'AR'){
       vdepth <- c(vdepth, rev(vdepth)[-1])
@@ -99,7 +122,6 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     
   } else {
     vdepth <- depth
-    check_val(time)
   }
 
   if (maj > 0) {
@@ -116,13 +138,13 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   if (length(vdepth) > 1){
     # stop('not yet implemented')
     dtcurve <- dtcurve(depth = vdepth, time = time, dist = dist, 
-                       palier = palier, vup = vup, 
+                       palier = palier, ascent_speed = ascent_speed, 
                        speed = speed, way = way)
   } else {
-    dtcurve <- dtcurve(time = time, depth = depth, palier = palier, vup = vup)
+    dtcurve <- dtcurve(time = time, depth = depth, palier = palier, ascent_speed = ascent_speed)
   }
   # compute the dtr from palier and depth in square profile
-  # dtr <- dtr(palier, depth = depth, vup = vup)
+  # dtr <- dtr(palier, depth = depth, ascent_speed = ascent_speed)
   dtr <- unname(unlist(dtcurve[3]))
   dtcurve[3] <- NULL
   
@@ -155,8 +177,8 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
 #' of a dive.
 #' 
 #' @examples 
-#' dive1 = dive(depth = 39, time = 22, secu = TRUE, vup = 10)
-#' dive2 = dive(depth = 20, time = 40, secu = TRUE, vup = 10)
+#' dive1 = dive(depth = 39, time = 22, secu = TRUE, ascent_speed = 10)
+#' dive2 = dive(depth = 20, time = 40, secu = TRUE, ascent_speed = 10)
 #' divet = ndive(dive1, dive2, inter = 30)
 #' 
 #' @return ndive, a ndive class object.
@@ -182,11 +204,11 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
     time <- dtime(dive1) + dive1$dtr + inter + time2
     # total depth
     depth <- max(depth(dive1), depth2)
-    if (max_depth_t(depth) >= time) { # check if second dive possible with time
+    if (max_depth_time(depth) >= time) { # check if second dive possible with time
       ndive <- list(
         dive1 = dive1,
         dive2 = dive(
-          depth = depth, time = time, vup = speed2, secu = secu2,
+          depth = depth, time = time, ascent_speed = speed2, secu = secu2,
           hour = dive1$hour[1]
         ),
         inter = inter, type = "consec"
@@ -224,11 +246,11 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
     
     # check if second dive possible (time in talbe)
     if (tablecheck(depth2, time2 + maj, force = TRUE) &
-      max_depth_t(depth2) >= time2 + maj ){ # & depth(dive1) <= 60) {
+      max_depth_time(depth2) >= time2 + maj ){ # & depth(dive1) <= 60) {
       hour2 <- dive1$hour[2] + inter
 
       suc_dive <- dive(depth = depth2, time = time2, maj = maj, secu = secu2,
-                       vup = speed2, hour = hour2)
+                       ascent_speed = speed2, hour = hour2)
       
       ndive <- list(
         dive1 = dive1, dive2 = suc_dive,

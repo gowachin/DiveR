@@ -2,8 +2,10 @@
 #' 
 #' Check if the parameters are possible with table information.
 #' 
-#' @param depth in meter. Max is 65m see Detail !
-#' @param time in minute. Max is 180' see Detail !
+#' @param depth depth in meter. Must be a single positive value 
+#' with a maximum is 65m.
+#' @param time time in minute. Must be a single positive value 
+#' with a maximum is 180 min
 #' @param force FALSE by default, if TRUE don't stop the function but 
 #' return a TRUE/FALSE value
 #' 
@@ -17,15 +19,20 @@
 #' 
 #' @export
 tablecheck <- function(depth, time, force = FALSE) {
+  #### LOAD DATA
   table <- DiveR::table
-  # checks
-  check_val(depth)
-  check_val(time)
+  #### IDIOT PROOF ####
+  if (any(depth < 0) | !is.numeric(depth) | length(depth) > 1 ) {
+    stop("depth must be positive numeric value.")
+  }
+  if (any(time < 0) | !is.numeric(time) | length(time) > 1 ) {
+    stop("time must be positive numeric value.")
+  }
   # get table values
   depths <- as.numeric(rownames(table))
   times <- as.numeric(colnames(table))
 
-  maxt <- max_depth_t(depth)
+  maxt <- max_depth_time(depth, force = TRUE)
   
   res <- TRUE
   # checks for max
@@ -33,40 +40,60 @@ tablecheck <- function(depth, time, force = FALSE) {
     if (force) {
       res <- FALSE
     } else {
-      stop("Time or depth values are outside the mn90 table 
-         depth must be not exceed 65 and time 3h (180 minutes)
-         please read doc with ?tablecheck or help(tablecheck)", call. = F)
+      stop("Time or depth values are outside the mn90 table,
+depth must be not exceed 65 and time 3h (180 minutes)
+please read doc with ?tablecheck or help(tablecheck)")
     }
   } else if( time > maxt) {
     if (force) {
       res <- FALSE
     } else {
-      stop(paste("Maximum time at",depth, "meters is",maxt,'minutes' ), call. = F)
+      stop(sprintf("Maximum time at %d meters is %d minutes",depth, maxt), 
+           call. = F)
     }
   }
   return(res)
 }
 
-#' max_depth_t
+
+#' max_depth_time
 #' 
 #' Max time present in the table for a given depth.
 #' 
-#' @param depth in meter. Max is 65m see Detail !
+#' @param depth depth in meter. Must be a single positive value 
+#' with a maximum is 65m.
+#' @param force FALSE by default, if TRUE don't stop the function but 
+#' return a TRUE/FALSE value
 #' 
-#' @return a single numeric value, the max time possible to dive at the given 
+#' @return 
+#' Single numeric value, the max time possible to dive at the given 
 #' depth is the MN90 table.
 #'  
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
 #' @rdname tablecheck
 #' @export
-max_depth_t <- function(depth) {
+max_depth_time <- function(depth, force = FALSE) {
+  #### LOAD DATA
   table <- DiveR::table[, , 1]
-  # chekcs
-  check_val(depth)
+  #### IDIOT PROOF ####
+  if (any(depth < 0) | !is.numeric(depth) | length(depth) > 1 ) {
+    stop("depth must be positive numeric value.")
+  }
 
   depths <- as.numeric(rownames(table))
   # round to upper depths and times !
-  rdepth <- min(depths[depths >= depth])
+  depths <- depths[depths >= depth]
+  if(length(depths) == 0){
+    if(force){
+      return(0)
+    } else {
+      stop("depth value is outside the mn90 table, depth
+must be not exceed 65 meter
+please read doc with ?tablecheck or help(tablecheck)")
+    }
+  }
+  rdepth <- min(depths)
 
   d <- as.character(rdepth)
   t <- names(which(!is.na(table[d, ])))
@@ -74,12 +101,15 @@ max_depth_t <- function(depth) {
   return(m)
 }
 
+
 #' palier
 #'
 #' Compute the palier depth and time from mn90 table.
 #' 
-#' @param depth in meter. Max is 65m see Detail !
-#' @param time in minute. Max is 180' see Detail !
+#' @param depth depth in meter. Must be a single positive value 
+#' with a maximum is 65m.
+#' @param time time in minute. Must be a single positive value 
+#' with a maximum is 180 min
 #' @param secu true by default, add a secu deco 3 min at 3 meter
 #' 
 #' @details 
@@ -94,11 +124,16 @@ max_depth_t <- function(depth) {
 #' 
 #' @export
 palier <- function(depth, time, secu = TRUE) {
+  #### LOAD DATA
   table <- DiveR::table
   grp <- DiveR::grp
-  # checks
-  check_val(depth)
-  check_val(time)
+  #### IDIOT PROOF ####
+  if (any(depth < 0) | !is.numeric(depth) | length(depth) > 1 ) {
+    stop("depth must be positive numeric value.")
+  }
+  if (any(time < 0) | !is.numeric(time) | length(time) > 1 ) {
+    stop("time must be positive numeric value.")
+  }
   # get table values
   depths <- as.numeric(rownames(table))
   times <- as.numeric(colnames(table))
@@ -192,7 +227,7 @@ majoration <- function(depth, group = "Z", inter = 16) {
 #' @param time in minute. Max is 180' see Detail !
 #' @param palier a object palier computed with the palier function. 
 #' Is a list of depth and time for every deco stage.
-#' @param vup 10 m/min max speed up to the deco. 
+#' @param ascent_speed 10 m/min max speed up to the deco. 
 #' Speed between deco is fixed to 6
 #' @param dist a distance vector
 #' @param speed speed of the diver
@@ -208,7 +243,7 @@ majoration <- function(depth, group = "Z", inter = 16) {
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
 #' @export
-dtcurve <- function(time, depth, palier, vup = 10, 
+dtcurve <- function(time, depth, palier, ascent_speed = 10, 
                     dist = NULL, speed = NULL, way = c('AR','AS')) {
   # checks
   check_val(time)
@@ -240,7 +275,7 @@ dtcurve <- function(time, depth, palier, vup = 10,
     stop('this probleme is not yet fully implemented')
   }
   # time to deco
-  up <- (depth - maxpal) / vup
+  up <- (depth - maxpal) / ascent_speed
   # time between deco
   vpal <- maxpal / 6
   dend <- up + tpal + vpal

@@ -2,15 +2,16 @@
 % Please edit documentation in R/deco.R
 \name{tablecheck}
 \alias{tablecheck}
-\alias{max_depth_t}
+\alias{max_depth_time}
 \title{tablecheck}
 \usage{
 tablecheck(depth, time, force = FALSE)
 
-max_depth_t(depth)
+max_depth_time(depth, force = FALSE)
 }
 \arguments{
-\item{depth}{in meter. Max is 65m see Detail !}
+\item{depth}{depth in meter. Must be a single positive value 
+with a maximum is 65m.}
 
 \item{time}{time in minute. Must be a single positive value 
 with a maximum is 180 min}
@@ -19,7 +20,7 @@ with a maximum is 180 min}
 return a TRUE/FALSE value}
 }
 \value{
-a single numeric value, the max time possible to dive at the given 
+Single numeric value, the max time possible to dive at the given 
 depth is the MN90 table.
 }
 \description{

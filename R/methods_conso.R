@@ -19,6 +19,29 @@ is.tank <- function(x){
   inherits(x, 'tank')
 }
 
+#' is.conso
+#'
+#' check if the object is of \code{\link[DiveR]{conso}} class
+#' 
+#' @param x any R object
+#' 
+#' @return
+#' TRUE or FALSE
+#' 
+#' @examples
+#' t <- tank(12,200)
+#' d <- dive(20, 40)
+#' c <- conso(d, t)
+#' is.tank(c)
+#' is.tank('conso')
+#' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
+#' @export
+is.conso <- function(x){
+  inherits(x, 'conso')
+}
+
 #' pressure
 #' \code{pressure} retrieve the pressure of tank(s).
 #' 
@@ -327,4 +350,11 @@ summary.conso <- function(object, ...){
   } else {
     cat("The dive is deadly !\n")
   }
+}
+
+#' @rdname depth
+#' 
+#' @export
+depth.conso <- function(object) {
+  return(max(object$dtcurve$depths))
 }
