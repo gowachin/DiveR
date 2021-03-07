@@ -29,6 +29,9 @@ file_coverage('R/methods_conso.R', 'tests/testthat/test-methods_conso.R')
 # Update the doc part of the github with pkgdown
 # pkgdown::build_site()
 
+# Link between functions
+library(mvbutils)
+foodweb(where = asNamespace( "DiveR"), cex = 0.8)
 
 # Update the coverage to codecov, don't forget the token
 # covr::codecov()
