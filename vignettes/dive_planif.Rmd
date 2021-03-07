@@ -1,0 +1,56 @@
+---
+title: "Dive Planification"
+author: "Maxime Jaunatre"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Gas consumption}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{=html}
+<style>
+body {
+text-align: justify}
+</style>
+```
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.height = 6.1,
+  fig.width = 8.5,
+  dpi = 96
+)
+```
+
+The package `{DiveR}` provide functions to simulate a dive. It does so by asking a depth, a time and few parameters. This vignette will demonstrate the workflow to simulate a simple dive and different models of two-dives systems.
+
+**Note here that it only show square dives, meaning that decompression is managed following mn90 (french) dive tables.**
+
+<!--
+
+## Simple Dive
+
+### Security Curve
+
+### Limits of the tables
+
+## Dive Methods
+
+## Multiple Dives
+
+### Independant Dives
+
+### Successive Dives
+
+### Consecutive Dives
+
+
+```{r basic_tank}
+library(DiveR)
+tank1 <- tank(vol = 12, press = 200)
+tank1
+```
+-->
