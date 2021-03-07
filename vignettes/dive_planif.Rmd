@@ -4,7 +4,7 @@ author: "Maxime Jaunatre"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Gas consumption}
+  %\VignetteIndexEntry{Dive Planification}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
