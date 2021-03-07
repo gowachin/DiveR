@@ -35,7 +35,7 @@ Intended to be used by french dive student, traduction of the lexic is on it's w
 
 You can install the development version of `{DiveR}` from [github](https://github.com/gowachin/DiveR) with:
 
-```{r}
+```{r, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github('https://github.com/gowachin/DiveR')
 # or 
