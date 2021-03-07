@@ -46,7 +46,7 @@ remotes::install_github("gowachin/DiveR")
 
 ### Dive planification
 
-**A vignette need to be written**
+**A vignette need to be written** 
 <!--
 ### Planning a single dive
 
