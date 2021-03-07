@@ -4,7 +4,7 @@
 
 * Consumption functions work on single tank dive, multiple tanks dive.
 
-* End of the gas consumption vignette
+* Gas consumption vignette.
 
 * testthat is set for consumption functions.
 
@@ -20,7 +20,7 @@
 
 * Added a `NEWS.md` file to track changes to the package.
 
-* Vignette about gas consumption
+* Vignette about gas consumption in work
 
 ## Modifications about consumption
 

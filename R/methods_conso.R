@@ -262,3 +262,69 @@ rules.conso <- function(object, ..., hour = FALSE){
   
   return(res)
 }
+
+
+#' @rdname summary.dive
+#'  
+#' @examples 
+#' summary(tank(vol = 12, press = 200))
+#' 
+#' @export
+summary.tank <- function(object, ...){
+  # parameters volume and pressure
+  cat(paste("Tank :",volume(object), "litre at",pressure(object),"bar\n"))
+  # rules
+  t <- paste(sprintf('%d %s : %3.f bar', 
+                     c(1:2),
+                     names(rules(object)), 
+                     rules(object)), collapse = '\n        ')
+  cat("rules :", t)
+  # typ and gas
+  cat("\nThe tank type is", object$typo["typ"],
+      "and contain", object$typo["gas"], "\n")
+  # name
+  cat("Named :", object$typo["name"], "\n")
+}
+
+#' @rdname summary.dive
+#'  
+#' @examples 
+#' Tank_15L <- tank(vol = 15, press = 200)
+#' viable <- conso(dive = dive(20,40), tank = Tank_15L, 
+#'                 cons = 20, failure_label = 'Air failure')
+#' summary(viable)
+#' 
+#' @export
+summary.conso <- function(object, ...){
+  # duration and depth of the dive
+  cat("Consumption simulated on dive at", depth(object),"m for", 
+      diff(object$hour), "minutes\n")
+  
+  Ltank <- nrow(object$rules)
+  cat("---------------------------------------------------------------------\n")
+  cat("       Tank name |         Rule | Pressure |    Time | Final pressure \n")
+  cat("---------------------------------------------------------------------\n")
+  for(i in 1:Ltank){
+    
+    name = rownames(object$rules)[i]
+    tanks <- paste(sprintf('%16.16s | %12.12s | %4.f bar | %3.f min | %3s', 
+                           c(paste("Tank",name), 
+                             rep(paste0(rep(" ",5+nchar(name)),
+                                        collapse = ""), 2)),
+                           object$rules[i,c(2,5,8)],
+                           object$rules[i,c(1,4,7)], 
+                           object$rules[i,c(3,6,9)],
+                           c(paste(as.character(pressure(object)[i]),"bar"), 
+                             c("",""))), 
+                   collapse = '\n')
+    cat(tanks, "\n")
+    
+    cat("---------------------------------------------------------------------\n")
+  }
+  # Viable
+  if( sum(pressure(object)) ){
+    cat("The dive is viable !\n")
+  } else {
+    cat("The dive is deadly !\n")
+  }
+}
