@@ -27,6 +27,18 @@ test_that("exp_rules_tank", {
 })
 
 
+# Test for correct output
+test_that("exp_summary_tank", {
+  t <- tank(12,200)
+  mess <- "Tank : 12 litre at 200 bar
+rules : 1 mid : 100 bar
+        2 res :  50 bar
+The tank type is back and contain Air 
+Named : back12 "
+  expect_equal(capture_output(summary(t)), mess)
+})
+
+
 #### Conso attributes method ####
 
 # Pressures
@@ -92,6 +104,57 @@ test_that("exp_pressure_conso", {
   # warnings are watch by another test
   expect_equal(unname(pressure(c)), 0)
   
+})
+
+test_that("exp_summary_conso", {
+  simp_dive <- dive(depth = 20, time = 40, secu = TRUE)
+  Tank_12L <- tank(vol = 12, press = 200)
+  death <- suppressWarnings(conso(dive = simp_dive, tank = Tank_12L, 
+                 cons = 20, failure_label = 'Air failure'))
+  Tank_15L <- tank(vol = 15, press = 200)
+  viable <- conso(dive = simp_dive, tank = Tank_15L, 
+                  cons = 20, failure_label = 'Air failure')
+  
+  mess <- "Consumption simulated on dive at 20 m for 45.2 minutes
+---------------------------------------------------------------------
+       Tank name |         Rule | Pressure |    Time | Final pressure 
+---------------------------------------------------------------------
+     Tank back12 |          mid |  100 bar |  20 min | 0 bar
+                 |          res |   50 bar |  30 min |    
+                 |  Air failure |    0 bar |  40 min |     
+---------------------------------------------------------------------
+The dive is deadly !"
+  expect_equal(capture_output(summary(death)), mess)
+  mess <- "Consumption simulated on dive at 20 m for 45.2 minutes
+---------------------------------------------------------------------
+       Tank name |         Rule | Pressure |    Time | Final pressure 
+---------------------------------------------------------------------
+     Tank back15 |          mid |  100 bar |  25 min | 29.16 bar
+                 |          res |   50 bar |  38 min |    
+                 |  Air failure |    0 bar |  NA min |     
+---------------------------------------------------------------------
+The dive is viable !"
+  expect_equal(capture_output(summary(viable)), mess)
+  
+  
+  A_10L <- tank(vol = 10, press = 200, name = 'A_10L')
+  B_10L <- tank(vol = 10, press = 200, name = 'B_10L')
+  bi_conso <- conso(dive = simp_dive, tank = list(A_10L, B_10L), 
+                    cons = 20, failure_label = 'Air failure')
+  mess <- "Consumption simulated on dive at 20 m for 45.2 minutes
+---------------------------------------------------------------------
+       Tank name |         Rule | Pressure |    Time | Final pressure 
+---------------------------------------------------------------------
+      Tank A_10L |          mid |  100 bar |  17 min | 50 bar
+                 |          res |   50 bar |  43 min |    
+                 |  Air failure |    0 bar |  NA min |     
+---------------------------------------------------------------------
+      Tank B_10L |          mid |  100 bar |  33 min | 93.74 bar
+                 |          res |   50 bar |  NA min |    
+                 |  Air failure |    0 bar |  NA min |     
+---------------------------------------------------------------------
+The dive is viable !"
+  expect_equal(capture_output(summary(bi_conso)), mess)
 })
 
 # Rules

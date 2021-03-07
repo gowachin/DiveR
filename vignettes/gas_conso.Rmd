@@ -9,11 +9,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{=html}
 <style>
 body {
 text-align: justify}
 </style>
-
+```
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -30,7 +31,7 @@ The package `{DiveR}` provide functions to simulate gas consumption. It does so 
 
 A tank can basically be set by 2 important parameters : a volume `vol` and a pressure `press`. Other input are used to set rules to define when and where the tank can be used to breath.
 
-Volume is set in litre and pressure in bar. 
+Volume is set in litre and pressure in bar.
 
 ```{r basic_tank}
 library(DiveR)
@@ -40,7 +41,7 @@ tank1
 
 We can see that many values are set by default, the principal one being the gas type. At this time only air is used and thus tanks are limited between the surface (0) and 66m of depth.
 
-Default rules are also set, which will message the user when the tank is half empty, 3/4 empty and when there is no gas left in it. You can set them like below, and name the rules too. 
+Default rules are also set, which will message the user when the tank is half empty, 3/4 empty and when there is no gas left in it. You can set them like below, and name the rules too.
 
 ```{r limit_tank}
 # set in percentage
@@ -55,21 +56,23 @@ rules(tank3)
 
 ### Tank types
 
-By default, the tank type is set to *back*, a category to describe back-mounted tanks commonly used by divers. However it is possible to have tanks dedicated to specific usage in a relay or at the end of a dive. 
+By default, the tank type is set to *back*, a category to describe back-mounted tanks commonly used by divers. However it is possible to have tanks dedicated to specific usage in a relay or at the end of a dive.
 
 #### Relay tank
 
 A tank used at the beginning and the end of a dive. Mostly used in cave diving. This type is attributed to tanks where there is an interdiction of usage between 2 times.
 
-The easier way to input this interdiction is to set the two rules at same value. During the dive, the tank will be used until pressure match 120b. Then the diver will use other tanks up to their second rules (ex : back tank reserve at 50b). When done, the diver will get back to the relay tank to finish the dive with it. 
+The easier way to input this interdiction is to set the two rules at same value. During the dive, the tank will be used until pressure match 120b. Then the diver will use other tanks up to their second rules (ex : back tank reserve at 50b). When done, the diver will get back to the relay tank to finish the dive with it.
 
 ```{r relay_tank}
 relay <- tank(vol = 12, press = 180, typ = 'relay',
               rules = list(rules = c('gap' = 120, 'end_gap' = 120), sys = 'bar'))
 ```
-<!-- Other gas not yet included.
 
-#### Desat tank
+<!--
+#### Desaturation tank
+
+**Other gas than Air are not yet included but the consumption algorithm is set for them**
 
 A tank used at the end of a dive to desaturate azote during ascent part of the dive. Often limited to a lower depth because it use other gas than air. This type of tank are tanks that divers can't use until he has used other tanks or passed the dive end point.
 
@@ -80,43 +83,27 @@ desat <- tank(vol = 12, press = 180, typ = 'relay',
               rules = list(rules = c('gap' = 100, 'end_gap' = 25), sys = '%'))
 desat$carac[c('rule1', 'rule2')]
 ```
+
 -->
 
 As these tanks are used in combination with a back-mounted tank, their usage will be described in the multiple tank usage part. The algorithm of usage will be described, don't fear not understanding it right now.
 
+## Tank methods
 
-## Tank attributes
-
-The parameters of a tank can be retrieved with specified function. We can find the pressure of any tank.
+The parameters of a tank can be retrieved with specified function. We can find the volume, pressure and rules of any tank. All these informations are grouped in a summary function
 
 ```{r attribute_tank}
 pressure(relay)
 volume(relay)
 rules(relay)
+summary(relay)
 ```
-
-<!-- 
-```{r tmp_attribute_tank, include = FALSE}
-
-summary_conso <- function(object, ...){
-  # parameters volume and pressure
-  cat(paste("Tank :",volume(object), "litre at",pressure(object),"bar\n"))
-  # dtr
-  dtr <- dtr(object)
-  cat('Total dive time is',dtime(object)+dtr,'with a dive ascent of',dtr,'minutes\n')
-  # palier & maj
-}
-
-```
-
-
---> 
 
 ## Tank consumption
 
-Once the tanks are defined, you can combine them with a dive. The `conso` function will then compute how many gas the diver will consume by following the dive depth curve and report pressure at different times of the dive. The function will also catch times where the rules of a tank are met. Note here that a new rules about air failure is added to each tank to report when a tank is empty. 
+Once the tanks are defined, you can combine them with a dive. The `conso` function will then compute how many gas the diver will consume by following the dive depth curve and report pressure at different times of the dive. The function will also catch times where the rules of a tank are met. Note here that a new rules about air failure is added to each tank to report when a tank is empty.
 
-If no tanks are available (pressure > 0) at some time, the function will return warnings to highlight these times.
+If no tanks are available (pressure \> 0) at some time, the function will return warnings to highlight these times.
 
 For the following examples, we will use a single dive of 40 minutes at 20 meter. There is one desaturation stop for 3min at 3m.
 
@@ -125,34 +112,35 @@ simp_dive <- dive(depth = 20, time = 40, secu = TRUE)
 summary(simp_dive)
 ```
 
-For mutliple dives you need to choose one of the two dives. A special case for consecutive dives is at work.
+For multiple dives you need to choose one of the two dives. A special case for consecutive dives is at work.
 
 ### Single Tank
 
-First we try to use a tank with a volume of 12L at 200 bar. The diver will breathe 20L/min, which is the default value of the function. 
+First we try to use a tank with a volume of 12L at 200 bar. The diver will breathe 20L/min, which is the default value of the function.
 
-A rapid observation of the consumption if possible by ploting the consumption object. We can easily see when the pressure met the rules and when the diver died (40min). This was also printed in warnings with specified times with missing gas.
+A rapid observation of the consumption if possible by plotting the consumption object. We can easily see when the pressure met the rules and when the diver died (40min). This was also printed in warnings with specified times with missing gas.
 
 ```{r death_conso, dev='png', out.width="100%"}
 Tank_12L <- tank(vol = 12, press = 200)
 death <- conso(dive = simp_dive, tank = Tank_12L, 
                cons = 20, failure_label = 'Air failure')
-plot(death)
+plot(death, line_print = FALSE)
 ```
-Once we observed this, we can solve the issue by using a different tank for example. Here we will increase the volume to 15L to get more air during the dive. Note that we could also increase the pressure of the precedent tank. Another solution could be to breath less and using a diver using  `cons = 15`.
 
-This solution work and the diver get to the end of the dive alive ! Hourra ! 
+Once we observed this, we can solve the issue by using a different tank for example. Here we will increase the volume to 15L to get more air during the dive. Note that we could also increase the pressure of the precedent tank. Another solution could be to breath less and using a diver using `cons = 15`.
+
+This solution work and the diver get to the end of the dive alive ! Hourra !
 
 ```{r viable_conso, dev='png', out.width="100%"}
 Tank_15L <- tank(vol = 15, press = 200)
 viable <- conso(dive = simp_dive, tank = Tank_15L, 
                cons = 20, failure_label = 'Air failure')
-plot(viable)
+plot(viable, line_print = FALSE)
 ```
 
 ## Consumption attributes
 
-Now that we have simulated both consumption on the same dive, we may want to find more information about the simulations, which will help us dive safely. 
+Now that we have simulated both consumption on the same dive, we may want to find more information about the simulations, which will help us dive safely.
 
 First we can check the pressure at the end of the dive. This can be helpful to see if the diver can still be alive. Here we see that effectively in the death simulation, the tank was empty at the end of the dive.
 
@@ -169,20 +157,118 @@ rules(viable)
 
 So, here, despite the diver in `viable` make it alive to the end of the dive, he didn't respect the second rule of ending the dive with 50 bar at the end.
 
-<!-- 
-
 Finally we can find all information in a summary. 
-
-```{r sum
-_conso, include = FALSE}
-
-summary_conso <- function(conso){
-  # print('hello')
-}
-
+```{r sum_conso}
 summary(death)
 summary(viable)
-
 ```
---> 
 
+## Multiple Tank
+
+To respect all rules broken before in this vignette we could use even larger tank or dive a shorter time. An other option could be to use multiple tanks.
+
+This is done by simply giving a list of tanks to the `conso` function.
+
+Below is an example of 2 independant 10L tanks used by the function. **For better understanding, it is better name them.**
+
+```{r mult_tank, dev='png', out.width="100%"}
+A_10L <- tank(vol = 10, press = 200, name = 'A_10L')
+B_10L <- tank(vol = 10, press = 200, name = 'B_10L')
+bi_conso <- conso(dive = simp_dive, tank = list(A_10L, B_10L), 
+               cons = 20, failure_label = 'Air failure')
+plot(bi_conso, line_print = FALSE)
+pressure(bi_conso)
+```
+
+We managed to get to the end of the dive alive and with no tank below 50 bar !
+
+The plot make it look messy but illustrate the algorithm written to used multiple tanks.
+
+1.   The tanks are used by their order in the list provided.
+
+2.   The tanks are used until they reach a rules. At this rule, the diver will switch to the next tank available before it's first rule.
+
+3.  It check tank availability at each time (not showed in this example).
+
+By using these simple rules, you can set diverse multiple tanks configurations.
+
+#### One relay and back tank
+
+We want to design a dive where we start on a relay tank (named Relay) up to a third of the pressure, then consume our back tank (named Tank_10L). Once the latter cross the second rule (or reserve), we finish the dive with the Relay. 
+
+```{r mult_relay, dev='png', out.width="100%"}
+Relay <- tank(vol = 10, press = 200, typ = 'relay', rules = list(
+  rules = c(' ' = 66, 'drop relay' = 66),
+  sys = '%'), name = "Relay"
+  )
+
+Tank_10L <- tank(vol = 10, press = 200, rules = list(
+  rules = c('Return' = 100, "Reserve" = 50), 
+  sys = "bar"), name = "Back"
+  )
+
+relay_conso <- conso(dive = simp_dive, 
+                     tank = list(Relay, Tank_10L), 
+                     cons = 20, failure_label = 'Air failure')
+plot(relay_conso, line_print = FALSE)
+summary(relay_conso)
+```
+
+With this configuration we still have our reserve on our back tank, and lot of gas in our relay. Note that because the relay is still available between it's drop and the back tank reserve, a full line is drawn
+
+<!--
+#### Multiple relay and back tank
+
+A second configuration could be to use multiple relay
+
+```{r mult_mrelay, eval = FALSE, include = FALSE}
+Relay1 <- tank(vol = 10, press = 200, typ = 'relay', rules = list(
+  rules = c(' ' = 66, 'drop relay' = 66),
+  sys = '%'), name = "Relay1"
+  )
+Relay1$limit['maxd'] = 10
+
+Relay2 <- tank(vol = 10, press = 200, typ = 'relay', rules = list(
+  rules = c(' ' = 66, 'drop relay' = 66),
+  sys = '%'), name = "Relay2"
+  )
+
+Tank_10L <- tank(vol = 10, press = 200, rules = list(
+  rules = c('Return' = 100, "Reserve" = 50), 
+  sys = "bar"), name = "Back"
+  )
+
+relay_conso <- conso(dive = dive(40, 35), 
+                     tank = list(Relay1, Relay2, Tank_10L), 
+                     cons = 20, failure_label = 'Air failure')
+plot(relay_conso)
+pressure(relay_conso)
+```
+
+-->
+
+<!--
+#### One Deco and back tank
+
+We want to design a dive where we dive with our back tank (named Tank_15L). Once the latter cross the second rule (or reserve), we finish the dive with a tank waiting for us. This is to mimic a desaturation tank despite other gas than air are not yet implemented
+
+```{r mult_deco, eval = FALSE, include = FALSE}
+Deco <- tank(vol = 6, press = 200, typ = 'relay', rules = list(
+  rules = c(' ' = 200, ' ' = 200),
+  sys = '%'), name = "Deco"
+  )
+
+Tank_15L <- tank(vol = 15, press = 200, rules = list(
+  rules = c('Return' = 100, "Reserve" = 50), 
+  sys = "bar"), name = "Back"
+  )
+
+relay_conso <- conso(dive = simp_dive, 
+                     tank = list(Deco, Tank_15L), 
+                     cons = 20, failure_label = 'Air failure')
+plot(relay_conso)
+pressure(relay_conso)
+```
+
+
+-->

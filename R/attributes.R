@@ -116,7 +116,8 @@ speed.dive <- function(object) {
 #' summary of a dive object
 #'
 #' @param object is a DiveR object. There are methods for 
-#' \code{\link[DiveR]{dive}} and \code{\link[DiveR]{palier}} objects.
+#' \code{\link[DiveR]{dive}}, \code{\link[DiveR]{tank}},
+#'  \code{\link[DiveR]{conso}} and \code{\link[DiveR]{palier}} objects.
 #' @param ... other arguments passed to the dtr.palier method.
 #' \describe{
 #'   \item{plot}{FALSE by default}
