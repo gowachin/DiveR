@@ -1,11 +1,18 @@
 
 #### Test attributes method ####
 
-test_that("exp_pressure_tank", {
+test_that("exp_is_tank", {
   t <- tank(12,200)
-  is.tank(t)
   expect_true(is.tank(t))
   expect_false(is.tank('tank'))
+})
+
+test_that("exp_is_tank", {
+  t <- tank(15,200)
+  d <- dive(20, 40)
+  c <- conso(d, t)
+  expect_true(is.conso(c))
+  expect_false(is.conso('conso'))
 })
 
 # Test for correct output
@@ -229,7 +236,13 @@ test_that("exp_rules_conso", {
   r <- c$rules
   r[, c(3, 6, 9)] <- r[, c(3, 6, 9)] + c$hour[1]
   expect_equal(rules(c, hour = TRUE), r)
+})
 
-  
+# Depth
+test_that("exp_depth_conso", {
+  t <- tank(15,200)
+  d <- dive(20,40)
+  c <- conso(d, t)
+  expect_equal(depth(c), 20)
 })
 
