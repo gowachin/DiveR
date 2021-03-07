@@ -11,13 +11,14 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+library(badger)
 ```
 
 # DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height=200px/>
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-`r badger::badge_devel("gowachin/DiveR", "blue")`
+`badge_devel("gowachin/DiveR", "blue")`
 [![R build status](https://github.com/gowachin/DiveR/workflows/R-CMD-check/badge.svg)](https://github.com/gowachin/DiveR/actions)
 [![Coverage status](https://codecov.io/gh/gowachin/DiveR/branch/master/graph/badge.svg)](https://codecov.io/github/gowachin/DiveR?branch=master)
 
@@ -34,7 +35,7 @@ Intended to be used by french dive student, traduction of the lexic is on it's w
 
 You can install the development version of `{DiveR}` from [github](https://github.com/gowachin/DiveR) with:
 
-``` r
+```{r}
 # install.packages("devtools")
 devtools::install_github('https://github.com/gowachin/DiveR')
 # or 
