@@ -56,7 +56,8 @@ check_val <- function(val, zero = FALSE) {
 #' @param hour NULL not implemented yet
 #' @param dist a distance vector
 #' @param speed speed of the diver
-#' @param way if the dive is one way or the diver return by the same depth
+#' @param way If the dive is one way (one way : 'OW') or if the diver return by 
+#' the same depth (way back : 'WB'). 
 #' 
 #' 
 #' @details 
@@ -71,8 +72,13 @@ check_val <- function(val, zero = FALSE) {
 #' 
 #' @export
 dive <- function(depth = 20, time = 40, secu = TRUE,
-                 ascent_speed = 10, maj = NULL, hour = NULL,
-                 dist = NULL,  speed = NULL, way = c('AS','AR')) {
+                 ascent_speed = 10, maj = 0, 
+                 desat_model = c('table'),
+                 
+                 hour = NULL,
+                 dist = NULL,  speed = NULL, way = c('AS','AR'),
+                 vup = 10 # TODO : to remove
+                 ) {
   #### IDIOT PROOF ####
   if (any(depth < 0) | !is.numeric(depth) ) {
     stop("depth must be positive numeric value(s).")
@@ -87,14 +93,14 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
       length(ascent_speed) > 1 ) {
     stop("ascent_speed must be a single positive numeric value(s).")
   }
-  if(!is.null(maj)){
+  if(maj != 0){
     if (any(maj < 0) | !is.numeric(maj) | length(maj) > 1 ) {
       stop("maj must be a single positive numeric value.")
     }
-  } else {
-    maj <- 0
   }
+  desat_model <- match.arg(desat_model)
   
+  ascent_speed = vup # TODO : deprecated argument
   way <- match.arg(way)
   
   if (length(depth) > 1){

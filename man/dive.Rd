@@ -13,7 +13,8 @@ dive(
   hour = NULL,
   dist = NULL,
   speed = NULL,
-  way = c("AS", "AR")
+  way = c("AS", "AR"),
+  vup = 10
 )
 }
 \arguments{

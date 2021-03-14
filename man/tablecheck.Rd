@@ -3,11 +3,14 @@
 \name{tablecheck}
 \alias{tablecheck}
 \alias{max_depth_time}
+\alias{max_depth_t}
 \title{tablecheck}
 \usage{
 tablecheck(depth, time, force = FALSE)
 
 max_depth_time(depth, force = FALSE)
+
+max_depth_t(depth, force = FALSE)
 }
 \arguments{
 \item{depth}{depth in meter. Must be a single positive value 

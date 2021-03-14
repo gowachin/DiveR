@@ -101,6 +101,14 @@ please read doc with ?tablecheck or help(tablecheck)")
   return(m)
 }
 
+#' @rdname tablecheck
+#' 
+#' @export
+max_depth_t <- function(depth, force = FALSE) {
+  warning("This function is deprecated")
+  max_depth_time(depth = depth, force = force)
+}
+
 
 #' palier
 #'

@@ -31,7 +31,7 @@ file_coverage('R/methods_conso.R', 'tests/testthat/test-methods_conso.R')
 
 # Link between functions
 library(mvbutils)
-foodweb(where = asNamespace( "DiveR"), cex = 0.8)
+foodweb(where = asNamespace( "DiveR"), cex = 0.8, color.lines = F)
 
 # Update the coverage to codecov, don't forget the token
 # covr::codecov()
