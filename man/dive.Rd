@@ -9,7 +9,8 @@ dive(
   time = 40,
   secu = TRUE,
   ascent_speed = 10,
-  maj = NULL,
+  maj = 0,
+  desat_model = c("table"),
   hour = NULL,
   dist = NULL,
   speed = NULL,
@@ -40,7 +41,8 @@ Only used by table decompression model.}
 
 \item{speed}{speed of the diver}
 
-\item{way}{if the dive is one way or the diver return by the same depth}
+\item{way}{If the dive is one way (one way : 'OW') or if the diver return by 
+the same depth (way back : 'WB').}
 }
 \value{
 dive, a dive class object.

@@ -23,7 +23,7 @@ dist2time <- function(dist, speed){ # TODO : need to find default value
 #' the same depth (way back : 'WB'). 
 #'
 #' @export
-init_dtcurve <- function(depth, time, ascend_speed, way = c("OW", "WB")) {
+init_dtcurve <- function(depth, time, ascent_speed = 10, way = c("OW", "WB")) {
   #### IDIOT PROOF ####
   if (any(depth < 0) | !is.numeric(depth)) {
     stop("depth must be positive numeric value(s).")
@@ -41,20 +41,20 @@ init_dtcurve <- function(depth, time, ascend_speed, way = c("OW", "WB")) {
     warning(paste(
       "Ascent speed is usually set between 10 and 20 m/min in",
       "most desaturation models.",
-      "6m/min is used between 6m and the surface"
+      "\n6m/min is used between 6m and the surface"
     ))
   }
 
   way <- match.arg(way)
 
-  if (length(depth) == length(time)) {
-    stop("depth and dist must be of same length")
+  if (length(depth) != length(time)) {
+    stop("depth and time must be of same length")
   }
 
   if (length(depth) == 1) {
     # square profile
     if (depth > 6) { # ascent speed above 6m is 6m/min
-      ascent_time <- ((depth - 6) / ascend_speed) + 1
+      ascent_time <- ((depth - 6) / ascent_speed) + 1
     } else {
       ascent_time <- depth / 6
     }
@@ -63,22 +63,27 @@ init_dtcurve <- function(depth, time, ascend_speed, way = c("OW", "WB")) {
       time = c(0, 0, time, time + ascent_time)
     )
   } else {
+    # check if origin point
+    if(time[1] > 0 | depth[1] > 0){
+      time <- c(0, time)
+      depth <- c(0, depth)
+    }
     # way of the dive
     if (way == "WB") {
       depth <- c(depth, rev(depth)[-1])
-      time <- c(time, rev(time)[-1])
+      time <- c(time, cumsum(c(tail(time, 1), rev(diff(time))))[-1] )
     }
     # make df
     dtcurve <- data.frame(depth = depth, time = time)
-    # check if origin point
-    if (sum(dtcurve[1, ]) > 0) {
-      dtcurve <- rbind(c(0, 0), dtcurve)
-    }
+    # 
+    # if (sum(dtcurve[1, ]) > 0) {
+    #   dtcurve <- rbind(c(0, 0), dtcurve)
+    # }
     # check for end point
-    if (tail(dtcurve$depth, 1) < 0) {
+    if (tail(dtcurve$depth, 1) > 0) {
       tmp_d <- tail(dtcurve$depth, 1)
       if (tmp_d > 6) { # ascent speed above 6m is 6m/min
-        ascent_time <- ((tmp_d - 6) / ascend_speed) + 1
+        ascent_time <- ((tmp_d - 6) / ascent_speed) + 1
       } else {
         ascent_time <- tmp_d / 6
       }

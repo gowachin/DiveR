@@ -19,7 +19,8 @@ report()
 
 file_coverage('R/conso.R', 'tests/testthat/test-conso.R')
 file_coverage('R/methods_conso.R', 'tests/testthat/test-methods_conso.R')
-
+x <- file_coverage('R/dive_utils.R', 'tests/testthat/test-dive_utils.R')
+report(x)
 # zero_coverage() shows only uncovered lines.
 # If run within RStudio, `zero_coverage()` will open a marker pane with the
 # uncovered lines.
