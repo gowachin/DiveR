@@ -1,14 +1,3 @@
-#' dist2time
-#' 
-#' @param dist Distance vector in meters from points to points.
-#' @param speed A diver speed value in meter/minute. 
-#' 
-#' @export
-dist2time <- function(dist, speed){ # TODO : need to find default value
-  time = c(0, cumsum(dist / speed))
-}
-
-
 #' init_dtcurve
 #' 
 #' expand depth and time to a dtcurve data.frame 
@@ -37,12 +26,6 @@ init_dtcurve <- function(depth, time, ascent_speed = 10, way = c("OW", "WB")) {
   if (any(ascent_speed <= 0) | !is.numeric(ascent_speed) |
     length(ascent_speed) > 1) {
     stop("ascent_speed must be a single positive numeric value(s).")
-  } else if (ascent_speed < 10 | ascent_speed > 15) {
-    warning(paste(
-      "Ascent speed is usually set between 10 and 20 m/min in",
-      "most desaturation models.",
-      "\n6m/min is used between 6m and the surface"
-    ))
   }
 
   way <- match.arg(way)

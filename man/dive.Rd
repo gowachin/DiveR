@@ -14,7 +14,7 @@ dive(
   hour = NULL,
   dist = NULL,
   speed = NULL,
-  way = c("AS", "AR"),
+  way = c("OW", "WB"),
   vup = 10
 )
 }

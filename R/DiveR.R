@@ -76,7 +76,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
                  desat_model = c('table'),
                  
                  hour = NULL,
-                 dist = NULL,  speed = NULL, way = c('AS','AR'),
+                 dist = NULL,  speed = NULL, way = c('OW','WB'),
                  vup = 10 # TODO : to remove
                  ) {
   #### IDIOT PROOF ####
@@ -93,41 +93,67 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
       length(ascent_speed) > 1 ) {
     stop("ascent_speed must be a single positive numeric value(s).")
   }
-  if(maj != 0){
+  if( any(maj != 0)){
     if (any(maj < 0) | !is.numeric(maj) | length(maj) > 1 ) {
       stop("maj must be a single positive numeric value.")
     }
   }
   desat_model <- match.arg(desat_model)
   
-  ascent_speed = vup # TODO : deprecated argument
+  
   way <- match.arg(way)
   
   if (length(depth) > 1){
     if (is.null(speed)){stop('A speed must be provided')}
-    
+
     if (is.null(dist) & length(time) == length(depth)){
       dist <- time * speed
     } else {
       stop(paste('multiple points dive need a same lenght numeric vector of',
                  'time or distances'))
     }
-    
+
     if (length(dist) != length(depth)){
       stop('depth and dist must be of same length')
     }
-    
+
     vdepth <- depth
     depth <- max(vdepth)
-    
+
     if (way == 'AR'){
       vdepth <- c(vdepth, rev(vdepth)[-1])
       dist <- c(dist, rev(dist))
-    } 
+    }
     time <- sum(dist)/speed
-    
+
   } else {
     vdepth <- depth
+  }
+  
+  if (ascent_speed < 10 | ascent_speed > 15) {
+    warning(paste( 
+      "Ascent speed is usually set between 10 and 20 m/min in",
+      "most desaturation models.",
+      "\n6m/min is used between 6m and the surface"
+    ))
+  }
+  
+  ascent_speed = vup # TODO : deprecated argument
+  
+  # draw raw dtcurve
+  raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
+  
+  if(desat_model == "table"){
+    if (maj > 0) {
+      timaj <- max(head(raw_dtcurve$time), -1) + maj
+    } else {
+      timaj <- max(head(raw_dtcurve$time), -1)
+    }
+    
+    # check for values
+    tablecheck(max(raw_dtcurve$depth), timaj)
+    
+    desat_stop <- desat_table(raw_dtcurve, maj)
   }
 
   if (maj > 0) {

@@ -27,13 +27,6 @@ test_that("err_init_dtcurve_ascent_sp", {
   expect_error(init_dtcurve(20, 40, ascent_speed = "10"), err )
 })
 
-test_that("war_init_dtcurve_ascent_sp", {
-  war <- "Ascent speed is usually set between 10 and 20 m/min in most desaturation models. 
-6m/min is used between 6m and the surface"
-  expect_warning(init_dtcurve(20, 40, ascent_speed = 7), war )
-  expect_warning(init_dtcurve(20, 40, ascent_speed = 16), war )
-})
-
 test_that("err_init_dtcurve_depth_time", {
   err <- "depth and time must be of same length"
   expect_error(init_dtcurve(c(20,10), 40), err )

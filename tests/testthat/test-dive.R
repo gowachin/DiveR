@@ -20,7 +20,7 @@ test_that("err_dive_secu", {
   expect_error(dive(20, 40, secu = NA), err )
 })
 
-test_that("err_dive_secu", {
+test_that("err_dive_ascent", {
   err <- "ascent_speed must be a single positive numeric value\\(s\\)."
   expect_error(dive(20, 40, ascent_speed = 0), err )
   expect_error(dive(20, 40, ascent_speed = -5), err )
@@ -28,26 +28,24 @@ test_that("err_dive_secu", {
   expect_error(dive(20, 40, ascent_speed = "10"), err )
 })
 
-test_that("err_dive_secu", {
+test_that("err_dive_maj", {
   err <- "maj must be a single positive numeric value."
   expect_error(dive(20, 40, maj = -5), err )
   expect_error(dive(20, 40, maj = c(2,3)), err )
   expect_error(dive(20, 40, maj = "10"), err )
 })
-# 
-# test_that("war_tank_rules", {
-#   # Warnings
-#   war <- 'NA values in rules are set to 0 with empty names'
-#   expect_warning(t <- tank(vol = 12, press = 200, 
-#                            rules = list(rules= c('mid' = 50, 'res' = NA), sys = '%')),
-#                  war )
-#   expect_equal(unname(t$carac['rule2']), 0)
-# })
+
+test_that("war_init_dtcurve_ascent_sp", {
+  war <- "Ascent speed is usually set between 10 and 20 m/min in most desaturation models. 
+6m/min is used between 6m and the surface"
+  expect_warning(dive(20, 40, ascent_speed = 7), war )
+  expect_warning(dive(20, 40, ascent_speed = 16), war )
+})
 # 
 # # Test for correct output
-test_that("dive_output", {
-  d = dive(depth = 39, time = 22, secu = TRUE, ascent_speed = 10)
-  plot(d)
+# test_that("dive_output", {
+#   d = dive(depth = 39, time = 22, secu = TRUE, ascent_speed = 10)
+#   plot(d)
   
   # t <- tank(vol = 12, press = 200)
   # # text if init of rules
@@ -68,7 +66,7 @@ test_that("dive_output", {
   # expect_equal(unname(t$carac[c('rule1','rule2')]), c(50, 25))
   # expect_equal(unname(t$typo['name']), 'relay15')
   # expect_equal(unname(t$typo[c('rule1','rule2')]), c("return", "end"))
-})
+# })
 
 #### Test square dive attributes ####
 # depth.dive

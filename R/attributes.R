@@ -1,3 +1,13 @@
+#' dist2time
+#' 
+#' @param dist Distance vector in meters from points to points.
+#' @param speed A diver speed value in meter/minute. 
+#' 
+dist2time <- function(dist, speed){ # TODO : need to find default value
+  time = c(0, cumsum(dist / speed))
+}
+
+
 #' dtr
 #'
 #' \code{dtr} compute the ascent time from a depth and between deco stages 
