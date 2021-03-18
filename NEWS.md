@@ -4,6 +4,14 @@
 
 * `max_depth_t` has been renamed to `max_depth_time`
 
+* desaturation with table has been rewritten from `palier` and `dtcurve` functions to `ìnit_dtcurve`, `add_desat` and `desat_table` functions. 
+
+* replacing all azote text with nitrogen...thinking about non french divers after all.
+
+## Bugs fixed
+
+* Correction of additionnal time when using successive dives. Was adding between 4 and 1 minute more than expected when using tables. ( #11 )
+
 # DiveR 0.3.0
 
 ## Major improvements

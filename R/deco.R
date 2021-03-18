@@ -61,60 +61,6 @@ palier <- function(depth, time, secu = TRUE) {
   return(palier)
 }
 
-#' majoration
-#'
-#' Compute the time majoration to a second dive at a specific depth.
-#' 
-#' @param depth in meter. Max is 65m see Detail !
-#' @param group byt default "Z", the deco group indicated by a letter. 
-#' This value is indicated in a palier object computed with the palier function.
-#' @param inter 16 by default, interval between dives in minutes 
-#' 
-#' @details 
-#' This function will stop if the depth > 65 or time > 180 because the table 
-#' are limited to this extent.
-#' However for lower values the table can return NA values. 
-#' 
-#' @return palier, a list with a vector of depth and a vector of time. 
-#' Vectors are ordered from deepest deco stage (9m) to the higher (3m).
-#' 
-#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
-#' 
-#' @export
-majoration <- function(depth, group = "Z", inter = 16) {
-  n2 <- DiveR::azote
-  tmaj <- DiveR::maj
-  # checks
-  check_val(depth)
-  if(depth > 60) stop('Depth must be inferior or equal to 60.')
-  check_val(inter)
-  if( group == "Z"){
-    stop(paste0('Majoration can not be computed with a group Z',
-         ' and less than 12h interval'))
-  }
-  if (!group %in% c(rownames(n2), "Z")) {
-    stop("Group must be a capital letter between A and P or Z")
-  }
-  
-  # get n2 values
-  grps <- rownames(n2)
-  times <- as.numeric(colnames(n2))
-  # get tmaj values
-  azotes <- as.numeric(rownames(tmaj))
-  depths <- as.numeric(colnames(tmaj))
-  # roud the interval to lower interval given in tables and get azote value
-  rinter <- max(times[times <= inter])
-  azote <- n2[grps == group, times == rinter]
-  if(is.na(azote)) azote = 0
-  # round depth and get maj
-  rdepth <- min(depths[depths >= depth])
-  razote <- min(azotes[azotes >= azote])
-  maj <- tmaj[azotes == razote, depths == rdepth]
-
-  class(maj) <- "maj"
-  return(maj)
-}
-
 #' dtcurve
 #' 
 #' Trace a curve of depth and time for given parameters and palier information

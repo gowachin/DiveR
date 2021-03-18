@@ -57,3 +57,80 @@ test_that("exp_init_dtcurve_depth_time", {
   expect_identical(init_dtcurve(c(20,15), c(5, 20), way = "WB"), exp)
   expect_identical(init_dtcurve(c(0, 20,15), c(0, 5, 20), way = "WB"), exp)
 })
+
+#### Test add_desat ####
+
+# Test for correct errors
+
+test_that("err_add_desat_format", {
+  dtcurve <- list(depth = c(0, 20, 20, 0),
+                  time = c(0, 5, 40, 43))
+  desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                      row.names = c("m9", "m6", "m3")),
+              group = "H", hour = NULL)
+  class(desat) <- "desat"
+  err <- "dtcurve must be a data.frame with 2 columns named depth and time without any NA value"
+  expect_error(add_desat(dtcurve, desat), err )
+
+  dtcurve <- as.data.frame(dtcurve)
+  tmp <- colnames(dtcurve)
+  colnames(dtcurve) <- c("depths", "time")
+  expect_error(add_desat(dtcurve, desat), err )
+  colnames(dtcurve) <- tmp
+  dtcurve[2, 1] <- NA
+  expect_error(add_desat(dtcurve, desat), err )
+})
+
+test_that("err_add_desat_depth", {
+  dtcurve <- data.frame(depth = c(0, -20, 20, 0),
+                        time = c(0, 5, 40, 43))
+  desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        row.names = c("m9", "m6", "m3")),
+                group = "H", hour = NULL)
+  class(desat) <- "desat"
+  err <- "depth must be positive numeric value."
+  expect_error(add_desat(dtcurve, desat), err )
+  dtcurve$depth[2] <- "hello"
+  expect_error(add_desat(dtcurve, desat), err )
+})
+
+test_that("err_add_desat_time", {
+  dtcurve <- data.frame(depth = c(0, 20, 20, 0),
+                        time = c(0, -5, 40, 43))
+  desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        row.names = c("m9", "m6", "m3")),
+                group = "H", hour = NULL)
+  class(desat) <- "desat"
+  err <- "time must be positive numeric value."
+  expect_error(add_desat(dtcurve, desat), err )
+  dtcurve$time[2] <- "hello"
+  expect_error(add_desat(dtcurve, desat), err )
+  dtcurve$time <- c(0,50,40, 43)
+  err <- "time values need to be sorted, you don't own a subaquatic dolorean"
+  expect_error(add_desat(dtcurve, desat), err )
+})
+
+test_that("err_add_desat_ascent_speed", {
+  dtcurve <- data.frame(depth = c(0, 20, 20, 0),
+                        time = c(0, 5, 40, 43))
+  desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        row.names = c("m9", "m6", "m3")),
+                group = "H", hour = NULL)
+  class(desat) <- "desat"
+  err <- "ascent_speed must be a single positive numeric value."
+  expect_error(add_desat(dtcurve, desat, ascent_speed = -5), err )
+  expect_error(add_desat(dtcurve, desat, ascent_speed = "hello"), err )
+  expect_error(add_desat(dtcurve, desat, ascent_speed = c(0, 0)), err )
+})
+
+test_that("err_dive_secu", {
+  dtcurve <- data.frame(depth = c(0, 20, 20, 0),
+                        time = c(0, 5, 40, 43))
+  desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        row.names = c("m9", "m6", "m3")),
+                group = "H", hour = NULL)
+  class(desat) <- "desat"
+  err <- "secu must be TRUE or FALSE"
+  expect_error(add_desat(dtcurve, desat, secu = "TRUE"), err )
+  expect_error(add_desat(dtcurve, desat, secu = NA), err )
+})

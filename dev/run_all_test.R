@@ -5,7 +5,7 @@ devtools::document('.')
 devtools::load_all('.')
 devtools::test()
 
-library(covr)
+library(covr, testthat)
 # get a shiny to find which line is not yet tested. Very helpfull
 report()
 # covr::package_coverage()

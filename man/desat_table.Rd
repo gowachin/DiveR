@@ -13,6 +13,18 @@ time. Depths values are meters (positive values) and time is in minute.}
 \item{maj}{majoration time in minute in case of consecutive dive. 
 0 by default.}
 }
+\value{
+a desat object, which is a list with a data.frame containing 
+desaturation stops at 9, 6 and 3 m depth. Next element is the dive groupe
+for possible second dive and lastly the times at which the desaturation
+stops occur during the dive. The last element is NULL because it's made with 
+tables.
+}
 \description{
 desat_table
+}
+\details{
+Dive time used in table is the maximum time in the dtcurve table, exept the 
+last one. This is important as the last time value is expected to be the 
+time at which the diver reach surface.
 }

@@ -53,11 +53,15 @@ check_val <- function(val, zero = FALSE) {
 #' Most dive table advice to limite this speed to 20M/min maximum.
 #' @param maj Time majoration for the dive. 
 #' Only used by table decompression model.
+#' @param desat_model Which desaturation model is used to compute desaturation
+#' stops during ascent, to eliminate nitrogen. Default is tables as only
+#' this one works today.
 #' @param hour NULL not implemented yet
 #' @param dist a distance vector
 #' @param speed speed of the diver
 #' @param way If the dive is one way (one way : 'OW') or if the diver return by 
 #' the same depth (way back : 'WB'). 
+#' @param vup deprecated argument, is replaced with ascent_speed
 #' 
 #' 
 #' @details 
@@ -99,36 +103,34 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     }
   }
   desat_model <- match.arg(desat_model)
-  
-  
   way <- match.arg(way)
   
-  if (length(depth) > 1){
-    if (is.null(speed)){stop('A speed must be provided')}
-
-    if (is.null(dist) & length(time) == length(depth)){
-      dist <- time * speed
-    } else {
-      stop(paste('multiple points dive need a same lenght numeric vector of',
-                 'time or distances'))
-    }
-
+  #### Will be removed .......................................................##
+  if (length(depth) > 1){                                                      #
+    if (is.null(speed)){stop('A speed must be provided')}                      #
+                                                                               #
+    if (is.null(dist) & length(time) == length(depth)){                        #
+      dist <- time * speed                                                     #
+    } else {                                                                   #
+      stop(paste('multiple points dive need a same lenght numeric vector of',  #
+                 'time or distances'))                                         #
+    }                                                                          #
     if (length(dist) != length(depth)){
       stop('depth and dist must be of same length')
     }
-
     vdepth <- depth
     depth <- max(vdepth)
-
+                                                                               #
     if (way == 'AR'){
       vdepth <- c(vdepth, rev(vdepth)[-1])
       dist <- c(dist, rev(dist))
-    }
+    }                                                                          #
     time <- sum(dist)/speed
-
+                                                                               #
   } else {
     vdepth <- depth
-  }
+  }                                                                            #
+  #### .......................................................................##
   
   if (ascent_speed < 10 | ascent_speed > 15) {
     warning(paste( 
@@ -137,31 +139,27 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
       "\n6m/min is used between 6m and the surface"
     ))
   }
-  
-  ascent_speed = vup # TODO : deprecated argument
-  
+  #### Will be removed .......................................................##
+  ascent_speed = vup # TODO : deprecated argument                              #
+  #### .......................................................................##
   # draw raw dtcurve
   raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
-  
   if(desat_model == "table"){
-    if (maj > 0) {
-      timaj <- max(head(raw_dtcurve$time), -1) + maj
-    } else {
-      timaj <- max(head(raw_dtcurve$time), -1)
-    }
-    
-    # check for values
-    tablecheck(max(raw_dtcurve$depth), timaj)
-    
+    # time maj and tablecheck is done in dest_table
     desat_stop <- desat_table(raw_dtcurve, maj)
+  } else {
+    message("Not yet implemented")
+    desat_stop <- list(depth = 0, time = 0, group = 'Z', hour = NULL)
+    class(desat) <- "desat"
   }
-
+  desat_dtcurve <- add_desat(raw_dtcurve, desat_stop, ascent_speed, secu)
+  
+  #### Will be removed .......................................................##
   if (maj > 0) {
     timaj <- time + maj
   } else {
     timaj <- time
   }
-
   # check for values
   tablecheck(depth, timaj)
   # get the palier from the table
@@ -173,12 +171,14 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
                        palier = palier, ascent_speed = ascent_speed, 
                        speed = speed, way = way)
   } else {
-    dtcurve <- dtcurve(time = time, depth = depth, palier = palier, ascent_speed = ascent_speed)
+    dtcurve <- dtcurve(time = time, depth = depth, 
+                       palier = palier, ascent_speed = ascent_speed)
   }
   # compute the dtr from palier and depth in square profile
   # dtr <- dtr(palier, depth = depth, ascent_speed = ascent_speed)
   dtr <- unname(unlist(dtcurve[3]))
   dtcurve[3] <- NULL
+  #### .......................................................................##
   
   # hour 
   if (is.null(hour)) {

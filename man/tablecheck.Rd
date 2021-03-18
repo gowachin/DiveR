@@ -23,6 +23,9 @@ with a maximum is 180 min}
 return a TRUE/FALSE value}
 }
 \value{
+Nothing expect when \code{force} parameter is TRUE. 
+Is designed to stop code and returns errors
+
 Single numeric value, the max time possible to dive at the given 
 depth is the MN90 table.
 }

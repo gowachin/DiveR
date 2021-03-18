@@ -35,6 +35,10 @@ Most dive table advice to limite this speed to 20M/min maximum.}
 \item{maj}{Time majoration for the dive. 
 Only used by table decompression model.}
 
+\item{desat_model}{Which desaturation model is used to compute desaturation
+stops during ascent, to eliminate nitrogen. Default is tables as only
+this one works today.}
+
 \item{hour}{NULL not implemented yet}
 
 \item{dist}{a distance vector}
@@ -43,6 +47,8 @@ Only used by table decompression model.}
 
 \item{way}{If the dive is one way (one way : 'OW') or if the diver return by 
 the same depth (way back : 'WB').}
+
+\item{vup}{deprecated argument, is replaced with ascent_speed}
 }
 \value{
 dive, a dive class object.
