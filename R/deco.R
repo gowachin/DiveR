@@ -88,14 +88,18 @@ palier <- function(depth, time, secu = TRUE) {
 dtcurve <- function(time, depth, palier, ascent_speed = 10, 
                     dist = NULL, speed = NULL, way = c('AR','AS')) {
   # checks
-  check_val(time)
+  if (time <= 0 | !is.numeric(time)) {
+    stop("time must be a single positive numeric value.")
+  }
   
   if (length(depth) > 1){
     if (is.null(speed)){stop('A speed must be provided')}
     
     vdepth <- depth
     depth <- max(vdepth)
-    check_val(depth)
+    if (depth <= 0 | !is.numeric(depth)) {
+      stop("depth must be a single positive numeric value.")
+    }
     
     vtimes <- cumsum(dist/speed)
     if (way == 'AR'){
@@ -103,7 +107,9 @@ dtcurve <- function(time, depth, palier, ascent_speed = 10,
     }
   } else {
     vdepth <- rep(depth, 2)
-    check_val(depth)
+    if (depth <= 0 | !is.numeric(depth)) {
+      stop("depth must be a single positive numeric value.")
+    }
     
     vtimes <- c(0, 0, time)
   }

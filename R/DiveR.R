@@ -10,36 +10,6 @@ NULL
 #' @name DiveR
 NULL
 
-#' check_val
-#' 
-#' Custom function for checking if values are single positive numeric.
-#' 
-#' @param val a single positive numeric value
-#' @param zero set to \code{FALSE} by default, to include zero value to the test
-#' 
-#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
-#' 
-#' @export
-check_val <- function(val, zero = FALSE) {
-  if (zero){
-    if (val < 0 | !is.numeric(val)) {
-      stop(paste(
-        deparse(substitute(val)),
-        "must be a single positive numeric value."
-      ))
-    }
-    
-  } else {
-    if (val <= 0 | !is.numeric(val)) {
-      stop(paste(
-        deparse(substitute(val)),
-        "must be a single positive numeric value."
-      ))
-    }
-  }
-  
-}
-
 #' dive
 #' 
 #' @param depth Depth of the dive in meter. Need to be positive values.

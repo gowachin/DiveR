@@ -8,6 +8,8 @@
 
 * replacing all azote text with nitrogen...thinking about non french divers after all.
 
+* Idiot proof is made with correct functions and `check_val` function has been removed
+
 ## Bugs fixed
 
 * Correction of additionnal time when using successive dives. Was adding between 4 and 1 minute more than expected when using tables. ( #11 )

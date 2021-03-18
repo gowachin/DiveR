@@ -434,7 +434,9 @@ plot.ndive <- function(x,
                        legend = FALSE,
                        add = FALSE) {
   
-  check_val(cut_inter)
+  if (cut_inter <= 0 | !is.numeric(cut_inter)) {
+    stop("cut_inter must be a single positive numeric value.")
+  }
   
   # get the call_par
   default_par <- list(
