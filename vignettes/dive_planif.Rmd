@@ -29,10 +29,19 @@ The package `{DiveR}` provide functions to simulate a dive. It does so by asking
 
 **Note here that it only show square dives, meaning that decompression is managed following mn90 (french) dive tables.**
 
-<!--
+
 
 ## Simple Dive
 
+To simulate a simple dive using tables, you just need to provide a depth (meter) and a time (minute) at this depth. Despite giving a depth, so an altitude below 0, the depth must be set in positive values in the package.
+
+```{r basic_dive}
+library(DiveR)
+dive20_40 <- dive(dept = 20, time = 40)
+dive20_40
+```
+
+<!--
 ### Security Curve
 
 ### Limits of the tables

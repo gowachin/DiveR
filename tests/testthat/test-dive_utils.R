@@ -66,8 +66,9 @@ test_that("err_add_desat_format", {
   dtcurve <- list(depth = c(0, 20, 20, 0),
                   time = c(0, 5, 40, 43))
   desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        hour = rep(NA, 3),
                                       row.names = c("m9", "m6", "m3")),
-              group = "H", hour = NULL)
+              group = "H")
   class(desat) <- "desat"
   err <- "dtcurve must be a data.frame with 2 columns named depth and time without any NA value"
   expect_error(add_desat(dtcurve, desat), err )
@@ -85,8 +86,9 @@ test_that("err_add_desat_depth", {
   dtcurve <- data.frame(depth = c(0, -20, 20, 0),
                         time = c(0, 5, 40, 43))
   desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        hour = rep(NA, 3),
                                         row.names = c("m9", "m6", "m3")),
-                group = "H", hour = NULL)
+                group = "H")
   class(desat) <- "desat"
   err <- "depth must be positive numeric value."
   expect_error(add_desat(dtcurve, desat), err )
@@ -98,8 +100,9 @@ test_that("err_add_desat_time", {
   dtcurve <- data.frame(depth = c(0, 20, 20, 0),
                         time = c(0, -5, 40, 43))
   desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        hour = rep(NA, 3),
                                         row.names = c("m9", "m6", "m3")),
-                group = "H", hour = NULL)
+                group = "H")
   class(desat) <- "desat"
   err <- "time must be positive numeric value."
   expect_error(add_desat(dtcurve, desat), err )
@@ -114,8 +117,9 @@ test_that("err_add_desat_ascent_speed", {
   dtcurve <- data.frame(depth = c(0, 20, 20, 0),
                         time = c(0, 5, 40, 43))
   desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        hour = rep(NA, 3),
                                         row.names = c("m9", "m6", "m3")),
-                group = "H", hour = NULL)
+                group = "H")
   class(desat) <- "desat"
   err <- "ascent_speed must be a single positive numeric value."
   expect_error(add_desat(dtcurve, desat, ascent_speed = -5), err )
@@ -123,14 +127,50 @@ test_that("err_add_desat_ascent_speed", {
   expect_error(add_desat(dtcurve, desat, ascent_speed = c(0, 0)), err )
 })
 
-test_that("err_dive_secu", {
+test_that("err_add_desat_secu", {
   dtcurve <- data.frame(depth = c(0, 20, 20, 0),
                         time = c(0, 5, 40, 43))
   desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        hour = rep(NA, 3),
                                         row.names = c("m9", "m6", "m3")),
-                group = "H", hour = NULL)
+                group = "H")
   class(desat) <- "desat"
   err <- "secu must be TRUE or FALSE"
   expect_error(add_desat(dtcurve, desat, secu = "TRUE"), err )
   expect_error(add_desat(dtcurve, desat, secu = NA), err )
+})
+
+test_that("err_add_desat_desat", {
+  dtcurve <- data.frame(depth = c(0, 20, 20, 0),
+                        time = c(0, 5, 40, 43))
+  desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        hour = rep(NA, 3),
+                                        row.names = c("m9", "m6", "m3")),
+                group = "H")
+  err <- "desat must be of class desat made with desat_model function"
+  expect_error(add_desat(dtcurve, desat), err )
+})
+
+# Test for correct output
+
+test_that("exp_add_desat", {
+  dtcurve <- init_dtcurve(20, 40)
+  # dtcurve <- data.frame(depth = c(0, 20, 20, 0),
+  #                       time = c(0, 0, 40, 43))
+  desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                        hour = rep(NA, 3),
+                                        row.names = c("m9", "m6", "m3")),
+                group = "H")
+  class(desat) <- "desat"
+  exp <- data.frame(depth = c(0, 20,20, 0), 
+                    time = c(0, 0, 40, 42))
+  expect_identical(add_desat(dtcurve, desat), exp)
+  exp <- data.frame(depth = c(0, 20,20, 3, 3, 0), 
+                    time = c(0, 0, 40, 41.7, 44.7, 45.2))
+  expect_identical(add_desat(dtcurve, desat, secu = TRUE), exp)
+  desat <- list(desat_stop = data.frame(depth = 5,time = 0, hour = NA,
+                                        row.names = "m5"),
+                group = "H")
+  class(desat) <- "desat"
+  expect_identical(add_desat(dtcurve, desat, secu = TRUE), exp)
 })

@@ -112,9 +112,10 @@ test_that("err_desat_table_maj", {
 
 test_that("exp_desat_table_maj", {
   dtcurve <- init_dtcurve(20, 40)
-  exp <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0), 
+  exp <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
+                                      hour = rep(NA, 3),
                                       row.names = c("m9", "m6", "m3")), 
-              group = "H", hour = NULL)
+              group = "H")
   class(exp) <- "desat"
   expect_equal(desat_table(dtcurve), exp )
   dtcurve <- init_dtcurve(20, 60)
