@@ -186,7 +186,7 @@ desat <- list(
     time = desat_time,
     hour = rep(NA, 3)
   ),
-  group = grup
+  group = grup, model = "table"
 )
   class(desat) <- "desat"
   # end

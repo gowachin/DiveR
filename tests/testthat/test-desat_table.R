@@ -115,7 +115,7 @@ test_that("exp_desat_table_maj", {
   exp <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
                                       hour = rep(NA, 3),
                                       row.names = c("m9", "m6", "m3")), 
-              group = "H")
+              group = "H", model = "table")
   class(exp) <- "desat"
   expect_equal(desat_table(dtcurve), exp )
   dtcurve <- init_dtcurve(20, 60)

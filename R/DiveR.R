@@ -26,9 +26,8 @@ NULL
 #' @param desat_model Which desaturation model is used to compute desaturation
 #' stops during ascent, to eliminate nitrogen. Default is tables as only
 #' this one works today.
-#' @param hour NULL not implemented yet
-#' @param dist a distance vector
-#' @param speed speed of the diver
+#' @param hour The first immersion hour in minute. Need to be 24h format 
+#' converted in minutes (hour = hours * 60 + minutes). 0 by default.
 #' @param way If the dive is one way (one way : 'OW') or if the diver return by 
 #' the same depth (way back : 'WB'). 
 #' 
@@ -47,9 +46,7 @@ NULL
 dive <- function(depth = 20, time = 40, secu = TRUE,
                  ascent_speed = 10, maj = 0, 
                  desat_model = c('table'),
-                 
-                 hour = NULL,
-                 dist = NULL,  speed = NULL, way = c('OW','WB')
+                 hour = 0, way = c('OW','WB')
                  ) {
   #### IDIOT PROOF ####
   if (any(depth < 0) | !is.numeric(depth) ) {
@@ -71,6 +68,9 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     }
   }
   desat_model <- match.arg(desat_model)
+  
+  # TODO : test hour input !
+  
   way <- match.arg(way)
   
   if (ascent_speed < 10 | ascent_speed > 15) {
@@ -96,7 +96,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   dtcurve <- desat_dtcurve # TODO : to remove
   colnames(dtcurve) <- c("depths", "times")
   
-  #### Will be removed .......................................................##
+  #### Will be removed or modifier ...........................................##
   if (maj > 0) {
     timaj <- time + maj
   } else {
@@ -109,14 +109,10 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   #### .......................................................................##
   
   # hour 
-  if (is.null(hour)) {
-    hour <- c(0, tail(dtcurve$time,1))
-  } else {
-    hour <- c(hour, hour + tail(dtcurve$time,1))
-  }
+  hour <- c(hour, hour + tail(dtcurve$time,1))
 
   dive <- list(
-    dtcurve = dtcurve, dtr = dtr, palier = palier,
+    dtcurve = dtcurve, dtr = dtr, palier = palier, desat = desat_stop,
     maj = maj, hour = hour
   )
   class(dive) <- "dive"
@@ -188,7 +184,7 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
     # successiv dives
     if (inter > 720 ){ # 12h interv is not longuer
       maj <- 0
-    } else if( depth2 > 60 | dive1$palier$group == 'Z'){ # Z is for 60+ dive1
+    } else if( depth2 > 60 | dive1$desat$group == 'Z'){ # Z is for 60+ dive1
       warning(paste0( "Second dive impossible in less than 12h ",
                       "after a dive a 60 more meters" ))
         ndive <- list(dive1 = dive1, dive2 = "STOP", 
@@ -200,7 +196,7 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
       # compute maj
       maj <- majoration(
         depth = depth2, inter = inter,
-        group = dive1$palier$group
+        group = dive1$desat$group
       )
     }
     

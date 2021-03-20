@@ -179,10 +179,10 @@ plot.dive <- function(x,
     time_i <- times_inf(x, col = call_par$col)
     do.call(text, time_i)
   } else if(deco_print){
-    for (i in x$palier$depth[x$palier$time > 0]) {
+    for (i in x$desat$depth[x$desat$time > 0]) {
       text(
         x = mean(dtcurve$time[dtcurve$depths == i]), y = -i,
-        paste(x$palier$time[x$palier$depth == i], "'", sep = ""), pos = 3,
+        paste(x$desat$time[x$desat$depth == i], "'", sep = ""), pos = 3,
         col = call_par$col
       )
     }
@@ -292,7 +292,7 @@ depths_inf <- function(x, col, only_pal = FALSE){
   depths <- unique(x$dtcurve$depths)
   depths <- depths[depths != 0]
   if(only_pal){
-    pal <- depths %in% x$palier$depth
+    pal <- depths %in% x$desat$depth
     depths <- depths[pal]
     first <- NULL
   } else {

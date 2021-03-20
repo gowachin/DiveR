@@ -11,9 +11,7 @@ dive(
   ascent_speed = 10,
   maj = 0,
   desat_model = c("table"),
-  hour = NULL,
-  dist = NULL,
-  speed = NULL,
+  hour = 0,
   way = c("OW", "WB")
 )
 }
@@ -38,11 +36,8 @@ Only used by table decompression model.}
 stops during ascent, to eliminate nitrogen. Default is tables as only
 this one works today.}
 
-\item{hour}{NULL not implemented yet}
-
-\item{dist}{a distance vector}
-
-\item{speed}{speed of the diver}
+\item{hour}{The first immersion hour in minute. Need to be 24h format 
+converted in minutes (hour = hours * 60 + minutes). 0 by default.}
 
 \item{way}{If the dive is one way (one way : 'OW') or if the diver return by 
 the same depth (way back : 'WB').}
