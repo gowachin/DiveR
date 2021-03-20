@@ -121,14 +121,6 @@ please read doc with ?tablecheck or help(tablecheck)")
   return(m)
 }
 
-#' @rdname tablecheck
-#' 
-#' @export
-max_depth_t <- function(depth, force = FALSE) {
-  #### TODO : will be removed once useless ####
-  warning("This function is deprecated")
-  max_depth_time(depth = depth, force = force)
-}
 
 #' desat_table
 #' 
@@ -191,10 +183,10 @@ desat_table <- function(dtcurve, maj = 0){
 desat <- list(
   desat_stop = data.frame(
     depth = desat_depth,
-    time = desat_time
+    time = desat_time,
+    hour = rep(NA, 3)
   ),
-  group = grup,
-  hour = NULL
+  group = grup
 )
   class(desat) <- "desat"
   # end

@@ -7,7 +7,7 @@ devtools::test()
 
 library(covr, testthat)
 # get a shiny to find which line is not yet tested. Very helpfull
-report()
+report(x = package_coverage(line_exclusions = list("R/graphic.R")))
 # covr::package_coverage()
 
 # rerun all coverage for dataframe analysis.

@@ -24,7 +24,7 @@ pdf in french :
 table
 }
 \description{
-A dataset containing an array with the palier time depending on depth 
+A dataset containing an array with the desaturation stop time depending on depth 
 and time and a data.frame with the group.
 }
 \details{

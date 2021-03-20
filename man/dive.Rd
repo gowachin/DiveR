@@ -14,8 +14,7 @@ dive(
   hour = NULL,
   dist = NULL,
   speed = NULL,
-  way = c("OW", "WB"),
-  vup = 10
+  way = c("OW", "WB")
 )
 }
 \arguments{
@@ -47,8 +46,6 @@ this one works today.}
 
 \item{way}{If the dive is one way (one way : 'OW') or if the diver return by 
 the same depth (way back : 'WB').}
-
-\item{vup}{deprecated argument, is replaced with ascent_speed}
 }
 \value{
 dive, a dive class object.

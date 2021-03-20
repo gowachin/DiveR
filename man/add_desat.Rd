@@ -17,7 +17,14 @@ Most dive table advice to limite this speed to 20M/min maximum.}
 
 \item{secu}{security decompression stop of 3 min at 3 m. FALSE by default.}
 }
+\value{
+a dtcurve data.frame with the same format, but desaturation stop have
+been rbinded at the end.
+}
 \description{
 Add the desaturation stops to the dive curve. It also check if there is no
 depth point higher and before the stops, to prevent accidents.
+}
+\author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

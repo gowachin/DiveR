@@ -11,6 +11,8 @@
 #' @param way If the dive is one way (one way : 'OW') or if the diver return by 
 #' the same depth (way back : 'WB'). 
 #'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
 #' @export
 init_dtcurve <- function(depth, time, ascent_speed = 10, way = c("OW", "WB")) {
   #### IDIOT PROOF ####
@@ -89,6 +91,11 @@ init_dtcurve <- function(depth, time, ascent_speed = 10, way = c("OW", "WB")) {
 #' Most dive table advice to limite this speed to 20M/min maximum.
 #' @param secu security decompression stop of 3 min at 3 m. FALSE by default.
 #'
+#' @return a dtcurve data.frame with the same format, but desaturation stop have
+#' been rbinded at the end.
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
 #' @export
 add_desat <- function(dtcurve, desat, ascent_speed = 10, secu = FALSE) {
   #### IDIOT PROOF ####
@@ -118,11 +125,42 @@ add_desat <- function(dtcurve, desat, ascent_speed = 10, secu = FALSE) {
   if( !is.logical(secu) | is.na(secu) )
     stop('secu must be TRUE or FALSE')
   
-  if(is.null(desat$hour)){
-    print(1)
-  } else {
-    print(2)
+  # adding security desat
+  if(secu){
+    depths <- desat$desat_stop$depth
+    if(3 %in% depths){
+      desat$desat_stop$time[depths==3] <- desat$desat_stop$time[depths==3] + 3
+    } else {
+      desat$desat_stop <- rbind(desat$desat_stop, m3 = data.frame(depth = 3, time = 3, 
+                                                  hour = NA))
+    }
   }
+  
+  # if(all(is.na(desat$desat_table))){ # in case time specified
+  dtcurve <- dtcurve[-nrow(dtcurve),]
+  for(i in 1:nrow(desat$desat_stop)){
+    if(desat$desat_stop$time[i] > 0){ 
+      last_p <- unlist(dtcurve[nrow(dtcurve),])
+      beg_depth <- end_depth <- desat$desat_stop$depth[i]
+      begtime <- last_p["time"] + (last_p["depth"] - beg_depth) / ascent_speed
+      endtime <- begtime + desat$desat_stop$time[i]
+      # now ascent_speed restricted to 6m.
+      if(ascent_speed > 6){
+        ascent_speed <- 6
+      }
+      # add desat stop
+      dtcurve <- rbind(dtcurve, data.frame(depth = c(beg_depth, end_depth),
+                                           time = c(begtime, endtime)))
+    }
+  }
+  # add last point to surface
+  last_p <- unlist(dtcurve[nrow(dtcurve),])
+  surf <- last_p["time"] + (last_p["depth"]) / ascent_speed
+  dtcurve <- rbind(dtcurve, data.frame(depth = 0,
+                                       time = surf))
+  # } else { # in case time specified
+  # }
+  row.names(dtcurve) <- 1:nrow(dtcurve)
   
   return(dtcurve)
 }

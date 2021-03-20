@@ -22,3 +22,6 @@ the same depth (way back : 'WB').}
 \description{
 expand depth and time to a dtcurve data.frame
 }
+\author{
+Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+}

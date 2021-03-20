@@ -31,7 +31,6 @@ NULL
 #' @param speed speed of the diver
 #' @param way If the dive is one way (one way : 'OW') or if the diver return by 
 #' the same depth (way back : 'WB'). 
-#' @param vup deprecated argument, is replaced with ascent_speed
 #' 
 #' 
 #' @details 
@@ -50,8 +49,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
                  desat_model = c('table'),
                  
                  hour = NULL,
-                 dist = NULL,  speed = NULL, way = c('OW','WB'),
-                 vup = 10 # TODO : to remove
+                 dist = NULL,  speed = NULL, way = c('OW','WB')
                  ) {
   #### IDIOT PROOF ####
   if (any(depth < 0) | !is.numeric(depth) ) {
@@ -75,33 +73,6 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   desat_model <- match.arg(desat_model)
   way <- match.arg(way)
   
-  #### Will be removed .......................................................##
-  if (length(depth) > 1){                                                      #
-    if (is.null(speed)){stop('A speed must be provided')}                      #
-                                                                               #
-    if (is.null(dist) & length(time) == length(depth)){                        #
-      dist <- time * speed                                                     #
-    } else {                                                                   #
-      stop(paste('multiple points dive need a same lenght numeric vector of',  #
-                 'time or distances'))                                         #
-    }                                                                          #
-    if (length(dist) != length(depth)){
-      stop('depth and dist must be of same length')
-    }
-    vdepth <- depth
-    depth <- max(vdepth)
-                                                                               #
-    if (way == 'AR'){
-      vdepth <- c(vdepth, rev(vdepth)[-1])
-      dist <- c(dist, rev(dist))
-    }                                                                          #
-    time <- sum(dist)/speed
-                                                                               #
-  } else {
-    vdepth <- depth
-  }                                                                            #
-  #### .......................................................................##
-  
   if (ascent_speed < 10 | ascent_speed > 15) {
     warning(paste( 
       "Ascent speed is usually set between 10 and 20 m/min in",
@@ -109,9 +80,6 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
       "\n6m/min is used between 6m and the surface"
     ))
   }
-  #### Will be removed .......................................................##
-  ascent_speed = vup # TODO : deprecated argument                              #
-  #### .......................................................................##
   # draw raw dtcurve
   raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
   if(desat_model == "table"){
@@ -123,6 +91,10 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     class(desat) <- "desat"
   }
   desat_dtcurve <- add_desat(raw_dtcurve, desat_stop, ascent_speed, secu)
+  dtr <- max(desat_dtcurve$time) - tail(raw_dtcurve$time, 2)[1]
+  
+  dtcurve <- desat_dtcurve # TODO : to remove
+  colnames(dtcurve) <- c("depths", "times")
   
   #### Will be removed .......................................................##
   if (maj > 0) {
@@ -131,23 +103,9 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     timaj <- time
   }
   # check for values
-  tablecheck(depth, timaj)
+  # tablecheck(depth, timaj)
   # get the palier from the table
   palier <- palier(depth, timaj, secu)
-  # dive dtcurve
-  if (length(vdepth) > 1){
-    # stop('not yet implemented')
-    dtcurve <- dtcurve(depth = vdepth, time = time, dist = dist, 
-                       palier = palier, ascent_speed = ascent_speed, 
-                       speed = speed, way = way)
-  } else {
-    dtcurve <- dtcurve(time = time, depth = depth, 
-                       palier = palier, ascent_speed = ascent_speed)
-  }
-  # compute the dtr from palier and depth in square profile
-  # dtr <- dtr(palier, depth = depth, ascent_speed = ascent_speed)
-  dtr <- unname(unlist(dtcurve[3]))
-  dtcurve[3] <- NULL
   #### .......................................................................##
   
   # hour 
