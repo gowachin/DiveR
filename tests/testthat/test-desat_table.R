@@ -150,7 +150,7 @@ test_that("err_majoration_group", {
 })
 
 test_that("err_majoration_inter", {
-  err <- "inter must be positive numeric value between."
+  err <- "inter must be positive numeric value above 15."
   expect_error(majoration(depth = 40, group = 'A', inter = 10), err )
   expect_error(majoration(depth = 40, group = 'A', inter = "10"), err )
   expect_error(majoration(depth = 40, group = 'A', inter = c(10, 20)), err )

@@ -17,13 +17,10 @@
 }
 \arguments{
 \item{object}{is a DiveR object. There are methods for 
-\code{\link[DiveR]{dive}}, \code{\link[DiveR]{tank}},
- \code{\link[DiveR]{conso}} and \code{\link[DiveR]{palier}} objects.}
+\code{\link[DiveR]{dive}}, \code{\link[DiveR]{tank}} and
+ \code{\link[DiveR]{conso}} objects.}
 
-\item{...}{other arguments passed to the dtr.palier method.
-\describe{
-  \item{plot}{FALSE by default}
-}}
+\item{...}{other arguments not used}
 }
 \value{
 A brief summary of a dive and its main parameters.

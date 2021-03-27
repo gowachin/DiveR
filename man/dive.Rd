@@ -10,7 +10,7 @@ dive(
   secu = TRUE,
   ascent_speed = 10,
   maj = 0,
-  desat_model = c("table"),
+  desat_model = c("table", "other"),
   hour = 0,
   way = c("OW", "WB")
 )
@@ -43,10 +43,14 @@ converted in minutes (hour = hours * 60 + minutes). 0 by default.}
 the same depth (way back : 'WB').}
 }
 \value{
-dive, a dive class object.
+dive, a list containing a depth/time curve in a data.frame,
+the desaturation stops acording to the model used, and some information
+about depth to surface time, and input parameters as ascent_speed and secu.
 }
 \description{
-dive
+Create a dive class object simulating a dive for given depth and times.
+To do so, it create a depth/time curve and find the desaturation stops
+according to a desaturation model.
 }
 \details{
 See \code{\link[DiveR]{tablecheck}} for limit values of depth and time.

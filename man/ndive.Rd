@@ -7,20 +7,25 @@
 ndive(dive1, dive2, inter = 16, verbose = FALSE)
 }
 \arguments{
-\item{dive1}{the first dive, obtained by the dive function}
+\item{dive1}{the first dive, must be a \code{\link[DiveR]{dive}} object}
 
-\item{dive2}{the first dive, obtained by the dive function. This one will be
-modified with a majoration obtained from dive1 and the interval.}
+\item{dive2}{the second dive, must be a \code{\link[DiveR]{dive}} object. 
+This one will be modified with a majoration obtained from dive1 and 
+the interval.}
 
-\item{inter}{16 by default, interval between dives in minutes}
+\item{inter}{16 by default, interval in minute between the end of the first 
+dive and the beginning of the second.}
 
-\item{verbose}{allow cat return in consol for debug purposes}
+\item{verbose}{allow cat return in consol for debug purposes. Show which
+case of sequence is used.}
 }
 \value{
 ndive, a ndive class object.
 }
 \description{
-ndive
+Combine 2 dives object in a sequence. To do so, it checks if the desaturation
+models are coherent and if the second dive is possible according to 
+residual azote and interval time.
 }
 \details{
 See \code{\link[DiveR]{tablecheck}} for limit values of depth and time 

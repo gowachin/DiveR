@@ -4,13 +4,17 @@ NULL
 
 #' DiveR
 #'
-#' A package to code some basic function about dive profiles.
+#' A package to simulate scuba-diving depth curve and desaturation models.
 #'
 #' @docType package
 #' @name DiveR
 NULL
 
 #' dive
+#' 
+#' Create a dive class object simulating a dive for given depth and times.
+#' To do so, it create a depth/time curve and find the desaturation stops
+#' according to a desaturation model.
 #' 
 #' @param depth Depth of the dive in meter. Need to be positive values.
 #' A single value is needed for square dive, however if a vector is provided
@@ -38,14 +42,16 @@ NULL
 #' @examples 
 #' dive = dive(depth = 39, time = 22, secu = TRUE, ascent_speed = 10)
 #' 
-#' @return dive, a dive class object.
+#' @return dive, a list containing a depth/time curve in a data.frame,
+#' the desaturation stops acording to the model used, and some information
+#' about depth to surface time, and input parameters as ascent_speed and secu.
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
 #' @export
 dive <- function(depth = 20, time = 40, secu = TRUE,
                  ascent_speed = 10, maj = 0, 
-                 desat_model = c('table'),
+                 desat_model = c('table', 'other'),
                  hour = 0, way = c('OW','WB')
                  ) {
   #### IDIOT PROOF ####
@@ -69,7 +75,9 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   }
   desat_model <- match.arg(desat_model)
   
-  # TODO : test hour input !
+  if (any(hour < 0) | !is.numeric(hour) | length(hour) > 1) {
+    stop("hour must be a single positive numeric value in minute.")
+  }
   
   way <- match.arg(way)
   
@@ -87,8 +95,10 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     desat_stop <- desat_table(raw_dtcurve, maj)
   } else {
     message("Not yet implemented")
-    desat_stop <- list(depth = 0, time = 0, group = 'Z', hour = NULL)
-    class(desat) <- "desat"
+    desat_stop <- list(desat_stop = data.frame(depth = 0, time = 0, hour = NA,
+                                               row.names = "m0"),
+                       group = 'Z', model = "other")
+    class(desat_stop) <- "desat"
   }
   desat_dtcurve <- add_desat(raw_dtcurve, desat_stop, ascent_speed, secu)
   dtr <- max(desat_dtcurve$time) - tail(raw_dtcurve$time, 2)[1]
@@ -100,10 +110,22 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     if(3 %in% depths){
       desat_stop$desat_stop$time[depths==3] <- desat_stop$desat_stop$time[depths==3] + 3
     } else {
-      desat_stop <- rbind(desat_stop$desat_stop, m3 = data.frame(depth = 3, time = 3, 
+      desat_stop$desat_stop <- rbind(desat_stop$desat_stop, m3 = data.frame(depth = 3, time = 3, 
                                                                   hour = NA))
     }
   }
+  
+  # retrieve hour of desat
+  for ( i in 1:nrow(desat_stop$desat_stop)){
+    if (desat_stop$desat_stop$time[i] > 0){
+      times <- desat_dtcurve$time[desat_dtcurve$depth == 
+                                     desat_stop$desat_stop$depth[i]]
+      if(round(desat_stop$desat_stop$time[i]) == round(diff(tail(times, 2)))){
+        desat_stop$desat_stop$hour[i] <- tail(times, 2)[1]
+      }
+    }
+  } 
+
   
   dtcurve <- desat_dtcurve # TODO : to remove
   colnames(dtcurve) <- c("depths", "times")
@@ -125,11 +147,18 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
 
 #' ndive
 #' 
-#' @param dive1 the first dive, obtained by the dive function
-#' @param dive2 the first dive, obtained by the dive function. This one will be
-#' modified with a majoration obtained from dive1 and the interval.
-#' @param inter 16 by default, interval between dives in minutes
-#' @param verbose allow cat return in consol for debug purposes
+#' Combine 2 dives object in a sequence. To do so, it checks if the desaturation
+#' models are coherent and if the second dive is possible according to 
+#' residual azote and interval time.
+#' 
+#' @param dive1 the first dive, must be a \code{\link[DiveR]{dive}} object
+#' @param dive2 the second dive, must be a \code{\link[DiveR]{dive}} object. 
+#' This one will be modified with a majoration obtained from dive1 and 
+#' the interval.
+#' @param inter 16 by default, interval in minute between the end of the first 
+#' dive and the beginning of the second.
+#' @param verbose allow cat return in consol for debug purposes. Show which
+#' case of sequence is used.
 #' 
 #' @details 
 #' See \code{\link[DiveR]{tablecheck}} for limit values of depth and time 
@@ -146,9 +175,15 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
 #' 
 #' @export
 ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
-  # checks
-  if (class(dive1) != "dive") stop("dive1 must be of class dive")
-  if (class(dive2) != "dive") stop("dive2 must be of class dive")
+  #### IDIOT PROOF ####
+  if (!is.dive(dive1)) stop("dive1 must be a dive object")
+  if (!is.dive(dive2)) stop("dive2 must be a dive object")
+  if (any(inter < 0) | !is.numeric(inter) | length(inter) > 1 ) {
+    stop("inter must be positive numeric value.")
+  }
+  if( !is.logical(verbose) | is.na(verbose) ){
+    stop('verbose must be TRUE or FALSE')
+  }
   # retrive some data avout dive2
   time2 <- dtime(dive2)
   depth2 <- depth(dive2)
@@ -156,8 +191,54 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
   secu2 <- as.logical(dive2$params["secu"])
   # speed2 <- speed(dive2)$asc
   speed2 <- dive2$params["ascent_speed"]
+  desat_model <- dive2$desat$model
+  
+  if(desat_model != "table") stop("this will be difficult")
 
-  if (inter <= 15) {
+  if (inter > 15) {
+    # successiv dives
+    if (inter > 720 ){ # 12h interv is not longuer
+      maj <- 0
+    } else if( depth2 > 60 | dive1$desat$group == 'Z'){ # Z is for 60+ dive1
+      warning(paste0( "Second dive impossible in less than 12h ",
+                      "after a dive a 60 more meters" ))
+      ndive <- list(dive1 = dive1, dive2 = "STOP", 
+                    inter = inter, type = "solo")
+      class(ndive) <- "ndive"
+      if(verbose) cat('60_no_success\n')
+      return(ndive)
+    } else {
+      # compute maj
+      maj <- majoration(
+        depth = depth2, inter = inter,
+        group = dive1$desat$group
+      )
+    }
+    
+    # check if second dive possible (time in talbe)
+    if (tablecheck(depth2, time2 + maj, force = TRUE) &
+        max_depth_time(depth2) >= time2 + maj ){ # & depth(dive1) <= 60) {
+      hour2 <- dive1$hour[2] + inter
+      
+      suc_dive <- dive(depth = depth2, time = time2, maj = maj, secu = secu2,
+                       ascent_speed = speed2, hour = hour2)
+      
+      ndive <- list(
+        dive1 = dive1, dive2 = suc_dive,
+        inter = inter, type = "success"
+      )
+      
+      if (inter > 720){
+        if(verbose) cat('diff\n')
+        ndive$type <- "diff"
+      } else {if(verbose) cat('success\n')}
+    } else {
+      if(verbose) cat('maj_no_success\n')
+      warning(paste0( "Second dive impossible due to majoration of time"))
+      # second dive is impossible here in the table
+      ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
+    }
+  } else {
     # consecutiv dives 
     warning("A minimum of 15 minutes is requiered between dives to consider them
             as different dives.")
@@ -183,49 +264,6 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
       if(verbose) cat('no_consec\n')
       # second dive is impossible here in the table
       warning("Cumulated time of both dives and interval is larger than table.")
-      ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
-    }
-  } else {
-    # successiv dives
-    if (inter > 720 ){ # 12h interv is not longuer
-      maj <- 0
-    } else if( depth2 > 60 | dive1$desat$group == 'Z'){ # Z is for 60+ dive1
-      warning(paste0( "Second dive impossible in less than 12h ",
-                      "after a dive a 60 more meters" ))
-        ndive <- list(dive1 = dive1, dive2 = "STOP", 
-                      inter = inter, type = "solo")
-        class(ndive) <- "ndive"
-        if(verbose) cat('60_no_success\n')
-        return(ndive)
-      } else {
-      # compute maj
-      maj <- majoration(
-        depth = depth2, inter = inter,
-        group = dive1$desat$group
-      )
-    }
-    
-    # check if second dive possible (time in talbe)
-    if (tablecheck(depth2, time2 + maj, force = TRUE) &
-      max_depth_time(depth2) >= time2 + maj ){ # & depth(dive1) <= 60) {
-      hour2 <- dive1$hour[2] + inter
-
-      suc_dive <- dive(depth = depth2, time = time2, maj = maj, secu = secu2,
-                       ascent_speed = speed2, hour = hour2)
-      
-      ndive <- list(
-        dive1 = dive1, dive2 = suc_dive,
-        inter = inter, type = "success"
-      )
-      
-      if (inter > 720){
-        if(verbose) cat('diff\n')
-        ndive$type <- "diff"
-      } else {if(verbose) cat('success\n')}
-    } else {
-      if(verbose) cat('maj_no_success\n')
-      warning(paste0( "Second dive impossible due to majoration of time"))
-      # second dive is impossible here in the table
       ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
     }
   }

@@ -21,7 +21,8 @@ stops occur during the dive. The last element is NULL because it's made with
 tables.
 }
 \description{
-desat_table
+Extract time for desat stop using the MN90 tables. Desat stop expected are
+at 3, 6 and 9 meters depths.
 }
 \details{
 Dive time used in table is the maximum time in the dtcurve table, exept the 

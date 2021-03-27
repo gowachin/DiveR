@@ -13,12 +13,9 @@ dist2time <- function(dist, speed){ # TODO : need to find default value
 #' summary of a dive object
 #'
 #' @param object is a DiveR object. There are methods for 
-#' \code{\link[DiveR]{dive}}, \code{\link[DiveR]{tank}},
-#'  \code{\link[DiveR]{conso}} and \code{\link[DiveR]{palier}} objects.
-#' @param ... other arguments passed to the dtr.palier method.
-#' \describe{
-#'   \item{plot}{FALSE by default}
-#' }
+#' \code{\link[DiveR]{dive}}, \code{\link[DiveR]{tank}} and
+#'  \code{\link[DiveR]{conso}} objects.
+#' @param ... other arguments not used
 #'
 #' @return A brief summary of a dive and its main parameters. 
 #'

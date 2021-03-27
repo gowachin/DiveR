@@ -5,9 +5,9 @@
 \alias{dtr.dive}
 \title{dtr}
 \usage{
-dtr(object, ...)
+dtr(object)
 
-\method{dtr}{dive}(object, ...)
+\method{dtr}{dive}(object)
 }
 \arguments{
 \item{object}{is a DiveR object. This method is defined for 

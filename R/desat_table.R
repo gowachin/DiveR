@@ -124,6 +124,9 @@ please read doc with ?tablecheck or help(tablecheck)")
 
 #' desat_table
 #' 
+#' Extract time for desat stop using the MN90 tables. Desat stop expected are
+#' at 3, 6 and 9 meters depths.
+#' 
 #' @param dtcurve a depth time curve in a data.frame with 2 columns depth and 
 #' time. Depths values are meters (positive values) and time is in minute.
 #' @param maj majoration time in minute in case of consecutive dive. 
@@ -222,7 +225,7 @@ majoration <- function(depth, group = "Z", inter = 16) {
   }
   if(depth > 60) stop('depth must be inferior or equal to 60.')
   if (any(inter < 16) | !is.numeric(inter) | length(inter) > 1 ) {
-    stop("inter must be positive numeric value between.")
+    stop("inter must be positive numeric value above 15.")
   }
   if (!group %in% c(rownames(n2), "Z")) {
     stop("group must be a capital letter between A and P or Z")

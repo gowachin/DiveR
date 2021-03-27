@@ -80,14 +80,14 @@ depth.ndive <- function(object) {
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
 #' @export
-dtr <- function(object, ...) {
+dtr <- function(object) {
   UseMethod("dtr")
 }
 
 #' @rdname dtr
 #' 
 #' @export
-dtr.dive <- function(object, ...) {
+dtr.dive <- function(object) {
   unname(object$params["dtr"])
 }
 
