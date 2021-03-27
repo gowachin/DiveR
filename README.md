@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height=200px/>
+# DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height="200px/"/>
 
 <!-- badges: start -->
 
@@ -39,13 +39,9 @@ You can install the development version of `{DiveR}` from
 ``` r
 # install.packages("devtools")
 devtools::install_github('https://github.com/gowachin/DiveR')
-#> Skipping install of 'DiveR' from a github remote, the SHA1 (c1711a61) has not changed since last install.
-#>   Use `force = TRUE` to force installation
 # or 
 # install.packages("remotes")
 remotes::install_github("gowachin/DiveR")
-#> Skipping install of 'DiveR' from a github remote, the SHA1 (c1711a61) has not changed since last install.
-#>   Use `force = TRUE` to force installation
 ```
 
 ## Usage

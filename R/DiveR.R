@@ -93,27 +93,30 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   desat_dtcurve <- add_desat(raw_dtcurve, desat_stop, ascent_speed, secu)
   dtr <- max(desat_dtcurve$time) - tail(raw_dtcurve$time, 2)[1]
   
+  # adding secu stop to desat_stop object.
+  # TODO : same code as in dive_utils, consider function !
+  if(secu){
+    depths <- desat_stop$desat_stop$depth
+    if(3 %in% depths){
+      desat_stop$desat_stop$time[depths==3] <- desat_stop$desat_stop$time[depths==3] + 3
+    } else {
+      desat_stop <- rbind(desat_stop$desat_stop, m3 = data.frame(depth = 3, time = 3, 
+                                                                  hour = NA))
+    }
+  }
+  
   dtcurve <- desat_dtcurve # TODO : to remove
   colnames(dtcurve) <- c("depths", "times")
   
-  #### Will be removed or modifier ...........................................##
-  if (maj > 0) {
-    timaj <- time + maj
-  } else {
-    timaj <- time
-  }
-  # check for values
-  # tablecheck(depth, timaj)
-  # get the palier from the table
-  palier <- palier(depth, timaj, secu)
-  #### .......................................................................##
-  
   # hour 
   hour <- c(hour, hour + tail(dtcurve$time,1))
+  
+  # other_info
+  params <- c(maj = maj, secu = secu, ascent_speed = ascent_speed, dtr = dtr)
 
   dive <- list(
-    dtcurve = dtcurve, dtr = dtr, palier = palier, desat = desat_stop,
-    maj = maj, hour = hour
+    dtcurve = dtcurve, desat = desat_stop,
+    hour = hour, params = params
   )
   class(dive) <- "dive"
   return(dive)
@@ -149,15 +152,17 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
   # retrive some data avout dive2
   time2 <- dtime(dive2)
   depth2 <- depth(dive2)
-  secu2 <- secu(dive2)
-  speed2 <- speed(dive2)$asc
+  # secu2 <- secu(dive2)
+  secu2 <- as.logical(dive2$params["secu"])
+  # speed2 <- speed(dive2)$asc
+  speed2 <- dive2$params["ascent_speed"]
 
   if (inter <= 15) {
     # consecutiv dives 
     warning("A minimum of 15 minutes is requiered between dives to consider them
             as different dives.")
     # total time of dive
-    time <- dtime(dive1) + dive1$dtr + inter + time2
+    time <- dtime(dive1) + dive1$params["dtr"] + inter + time2
     # total depth
     depth <- max(depth(dive1), depth2)
     if (max_depth_time(depth) >= time) { # check if second dive possible with time
@@ -172,8 +177,8 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
       if(verbose) cat('consec\n')
       # modification of dive2 curve in times for graphics !
       ndive$dive2$dtcurve$times[-c(1,2)] <- ndive$dive2$dtcurve$time[-c(1,2)] - 
-        (dtime(dive1) + dive1$dtr + inter)
-      ndive$dive2$hour[1] <- (dive1$hour[1] + dtime(dive1) + dive1$dtr + inter)
+        (dtime(dive1) + dive1$params["dtr"] + inter)
+      ndive$dive2$hour[1] <- (dive1$hour[1] + dtime(dive1) + dive1$params["dtr"] + inter)
     } else {
       if(verbose) cat('no_consec\n')
       # second dive is impossible here in the table

@@ -199,19 +199,19 @@ plot.dive <- function(x,
     text(
       x = mean(dtcurve$times[c(3, length(dtcurve$depths))]),
       y = -max(dtcurve$depths),
-      paste(round(x$dtr,2), "'", sep = ""), pos = 3,
-      # paste("dtr = ", x$dtr, "'", sep = ""), pos = 3,
+      paste(round(x$params["dtr"],2), "'", sep = ""), pos = 3,
+      # paste("dtr = ", x$params["dtr"], "'", sep = ""), pos = 3,
       col = call_par$col
     )
   }
   # add default legend about ascent speed ----
-  if (legend) {
-    legend("bottomright", sprintf(
-      "%s speed : %g m/min", c("ascent", "deco stop"),
-      unlist(speed(x))
-    ), horiz = T, cex = 0.7, box.col = call_par$col.axis, 
-    text.col = call_par$col.axis)
-  }
+  # if (legend) {
+  #   legend("bottomright", sprintf(
+  #     "%s speed : %g m/min", c("ascent", "deco stop"),
+  #     unlist(speed(x))
+  #   ), horiz = T, cex = 0.7, box.col = call_par$col.axis, 
+  #   text.col = call_par$col.axis)
+  # }
   
   if (def_cols) {par(bg = tmp_bg)}
 }
@@ -630,7 +630,7 @@ plot.ndive <- function(x,
                                               day = F)),
                      # sprintf("%02.0f:%02.0f:%02.0f", x$inter %/% 60, 
                      # x$inter %% 60, (x$inter %% 60 %% 1) * 60 )
-                                  paste('maj:', x$dive2$maj)), pos = c(3,1),
+                                  paste('maj:', x$dive2$params["maj"])), pos = c(3,1),
       col = call_par$col
     )
     

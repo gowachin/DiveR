@@ -60,3 +60,32 @@ palier <- function(depth, time, secu = TRUE) {
   # end
   return(palier)
 }
+
+#' @rdname dtr
+#' 
+#' @export
+dtr.palier <- function(object, ..., ascent_speed = 10) {
+  palier <- object
+  
+  call_par <- list(...)
+  
+  if (is.null(call_par$depth)) {
+    stop("dtr computed with a palier object require a depth 
+         to start the ascent")
+  } else {
+    depth <- call_par$depth
+  }
+  
+  # time of deco
+  tpal <- sum(palier$time)
+  
+  maxpal <- sum(3 * (palier$time > 0))
+  # time to deco
+  up <- (depth - maxpal) / ascent_speed
+  # time between deco
+  vpal <- maxpal / 6
+  
+  dtr <- up + tpal + vpal
+  # end
+  return(dtr)
+}
