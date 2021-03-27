@@ -59,3 +59,36 @@ depth.ndive <- function(object) {
   d2 <- depth(object$dive2)
   return(c(d1,d2))
 }
+
+
+#' dtr
+#'
+#' \code{dtr} retrieve time from end dive time to the surface including
+#' desaturation time
+#'
+#' @param object is a DiveR object. This method is defined for 
+#' \code{\link[DiveR]{dive}} objects.
+#'
+#' @return It returns a numeric with the duration of the ascent 
+#' to end of the dive.
+#' 
+#' @examples 
+#' dtr(dive(20,40))
+#' # absurd slowness with ascent_speed = 1
+#' dtr(dive(20,40, ascent_speed = 1))
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+dtr <- function(object, ...) {
+  UseMethod("dtr")
+}
+
+#' @rdname dtr
+#' 
+#' @export
+dtr.dive <- function(object, ...) {
+  unname(object$params["dtr"])
+}
+
+# TODO : define method for desat
