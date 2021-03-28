@@ -21,17 +21,31 @@ At this day, only mn90 tables models are coded for single, consecutive
 or successive dives. This mean all profile are square ones and only
 maximum depth and dive time are used to compute desaturation.
 
-**The shiny application is not yet in production.**
-
 Future parts are work in progress, like more precise planification setup
 with different depths and time input. Desaturation planification with
 other models are also planned along with maybe other gas than air
 supported for consumption.
 
 Intended to be used by french dive student, traduction of the lexic is
-on it’s way.
+on it’s way. Feel free to participate to this project, it is designed to
+be open source under a [CECILL-2
+Licence](https://github.com/gowachin/DiveR/blob/master/LICENCE-CECILL-2.1.txt).
 
 ## Installation
+
+### Dependencies
+
+This package relies on very few packages listed below, that you can
+install with the following code.
+
+``` r
+for (i in c('graphics', 'stats', 'viridisLite') ){
+  if(!require(i,character.only = TRUE))
+    install.packages(i)
+}
+```
+
+### Development version
 
 You can install the development version of `{DiveR}` from
 [github](https://github.com/gowachin/DiveR) with:
@@ -44,12 +58,7 @@ devtools::install_github('https://github.com/gowachin/DiveR')
 remotes::install_github("gowachin/DiveR")
 ```
 
-## Usage
-
-### Dive planification
-
-**A vignette need to be written**
-
+<!--## Usage-->
 <!--
 ### Planning a single dive
 
@@ -61,6 +70,15 @@ dive(20,40)
 
 A second dive depends heavily on the first one as the desaturation is not perfect and residual azote will impact the second saturation. 
  -->
+
+## Documentation
+
+For further information, check the vignettes describing above examples
+in more depth.
+
+### Dive planification
+
+**A vignette need to be written**
 
 ### Gas Consumption
 
@@ -93,6 +111,10 @@ Note here that all dives simulated will also being at sea level.
 
 ## Want to help ?
 
-Go check the projects of this repository !
+Go check the [projects](https://github.com/gowachin/DiveR/projects) of
+this repository ! Any help is welcome and I accept all sort of ideas for
+future project. The idea of this package is to learn about process like
+desaturation models and turn them into algorithms. If you want to use a
+specific model, join me and we can try to implement it !
 
 Feel free to fork this, and use it. Any recommendation is welcome :)
