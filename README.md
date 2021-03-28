@@ -39,12 +39,10 @@ Installation
 This package relies on very few packages listed below, that you can
 install with the following code.
 
-``` r
-for (i in c('graphics', 'stats', 'viridisLite') ){
-  if(!require(i,character.only = TRUE))
-    install.packages(i)
-}
-```
+    for (i in c('graphics', 'stats', 'viridisLite') ){
+      if(!require(i,character.only = TRUE))
+        install.packages(i)
+    }
 
 ### Development version
 
@@ -58,7 +56,6 @@ You can install the development version of `{DiveR}` from
     remotes::install_github("gowachin/DiveR")
 
 <!--## Usage-->
-
 <!--
 ### Planning a single dive
 
@@ -71,7 +68,8 @@ dive(20,40)
 A second dive depends heavily on the first one as the desaturation is not perfect and residual azote will impact the second saturation. 
  -->
 
-## Documentation
+Documentation
+-------------
 
 For further information, check the vignettes describing above examples
 in more depth.
