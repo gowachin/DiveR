@@ -22,7 +22,9 @@ library(badger)
 
 <!-- badges: end -->
 
-R package for dive planification tools. It contains functions and methods to represent dive curves, desaturation time and gas consumption. At this day, only mn90 tables models are coded for single, consecutive or successive dives. This mean all profile are square ones and only maximum depth and dive time are used to compute desaturation.
+R package for dive planification tools. It contains functions and methods to represent dive curves, desaturation time and gas consumption. 
+
+At this day, only mn90 tables models are coded for single, consecutive or successive dives. This mean all profile are square ones and only maximum depth and dive time are used to compute desaturation.
 
 Future parts are work in progress, like more precise planification setup with different depths and time input. Desaturation planification with other models are also planned along with maybe other gas than air supported for consumption.
 
