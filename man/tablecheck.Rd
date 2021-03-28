@@ -7,7 +7,7 @@
 \usage{
 tablecheck(depth, time, force = FALSE)
 
-max_depth_time(depth, force = FALSE)
+max_depth_time(depth, force = FALSE, no_deco = FALSE)
 }
 \arguments{
 \item{depth}{depth in meter. Must be a single positive value 
@@ -18,6 +18,8 @@ with a maximum is 180 min}
 
 \item{force}{FALSE by default, if TRUE don't stop the function but 
 return a TRUE/FALSE value}
+
+\item{no_deco}{FALSE by default, if TRUE return the time without deco}
 }
 \value{
 Nothing expect when \code{force} parameter is TRUE. 
@@ -29,7 +31,7 @@ depth is the MN90 table.
 \description{
 Check if the parameters are possible with table information.
 
-Max time present in the table for a given depth.
+Max time present in the table for a given depth, with or without deco
 }
 \details{
 This function will stop if the depth > 65 or time > 180 because the table 

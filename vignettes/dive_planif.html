@@ -12,7 +12,7 @@
 
 <meta name="author" content="Maxime Jaunatre" />
 
-<meta name="date" content="2021-03-27" />
+<meta name="date" content="2021-03-28" />
 
 <title>Dive Planification</title>
 
@@ -140,60 +140,42 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Dive Planification</h1>
 <h4 class="author">Maxime Jaunatre</h4>
-<h4 class="date">2021-03-27</h4>
+<h4 class="date">2021-03-28</h4>
 
 
 
-<style>
-body {
-text-align: justify}
-</style>
 <p>The package <code>{DiveR}</code> provide functions to simulate a dive. It does so by asking a depth, a time and few parameters. This vignette will demonstrate the workflow to simulate a simple dive and different models of two-dives systems.</p>
 <p><strong>Note here that it only show square dives, meaning that decompression is managed following mn90 (french) dive tables.</strong></p>
 <div id="simple-dive" class="section level2">
 <h2>Simple Dive</h2>
-<p>To simulate a simple dive using tables, you just need to provide a depth (meter) and a time (minute) at this depth. Despite giving a depth, so an altitude below 0, the depth must be set in positive values in the package.</p>
+<p>To simulate a simple dive using tables, you just need to provide a depth (meter) and a time (minute) at this depth. Despite being an altitude below 0, the depth must be set in positive values in the package.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DiveR)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>dive20_40 <span class="ot">&lt;-</span> <span class="fu">dive</span>(<span class="at">dept =</span> <span class="dv">20</span>, <span class="at">time =</span> <span class="dv">40</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>dive20_40</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $dtcurve</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   depths times</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      0   0.0</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     20   0.0</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3     20  40.0</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4      3  41.7</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      3  44.7</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6      0  45.2</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $desat</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $desat_stop</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    depth time hour</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; m9     9    0   NA</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; m6     6    0   NA</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; m3     3    3   NA</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $group</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;H&quot;</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $model</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;table&quot;</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;desat&quot;</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $hour</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  0.0 45.2</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $params</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          maj         secu ascent_speed          dtr </span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          0.0          1.0         10.0          5.2 </span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;dive&quot;</span></span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>dive20_40 <span class="ot">&lt;-</span> <span class="fu">dive</span>(<span class="at">depth =</span> <span class="dv">20</span>, <span class="at">time =</span> <span class="dv">40</span>)</span></code></pre></div>
+<p>This object of class dive contain a time/depth curve, information about the desaturation process and more information about the parameters used and other results that will be used in plots or other simulations.</p>
+<p>The default parameters worth noting are : * <code>secu = TRUE</code> adding a default security stop at 3m for 3min *<code>desat_model</code> The desaturation model used. This vignette will only show <code>table</code> model (mn90 french dive tables).</p>
+<div id="limits-of-table-model" class="section level3">
+<h3>Limits of table model</h3>
+<p>This precise model provide desaturation stops at 3, 6 and 9 meters depths for a given time and depth. It’s important to check these two values because this table is limited to a maximum depth of 65m and time limits depending on the depth.</p>
+<p><img src="data:image/png;base64,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" width="100%" /></p>
+<p>You can check values with following functions :</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">### check if in table</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tablecheck</span>(<span class="dv">20</span>, <span class="dv">50</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tablecheck</span>(<span class="dv">20</span>, <span class="dv">80</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error: Maximum time at 20 meters is 75 minutes</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tablecheck</span>(<span class="dv">20</span>, <span class="dv">80</span>, <span class="at">force =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="do">### checking time</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">max_depth_time</span>(<span class="at">depth =</span> <span class="dv">20</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 75</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">max_depth_time</span>(<span class="at">depth =</span> <span class="dv">20</span>, <span class="at">no_deco =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 40</span></span></code></pre></div>
 <!--
-### Security Curve
+<details>
+ <summary>Summary Goes Here</summary>
+ ...this is hidden, collapsable content...
+</details>
 
-### Limits of the tables
 
 ## Dive Methods
 
@@ -225,7 +207,9 @@ tank1
 #> 
 #> attr(,"class")
 #> [1] "tank"
-<p>–&gt; ```</p>
+```
+-->
+</div>
 </div>
 
 

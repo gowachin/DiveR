@@ -110,8 +110,9 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     if(3 %in% depths){
       desat_stop$desat_stop$time[depths==3] <- desat_stop$desat_stop$time[depths==3] + 3
     } else {
-      desat_stop$desat_stop <- rbind(desat_stop$desat_stop, m3 = data.frame(depth = 3, time = 3, 
-                                                                  hour = NA))
+      desat_stop$desat_stop <- rbind(desat_stop$desat_stop, 
+                                     m3 = data.frame(depth = 3, time = 3, 
+                                                     hour = NA))
     }
   }
   

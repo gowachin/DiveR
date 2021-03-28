@@ -8,7 +8,7 @@
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
+  fig.path = "inst/images/README-",
   out.width = "100%"
 )
 library(badger)
@@ -55,6 +55,20 @@ remotes::install_github("gowachin/DiveR")
 ```
 
 <!--## Usage-->
+
+Below is a simple example to simulate a dive and the corresponding air consumption.
+
+```{r example_dive}
+# Simulation of a dive
+library(DiveR)
+dive <- dive(depth = 39, time = 22, secu = TRUE, 
+             ascent_speed = 10, desat_model = "table")
+summary(dive)
+tank <- tank(vol = 15, press = 230, name = "15L")
+conso <- conso(dive = dive, tank = tank, cons = 20)
+summary(conso)
+plot(conso)
+```
 
 <!--
 ### Planning a single dive

@@ -7,7 +7,8 @@ test_that("exp_is_desat", {
   expect_false(is.desat('desat'))
 })
 
-#### Test tablecheck and max_depth_time ####
+#### Test tablecheck max_depth_time and no_deco_depth ####
+
 # Test for correct input
 test_that("err_tablecheck_depth", {
   err <- "depth must be positive numeric value."
@@ -45,6 +46,11 @@ please read doc with \\?tablecheck or help\\(tablecheck\\)"
   expect_error(max_depth_time(80), err )
 })
 
+test_that("err_max_depth_time_outtable", {
+  err <- "no deco dives are not possible below 48m"
+  expect_error(max_depth_time(50, no_deco = TRUE), err )
+})
+
 test_that("err_tablecheck_outtable", {
   err <- "Maximum time at 20 meters is 75 minutes"
   expect_error(tablecheck(20, 100), err )
@@ -59,6 +65,8 @@ test_that("out_tablecheck_intable", {
 test_that("out_max_depth_time_intable", {
   expect_equal(max_depth_time(20), 75 )
   expect_equal(max_depth_time(80, force = TRUE), 0 )
+  expect_equal(max_depth_time(20, no_deco = TRUE), 40 )
+  expect_equal(max_depth_time(50, no_deco = TRUE, force = TRUE), 0)
 })
 
 #### Test desat_table ####

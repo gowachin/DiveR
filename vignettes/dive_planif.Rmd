@@ -9,12 +9,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{=html}
-<style>
-body {
-text-align: justify}
-</style>
-```
+
+
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -23,6 +19,8 @@ knitr::opts_chunk$set(
   fig.width = 8.5,
   dpi = 96
 )
+#library(details)
+library(viridisLite)
 ```
 
 The package `{DiveR}` provide functions to simulate a dive. It does so by asking a depth, a time and few parameters. This vignette will demonstrate the workflow to simulate a simple dive and different models of two-dives systems.
@@ -31,19 +29,63 @@ The package `{DiveR}` provide functions to simulate a dive. It does so by asking
 
 ## Simple Dive
 
-To simulate a simple dive using tables, you just need to provide a depth (meter) and a time (minute) at this depth. Despite giving a depth, so an altitude below 0, the depth must be set in positive values in the package.
+To simulate a simple dive using tables, you just need to provide a depth (meter) and a time (minute) at this depth. Despite being an altitude below 0, the depth must be set in positive values in the package.
 
 ```{r basic_dive}
 library(DiveR)
-dive20_40 <- dive(dept = 20, time = 40)
-dive20_40
+dive20_40 <- dive(depth = 20, time = 40)
 ```
 
-```{=html}
-<!--
-### Security Curve
+This object of class dive contain a time/depth curve, information about the desaturation process and more information about the parameters used and other results that will be used in plots or other simulations.
 
-### Limits of the tables
+The default parameters worth noting are :
+* `secu = TRUE` adding a default security stop at 3m for 3min
+*`desat_model` The desaturation model used. This vignette will only show `table` model (mn90 french dive tables).
+
+### Limits of table model
+
+This precise model provide desaturation stops at 3, 6 and 9 meters depths for a given time and depth. It's important to check these two values because this table is limited to a maximum depth of 65m and time limits depending on the depth. 
+
+```{r secu_curve,  dev='png', out.width="100%", echo = FALSE}
+nodeco <- time <- depth <- 1:65
+for(i in depth){
+  time[i] <- max_depth_time(depth[i])
+  nodeco[i] <- max_depth_time(depth[i], force = TRUE, no_deco = TRUE)
+}
+cols = viridis(3)
+# plot(time, -depth, type = "l", xlim = c(0, max(time)), 
+#      xlab = "Time (min)", ylab = "Depth (meter)", 
+#      main = "Maximum time in table with desat stop (Deco) and without")
+# lines(nodeco, -depth, type = "l")
+# polygon(c(rep(0, length(nodeco)), rev(nodeco)), c(-depth, -rev(depth)), col = cols[2])
+# polygon(c(time, rev(nodeco)), c(-depth, -rev(depth)), col = cols[1])
+
+df <- rbind(rev(nodeco),rev(time-nodeco))
+colnames(df) <- -rev(depth)
+barplot(df, horiz = TRUE, col = rev(cols[-3]), yaxt = "n", 
+     xlab = "Time (min)", ylab = "Depth (meter)", 
+     main = "Maximum time in table with desat stop (Deco) and without")
+axis(2, at = seq(0, par("usr")[4]- 3, length.out = 14), labels = seq(-65, -0, by = 5))
+legend("bottomright", legend = c("Deco", "No-deco time"), fill = (cols[-3]))
+```
+
+
+```{r lim funct, error=TRUE}
+### check if in table
+tablecheck(20, 50)
+tablecheck(20, 80)
+tablecheck(20, 80, force = TRUE)
+### checking time
+max_depth_time(depth = 20)
+max_depth_time(depth = 20, no_deco = TRUE)
+```
+
+<!--
+<details>
+ <summary>Summary Goes Here</summary>
+ ...this is hidden, collapsable content...
+</details>
+
 
 ## Dive Methods
 
@@ -62,4 +104,3 @@ tank1 <- tank(vol = 12, press = 200)
 tank1
 ```
 -->
-```

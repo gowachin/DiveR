@@ -78,12 +78,13 @@ please read doc with ?tablecheck or help(tablecheck)")
 
 #' max_depth_time
 #' 
-#' Max time present in the table for a given depth.
+#' Max time present in the table for a given depth, with or without deco
 #' 
 #' @param depth depth in meter. Must be a single positive value 
 #' with a maximum is 65m.
 #' @param force FALSE by default, if TRUE don't stop the function but 
 #' return a TRUE/FALSE value
+#' @param no_deco FALSE by default, if TRUE return the time without deco
 #' 
 #' @return 
 #' Single numeric value, the max time possible to dive at the given 
@@ -93,7 +94,7 @@ please read doc with ?tablecheck or help(tablecheck)")
 #' 
 #' @rdname tablecheck
 #' @export
-max_depth_time <- function(depth, force = FALSE) {
+max_depth_time <- function(depth, force = FALSE, no_deco = FALSE) {
   #### LOAD DATA
   table <- DiveR::table[, , 1]
   #### IDIOT PROOF ####
@@ -116,7 +117,18 @@ please read doc with ?tablecheck or help(tablecheck)")
   rdepth <- min(depths)
   
   d <- as.character(rdepth)
-  t <- names(which(!is.na(table[d, ])))
+  if(no_deco){
+    t <- names(which(!is.na(table[d,table[d, ] == 0])))
+    if(length(t) == 0){
+      if(force){
+        return(0)
+      } else {
+        stop("no deco dives are not possible below 48m")
+      }
+    }
+  } else {
+    t <- names(which(!is.na(table[d, ])))
+  }
   m <- max(as.numeric(t))
   return(m)
 }
