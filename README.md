@@ -1,7 +1,7 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height="200px/"/>
-=============================================================================================================================================
+# DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height="200px/"/>
 
 <!-- badges: start -->
 
@@ -17,6 +17,7 @@ status](https://codecov.io/gh/gowachin/DiveR/branch/master/graph/badge.svg)](htt
 
 R package for dive planification tools. It contains functions and
 methods to represent dive curves, desaturation time and gas consumption.
+
 At this day, only mn90 tables models are coded for single, consecutive
 or successive dives. This mean all profile are square ones and only
 maximum depth and dive time are used to compute desaturation.
@@ -31,31 +32,66 @@ on it’s way. Feel free to participate to this project, it is designed to
 be open source under a [CECILL-2
 Licence](https://github.com/gowachin/DiveR/blob/master/LICENCE-CECILL-2.1.txt).
 
-Installation
-------------
+## Installation
 
 ### Dependencies
 
 This package relies on very few packages listed below, that you can
 install with the following code.
 
-    for (i in c('graphics', 'stats', 'viridisLite') ){
-      if(!require(i,character.only = TRUE))
-        install.packages(i)
-    }
+``` r
+for (i in c('graphics', 'stats', 'viridisLite') ){
+  if(!require(i,character.only = TRUE))
+    install.packages(i)
+}
+```
 
 ### Development version
 
 You can install the development version of `{DiveR}` from
 [github](https://github.com/gowachin/DiveR) with:
 
-    # install.packages("devtools")
-    devtools::install_github('https://github.com/gowachin/DiveR')
-    # or 
-    # install.packages("remotes")
-    remotes::install_github("gowachin/DiveR")
+``` r
+# install.packages("devtools")
+devtools::install_github('https://github.com/gowachin/DiveR')
+# or 
+# install.packages("remotes")
+remotes::install_github("gowachin/DiveR")
+```
 
 <!--## Usage-->
+
+Below is a simple example to simulate a dive and the corresponding air
+consumption.
+
+``` r
+# Simulation of a dive
+library(DiveR)
+dive <- dive(depth = 39, time = 22, secu = TRUE, 
+             ascent_speed = 10, desat_model = "table")
+summary(dive)
+#> Dive for : 22 minutes at 39 meters
+#> Total dive time is  with a dive ascent of minutes
+#> 2 stops :   2 minutes at 6 meters
+#>            22 minutes at 3 meters 
+#> The dive group is J
+tank <- tank(vol = 15, press = 230, name = "15L")
+conso <- conso(dive = dive, tank = tank, cons = 20)
+summary(conso)
+#> Consumption simulated on dive at 39 m for 50.3 minutes
+#> ---------------------------------------------------------------------
+#>        Tank name |         Rule | Pressure |    Time | Final pressure 
+#> ---------------------------------------------------------------------
+#>         Tank 15L |          mid |  115 bar |  18 min | 27.83 bar
+#>                  |          res |   58 bar |  33 min |    
+#>                  |           AF |    0 bar |  NA min |     
+#> ---------------------------------------------------------------------
+#> The dive is viable !
+plot(conso)
+```
+
+<img src="inst/images/README-example_dive-1.png" width="100%" />
+
 <!--
 ### Planning a single dive
 
@@ -68,8 +104,7 @@ dive(20,40)
 A second dive depends heavily on the first one as the desaturation is not perfect and residual azote will impact the second saturation. 
  -->
 
-Documentation
--------------
+## Documentation
 
 For further information, check the vignettes describing above examples
 in more depth.
@@ -84,8 +119,7 @@ Read [Gas
 Consumption](https://gowachin.github.io/DiveR/articles/gas_conso.html)
 Vignette to learn how to simulate the use of gas during a dive.
 
-Disclaimer
-----------
+## Disclaimer
 
 This application is intended for use in education about scubadiving
 planification and academic interest only. It is not designed for actual
@@ -108,8 +142,7 @@ model may not be correct predictions.
 
 Note here that all dives simulated will also being at sea level.
 
-Want to help ?
---------------
+## Want to help ?
 
 Go check the [projects](https://github.com/gowachin/DiveR/projects) of
 this repository ! Any help is welcome and I accept all sort of ideas for

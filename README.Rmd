@@ -29,7 +29,7 @@ At this day, only mn90 tables models are coded for single, consecutive or succes
 Future parts are work in progress, like more precise planification setup with different depths and time input. Desaturation planification with other models are also planned along with maybe other gas than air supported for consumption.
 
 Intended to be used by french dive student, traduction of the lexic is on it's way. 
-Feel free to participate to this project, it is designed to be open source under a [CECILL-2 Licence](https://github.com/gowachin/DiveR/blob/master/LICENCE-CECILL-2.1.txt).
+Feel free to participate to this project, it is designed to be open source under a [CECILL-2 Licence](https://github.com/gowachin/DiveR/blob/master/LICENCE-CECILL-2.1.txt). 
 
 ## Installation
 
