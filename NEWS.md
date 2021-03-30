@@ -10,7 +10,11 @@
 
 * Idiot proof is made with correct functions and `check_val` function has been removed
 
+* Most summary are pretty now.
+
 ## Bugs fixed
+
+* dtime work now on curve dives
 
 * Correction of additionnal time when using successive dives. Was adding between 4 and 1 minute more than expected when using tables. ( #11 )
 

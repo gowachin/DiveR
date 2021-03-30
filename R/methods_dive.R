@@ -163,3 +163,81 @@ depth_at_time <- function(dive, time){
   }
   return(unname(res))
 }
+
+
+#' summary
+#'
+#' summary method for class \code{\link[DiveR]{dive}}.
+#'
+#' @param object is a DiveR object. There are methods for 
+#' \code{\link[DiveR]{dive}}, \code{\link[DiveR]{tank}} and
+#'  \code{\link[DiveR]{conso}} objects.
+#' @param ... other arguments not used
+#'
+#' @return A brief summary of a dive and its main parameters. 
+#' 
+#' summary(dive(20, 40, secu = FALSE))
+#' summary(dive(20, 40, secu = TRUE))
+#' summary(dive(20, 45))
+#' summary(dive(39, 22))
+#' summary(dive(50, 22))
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+summary.dive <- function(object, ...){ 
+  
+  secu <- switch (object$params["secu"]+1,
+                  "FALSE","TRUE")
+  cat('--------------------------------------------------\n')
+  cat(sprintf('Maximum depth : %3.f m  | Depth dive time : %3.f min \n', 
+              depth(object), dtime(object)),
+      sprintf('Dive ascent : %3.f min | Underwater time : %3.f min\n', 
+              dtr(object), diff(object$hour)),
+      sprintf(' Majoration : %3.f min | Security stop : %5.5s \n', 
+              object$params["maj"], secu)
+  )
+  cat('--------------------------------------------------\n')
+  
+  cat('\n|- Desaturation -|\n')
+  summary(object$desat)
+  # add the secu stop in row
+}
+
+
+#' @rdname summary.dive
+#'  
+#' @examples
+#' summary(desat_table(init_dtcurve(20, 40)))
+#' summary(desat_table(init_dtcurve(20, 45)))
+#' summary(desat_table(init_dtcurve(39, 22)))
+#' summary(desat_table(init_dtcurve(50, 22)))
+#' 
+#' @export
+summary.desat <- function(object, ...) {
+  
+  sup <- object$desat_stop$time > 0
+  n <- sum(sup)
+  if(n> 0){
+    cat("---------------------------------\n")
+    cat(" Stop | Depth | Duration |   Time \n")
+    cat("---------------------------------\n")
+    for(i in (4-n):3){ # TODO : change here !!!
+      stops <- paste(sprintf(' n %2.f | %3.f m | %4.f min | %2.f min',
+                             i,
+                             object$desat_stop[i,1],
+                             object$desat_stop[i,2],
+                             object$desat_stop[i,3]),
+                     collapse = '\n')
+      cat(stops, "\n")
+      cat("---------------------------------\n")
+    }
+  } else {
+    cat("--------- No desat stop ---------\n")
+  }
+  cat(
+    paste(sprintf('    Group : %1.1s | Model : %7.7s \n',
+                  object$group, object$model),
+          collapse = '\n')
+  )
+}

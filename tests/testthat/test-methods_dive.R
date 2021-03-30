@@ -52,4 +52,88 @@ test_that("exp_dtr_dive", {
   expect_equal(dtr(d), 3.9)
 })
 
+#### Summary ####
 
+test_that("exp_summary_conso", {
+  object <- dive(20, 40, secu = FALSE)
+  mess <- "--------------------------------------------------
+Maximum depth :  20 m  | Depth dive time :  40 min 
+ Dive ascent :   2 min | Underwater time :  42 min
+  Majoration :   0 min | Security stop : FALSE 
+--------------------------------------------------
+
+|- Desaturation -|
+--------- No desat stop ---------
+    Group : H | Model :   table "
+  expect_equal(capture_output(summary(object)), mess)
+  
+  object <- dive(20, 40)
+  mess <- "--------------------------------------------------
+Maximum depth :  20 m  | Depth dive time :  40 min 
+ Dive ascent :   5 min | Underwater time :  45 min
+  Majoration :   0 min | Security stop :  TRUE 
+--------------------------------------------------
+
+|- Desaturation -|
+---------------------------------
+ Stop | Depth | Duration |   Time 
+---------------------------------
+ n  3 |   3 m |    3 min | 42 min 
+---------------------------------
+    Group : H | Model :   table "
+  expect_equal(capture_output(summary(object)), mess)
+  
+  object <- dive(20, 45)
+  mess <- "--------------------------------------------------
+Maximum depth :  20 m  | Depth dive time :  45 min 
+ Dive ascent :   6 min | Underwater time :  51 min
+  Majoration :   0 min | Security stop :  TRUE 
+--------------------------------------------------
+
+|- Desaturation -|
+---------------------------------
+ Stop | Depth | Duration |   Time 
+---------------------------------
+ n  3 |   3 m |    4 min | 47 min 
+---------------------------------
+    Group : I | Model :   table "
+  expect_equal(capture_output(summary(object)), mess)
+  
+  object <- dive(39, 22)
+  mess <- "--------------------------------------------------
+Maximum depth :  39 m  | Depth dive time :  22 min 
+ Dive ascent :  28 min | Underwater time :  50 min
+  Majoration :   0 min | Security stop :  TRUE 
+--------------------------------------------------
+
+|- Desaturation -|
+---------------------------------
+ Stop | Depth | Duration |   Time 
+---------------------------------
+ n  2 |   6 m |    2 min | 25 min 
+---------------------------------
+ n  3 |   3 m |   22 min | 28 min 
+---------------------------------
+    Group : J | Model :   table "
+  expect_equal(capture_output(summary(object)), mess)
+  
+  object <- dive(50, 22)
+  mess <- "--------------------------------------------------
+Maximum depth :  50 m  | Depth dive time :  22 min 
+ Dive ascent :  50 min | Underwater time :  72 min
+  Majoration :   0 min | Security stop :  TRUE 
+--------------------------------------------------
+
+|- Desaturation -|
+---------------------------------
+ Stop | Depth | Duration |   Time 
+---------------------------------
+ n  1 |   9 m |    1 min | 26 min 
+---------------------------------
+ n  2 |   6 m |    8 min | 28 min 
+---------------------------------
+ n  3 |   3 m |   35 min | 36 min 
+---------------------------------
+    Group : L | Model :   table "
+  expect_equal(capture_output(summary(object)), mess)
+})
