@@ -31,9 +31,10 @@ The package `{DiveR}` provide functions to simulate a dive. It does so by asking
 
 To simulate a simple dive using tables, you just need to provide a depth (meter) and a time (minute) at this depth. Despite being an altitude below 0, the depth must be set in positive values in the package.
 
-```{r basic_dive}
+```{r basic_dive,  dev='png', out.width="100%"}
 library(DiveR)
 dive20_40 <- dive(depth = 20, time = 40)
+plot(dive20_40, line_print = FALSE)
 ```
 
 This object of class dive contain a time/depth curve, information about the desaturation process and more information about the parameters used and other results that will be used in plots or other simulations.
@@ -66,7 +67,7 @@ barplot(df, horiz = TRUE, col = rev(cols[-3]), yaxt = "n",
      xlab = "Time (min)", ylab = "Depth (meter)", 
      main = "Maximum time in table with desat stop (Deco) and without")
 axis(2, at = seq(0, par("usr")[4]- 3, length.out = 14), labels = seq(-65, -0, by = 5))
-legend("bottomright", legend = c("Deco", "No-deco time"), fill = (cols[-3]))
+legend("bottomright", legend = c("No-deco time" , "Deco"), fill = rev(cols[-3]))
 ```
 
 
@@ -80,14 +81,55 @@ max_depth_time(depth = 20)
 max_depth_time(depth = 20, no_deco = TRUE)
 ```
 
+
+
+## Dive Methods
+
+Now that we have simulated a dive, we may want to find more information about it, in order to dive in safety.
+
+First we check if we can dive at the simulated depth. This is important because depth is the main parameter we have to check during a dive.
+
+```{r ghost_dive, echo = FALSE}
+ghost_dive <- dive(depth = 39, time = 22, secu = FALSE)
+```
+
+```{r depth_dive}
+depth(dive20_40)
+depth(ghost_dive) # it is important when depth is not in the name !
+```
+
+The second important parameter of a dive is the duration of the dive. This parameter is important to understand saturation process. The `dtime` function return the dive time at depth. **This is different from the underwater time retrieved by the difference between the immersion hour and surface hour.**
+
+```{r dtime_dive}
+dtime(dive20_40)
+dtime(ghost_dive) # it is important when depth is not in the name !
+# Difference with underwater time
+diff(dive20_40$hour)
+dtime(dive20_40) + dtr(dive20_40) == diff(dive20_40$hour)
+```
+
+Above function allow to retrieve very basic parameters. If you want to check the depth at a time or when you will be at some depth, you can ! Note that outside the dive this is assumed to be 0m.
+
+```{r depth_time_dive}
+depth_at_time(dive20_40, 15)
+depth_at_time(dive20_40, 43) # during desat
+depth_at_time(dive20_40, 50) # after the dive
+depth_at_time(ghost_dive, 15)
+```
+
+Finally we can find all information in a summary. It also show the desaturation stop used for the dive.
+
+```{r summary_dive}
+summary(dive20_40)
+summary(ghost_dive)
+```
+
+
 <!--
 <details>
  <summary>Summary Goes Here</summary>
  ...this is hidden, collapsable content...
 </details>
-
-
-## Dive Methods
 
 ## Multiple Dives
 
@@ -97,10 +139,30 @@ max_depth_time(depth = 20, no_deco = TRUE)
 
 ### Consecutive Dives
 
-
-```{r basic_tank}
-library(DiveR)
-tank1 <- tank(vol = 12, press = 200)
-tank1
-```
 -->
+
+
+## Testing other dive style
+
+Need to correct depth inf for these dives as well as to warning if depth > max depth desat stop because there is back to the future dive style there !
+Check add_desat function !
+
+Modification of methods too to check these objects. May be just show max time, hour, max depth
+
+```{r dive}
+library(DiveR)
+dive20_40 <- dive(depth = 20, time = 40) ; plot(dive20_40)
+dive39_22 <- dive(depth = 39, time = 22) ; plot(dive39_22)
+
+diveC_20_40 <- dive(depth = c(0, 20, 20, 10, 10, 7), 
+                    time = c(0, 2, 15, 20, 35,  40)) ; plot(diveC_20_40)
+diveC_20_40 <- dive(depth = c(0, 20, 18, 10, 2), 
+                    time = c(0, 2, 15, 20, 40)) ; plot(diveC_20_40)
+dtime(diveC_20_40)
+dtr(diveC_20_40)
+diveC_39_22 <- dive(depth = c(0, 39, 30, 15, 7), 
+                    time = c(0, 2, 7, 15, 22)) ; plot(diveC_39_22)
+diveC_39_22 <- dive(depth = c(0, 39, 30, 15, 3), 
+                    time = c(0, 2, 7, 15, 22)) ; plot(diveC_39_22)
+```
+

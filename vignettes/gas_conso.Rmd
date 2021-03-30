@@ -138,7 +138,7 @@ viable <- conso(dive = simp_dive, tank = Tank_15L,
 plot(viable, line_print = FALSE)
 ```
 
-## Consumption attributes
+## Consumption methodes
 
 Now that we have simulated both consumption on the same dive, we may want to find more information about the simulations, which will help us dive safely.
 
