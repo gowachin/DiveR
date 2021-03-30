@@ -136,13 +136,15 @@ add_desat <- function(dtcurve, desat, ascent_speed = 10, secu = FALSE) {
     }
   }
   
+  
+  
   # if(all(is.na(desat$desat_table))){ # in case time specified
   dtcurve <- dtcurve[-nrow(dtcurve),]
   for(i in 1:nrow(desat$desat_stop)){
     if(desat$desat_stop$time[i] > 0){ 
       last_p <- unlist(dtcurve[nrow(dtcurve),])
       beg_depth <- end_depth <- desat$desat_stop$depth[i]
-      begtime <- last_p["time"] + (last_p["depth"] - beg_depth) / ascent_speed
+      begtime <- last_p["time"] + abs(last_p["depth"] - beg_depth) / ascent_speed
       endtime <- begtime + desat$desat_stop$time[i]
       # now ascent_speed restricted to 6m.
       if(ascent_speed > 6){

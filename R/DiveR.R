@@ -126,7 +126,6 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
       }
     }
   } 
-
   
   dtcurve <- desat_dtcurve # TODO : to remove
   colnames(dtcurve) <- c("depths", "times")

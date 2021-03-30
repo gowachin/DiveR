@@ -23,13 +23,22 @@
 \item{...}{other arguments not used}
 }
 \value{
-A brief summary of a dive and its main parameters.
+A brief summary of a dive and its main parameters. 
+
+summary(dive(20, 40, secu = FALSE))
+summary(dive(20, 40, secu = TRUE))
+summary(dive(20, 45))
+summary(dive(39, 22))
+summary(dive(50, 22))
 }
 \description{
-summary of a dive object
+summary method for class \code{\link[DiveR]{dive}}.
 }
 \examples{
-
+summary(desat_table(init_dtcurve(20, 40)))
+summary(desat_table(init_dtcurve(20, 45)))
+summary(desat_table(init_dtcurve(39, 22)))
+summary(desat_table(init_dtcurve(50, 22)))
 
 summary(tank(vol = 12, press = 200))
 

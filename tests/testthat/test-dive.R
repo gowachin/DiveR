@@ -50,7 +50,7 @@ test_that("war_init_dtcurve_ascent_sp", {
 })
 
 # Test for correct output
-test_that("dive_output", {
+test_that("dive_square_output", {
   d <- dive(depth = 39, time = 22, secu = TRUE, ascent_speed = 10)
   
   exp <- list(
@@ -83,26 +83,58 @@ test_that("dive_output", {
   expect_equal(d, exp)
 })
 
-#### Test square dive attributes ####
-# depth.dive
-test_that("sq_depth.dive", {
-  d <- dive(20,40)
-  expect_equal(depth(d), 20)
-})
-
-# dtime.dive
-test_that("sq_dtime.dive", {
-  d <- dive(20,40)
-  expect_equal(dtime(d), 40)
-})
-
-# dtr.dive
-test_that("sq_dtr.dive", {
-  d <- dive(20,40)
-  expect_equal(dtr(d), 5.2)
+test_that("dive_curve_output", {
+  d <- dive(depth = c(0, 20, 19, 10, 7), 
+            time = c(0, 2, 15, 20,  40)) 
+  exp <- list(
+    dtcurve = data.frame(depths = c(0, 20, 19, 10, 7, 3, 3, 0), 
+                         times = c(0, 2, 15, 20,  40, 40.4, 43.4, 43.9)),
+    desat = list(desat_stop = data.frame(depth = c(9, 6, 3), time = c(0, 0, 3),
+                                         hour = c(NA, NA, 40.4), 
+                                         row.names = paste0("m", c(9,6,3))),
+                 group = "H", model = "table"),
+    hour = c(0, 43.9),
+    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 3.9)
+  )
+  class(exp) <- "dive"
+  class(exp$desat) <- "desat"
+  expect_equal(d, exp)
   
-  d <- dive(20, 40, secu = FALSE)
-  expect_equal(dtr(d), 2)
+  
+  d <- dive(depth = c(0, 20, 19, 10, 2), 
+            time = c(0, 2, 15, 20, 40)) 
+  exp$dtcurve$depths[5] <- 2
+  exp$dtcurve$times <- c(0, 2, 15, 20, 40, 40.1, 43.1, 43.6)
+  exp$desat$desat_stop[3,3] <- 40.1
+  exp$params["dtr"] <- 3.6
+  exp$hour[2] <- 43.6
+  expect_equal(d, exp)
+  
+  d <- dive(depth = c(0, 39, 30, 15, 7), 
+            time = c(0, 2, 7, 15, 22))
+  exp <- list(
+    dtcurve = data.frame(depths = c(0, 39, 30, 15, 7, 6, 6, 3, 3, 0), 
+                         times = c(0, 2, 7, 15, 22, 22.1, 24.1, 24.6, 46.6, 47.1)),
+    desat = list(desat_stop = data.frame(depth = c(9, 6, 3), time = c(0, 2, 22),
+                                         hour = c(NA, 22.1, 24.6), 
+                                         row.names = paste0("m", c(9,6,3))),
+                 group = "J", model = "table"),
+    hour = c(0, 47.1),
+    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 25.1)
+  )
+  class(exp) <- "dive"
+  class(exp$desat) <- "desat"
+  expect_equal(d, exp)
+  
+  d <- dive(depth = c(0, 39, 30, 15, 3), 
+            time = c(0, 2, 7, 15, 22))
+  exp$dtcurve$depths[5] <- 3
+  exp$dtcurve$times <- c(0, 2, 7, 15, 22, 22.3, 24.3, 24.8, 46.8, 47.3)
+  exp$desat$desat_stop[c(2,3),3] <- c(22.3, 24.8)
+  exp$params["dtr"] <- 25.3
+  exp$hour[2] <- 47.3
+  expect_equal(d, exp)
+  
 })
 
 ##### Test ndive ####

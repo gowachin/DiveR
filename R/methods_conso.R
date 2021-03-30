@@ -324,6 +324,7 @@ summary.conso <- function(object, ...){
       diff(object$hour), "minutes\n")
   
   Ltank <- nrow(object$rules)
+  # TODO : check cli for this type of lines
   cat("---------------------------------------------------------------------\n")
   cat("       Tank name |         Rule | Pressure |    Time | Final pressure \n")
   cat("---------------------------------------------------------------------\n")

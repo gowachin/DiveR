@@ -22,6 +22,7 @@ file_coverage('R/methods_conso.R', 'tests/testthat/test-methods_conso.R')
 x <- file_coverage('R/dive_utils.R', 'tests/testthat/test-dive_utils.R')
 x <- file_coverage('R/DiveR.R', 'tests/testthat/test-dive.R')
 x <- file_coverage('R/desat_table.R', 'tests/testthat/test-desat_table.R')
+x <- file_coverage('R/methods_dive.R', 'tests/testthat/test-methods_dive.R')
 # x <- file_coverage('R/deco.R', 'tests/testthat/test-deco.R')
 report(x)
 # zero_coverage() shows only uncovered lines.
