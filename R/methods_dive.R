@@ -222,7 +222,7 @@ summary.desat <- function(object, ...) {
     cat("---------------------------------\n")
     cat(" Stop | Depth | Duration |   Time \n")
     cat("---------------------------------\n")
-    for(i in (4-n):3){ # TODO : change here !!!
+    for(i in (4-n):3){
       stops <- paste(sprintf(' n %2.f | %3.f m | %4.f min | %2.f min',
                              i,
                              object$desat_stop[i,1],

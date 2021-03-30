@@ -184,7 +184,7 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
   if( !is.logical(verbose) | is.na(verbose) ){
     stop('verbose must be TRUE or FALSE')
   }
-  # retrive some data avout dive2
+  # retrieve some data avout dive2
   time2 <- dtime(dive2)
   depth2 <- depth(dive2)
   # secu2 <- secu(dive2)
@@ -196,16 +196,19 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
   if(desat_model != "table") stop("this will be difficult")
 
   if (inter > 15) {
-    # successiv dives
-    if (inter > 720 ){ # 12h interv is not longuer
+# Compute majoration
+    # TODO : majoration is only for table model !
+    if (inter > 720) { # 12h interv is not longuer
       maj <- 0
-    } else if( depth2 > 60 | dive1$desat$group == 'Z'){ # Z is for 60+ dive1
-      warning(paste0( "Second dive impossible in less than 12h ",
-                      "after a dive a 60 more meters" ))
-      ndive <- list(dive1 = dive1, dive2 = "STOP", 
-                    inter = inter, type = "solo")
+    } else if (depth2 > 60 | dive1$desat$group == "Z") { # Z is for 60+ dive1
+      # Second dive is impossible
+      warning(paste0(
+        "Second dive impossible in less than 12h ",
+        "after a dive a 60 more meters"
+      ))
+      ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
       class(ndive) <- "ndive"
-      if(verbose) cat('60_no_success\n')
+      if (verbose) cat("60_no_success\n") # TODO : remove this ?
       return(ndive)
     } else {
       # compute maj
@@ -214,36 +217,42 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
         group = dive1$desat$group
       )
     }
-    
-    # check if second dive possible (time in talbe)
+    # check if second dive possible (time in table)
     if (tablecheck(depth2, time2 + maj, force = TRUE) &
-        max_depth_time(depth2) >= time2 + maj ){ # & depth(dive1) <= 60) {
-      hour2 <- dive1$hour[2] + inter
-      
-      suc_dive <- dive(depth = depth2, time = time2, maj = maj, secu = secu2,
-                       ascent_speed = speed2, hour = hour2)
-      
-      ndive <- list(
-        dive1 = dive1, dive2 = suc_dive,
-        inter = inter, type = "success"
+        max_depth_time(depth2) >= time2 + maj) {
+      # compute second dive
+      suc_dive <- dive( # TODO : maybe just used the dtcurve table...
+        # x$dtcurve[x$dtcurve$time <= dtime(x),]
+        depth = depth2, time = time2, maj = maj, secu = secu2,
+        ascent_speed = speed2, hour = dive1$hour[2] + inter,
+        desat_model = desat_model
       )
-      
-      if (inter > 720){
-        if(verbose) cat('diff\n')
+      ndive <- list(
+        dive1 = dive1, dive2 = suc_dive, inter = inter,
+        type = "success"
+      )
+      if (inter > 720) {
+        if (verbose) cat("diff\n")
         ndive$type <- "diff"
-      } else {if(verbose) cat('success\n')}
+      } else {
+        if (verbose) cat("success\n")
+      }
     } else {
-      if(verbose) cat('maj_no_success\n')
-      warning(paste0( "Second dive impossible due to majoration of time"))
+      if (verbose) cat("maj_no_success\n")
+      warning(paste0("Second dive impossible due to majoration of time"))
       # second dive is impossible here in the table
-      ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
+      ndive <- list(
+        dive1 = dive1, dive2 = "STOP", inter = inter,
+        type = "solo"
+      )
     }
   } else {
     # consecutiv dives 
     warning("A minimum of 15 minutes is requiered between dives to consider them
             as different dives.")
+    # TODO : concatenate depth and time vector for create a new dive
     # total time of dive
-    time <- dtime(dive1) + dive1$params["dtr"] + inter + time2
+    time <- dtime(dive1) + dive1$params["dtr"] + time2
     # total depth
     depth <- max(depth(dive1), depth2)
     if (max_depth_time(depth) >= time) { # check if second dive possible with time
