@@ -69,7 +69,36 @@ depth_at_time(ghost_dive, 15)
 summary(dive20_40)
 summary(ghost_dive)
 
-## ----dive---------------------------------------------------------------------
+## ----inde_dive,  dev='png', out.width="100%"----------------------------------
+dive1 <- dive(20, 40)
+dive2 <- dive(20, 40)
+
+diff_dive <- ndive(dive1, dive2, inter = 721)
+plot(diff_dive)
+
+## ----success_dive,  dev='png', out.width="100%", error=TRUE-------------------
+succ_dive <- ndive(dive1, dive2, inter = 214.8) # this is just round hours ^^
+plot(succ_dive)
+
+## ----no_success_dive,  dev='png', out.width="100%", error=TRUE----------------
+no_succ_dive <- ndive(dive1, dive2, inter = 30)
+plot(no_succ_dive)
+
+## ----force_success_dive,  dev='png', out.width="100%"-------------------------
+maj <- majoration(depth = 20, group = dive1$desat$group, inter = 30)
+maj
+max_time <- max_depth_time(depth = 20) - maj
+max_time
+max_succ_dive <- ndive(dive1, dive(20, max_time), inter = 30)
+plot(max_succ_dive)
+
+## ----consec_dive,  dev='png', out.width="100%", warning=TRUE------------------
+dive1 <- dive(20, 40)
+dive2 <- dive(10, 5)
+cons_dive <- ndive(dive1, dive2, inter = 10) # this is just round hours ^^
+plot(cons_dive)
+
+## ----dive,  dev='png', out.width="100%"---------------------------------------
 library(DiveR)
 dive20_40 <- dive(depth = 20, time = 40) ; plot(dive20_40)
 dive39_22 <- dive(depth = 39, time = 22) ; plot(dive39_22)

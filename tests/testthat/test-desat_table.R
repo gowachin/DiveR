@@ -47,7 +47,7 @@ please read doc with \\?tablecheck or help\\(tablecheck\\)"
 })
 
 test_that("err_max_depth_time_outtable", {
-  err <- "no deco dives are not possible below 48m"
+  err <- "no deco dives are possible below 48m"
   expect_error(max_depth_time(50, no_deco = TRUE), err )
 })
 

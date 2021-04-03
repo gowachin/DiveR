@@ -69,7 +69,7 @@ please read doc with ?tablecheck or help(tablecheck)")
       res <- FALSE
     } else {
       stop(sprintf("Maximum time at %d meters is %d minutes",depth, maxt), 
-           call. = F)
+           call. = FALSE)
     }
   }
   return(res)
@@ -123,7 +123,7 @@ please read doc with ?tablecheck or help(tablecheck)")
       if(force){
         return(0)
       } else {
-        stop("no deco dives are not possible below 48m")
+        stop("no deco dives are possible below 48m")
       }
     }
   } else {
@@ -326,7 +326,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
       warning(paste0(
         "Second dive impossible in less than 12h ",
         "after a dive a 60 more meters"
-      ))
+      ), call. = FALSE)
       ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
       class(ndive) <- "ndive"
       if (verbose) cat("60_no_success\n") # TODO : remove this ?
@@ -352,7 +352,8 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
       if (verbose) cat("success\n")
     } else {
       if (verbose) cat("maj_no_success\n")
-      warning(paste0("Second dive impossible due to majoration of time"))
+      warning(paste0("Second dive impossible due to majoration of time"), 
+              call. = FALSE)
       # second dive is impossible here in the table
       ndive <- list(
         dive1 = dive1, dive2 = "STOP", inter = inter,
@@ -362,7 +363,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
   } else {
     # consecutiv dives 
     warning("A minimum of 15 minutes is requiered between dives to consider them
-            as different dives.")
+            as different dives.", call. = FALSE)
     # total time of dive
     time <- dtime(dive1) + dive1$params["dtr"] + time2
     # total depth
@@ -389,7 +390,8 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
     } else {
       if(verbose) cat('no_consec\n')
       # second dive is impossible here in the table
-      warning("Cumulated time of both dives and interval is larger than table.")
+      warning("Cumulated time of both dives and interval is larger than table.",
+              call. = FALSE)
       ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
     }
   }

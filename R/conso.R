@@ -467,7 +467,7 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
         warning(paste(
           "No tank is available between", t1, "and", t2,
           "minutes so you died. Try again !"
-        ))
+        ), call. = FALSE)
         AIR_FAIL <- TRUE
         break
       }
@@ -486,7 +486,7 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
       warning(paste(
         "No tank is available between", round(t1,2), "and", round(t2,2),
         "minutes so you died. Try again !"
-      ))
+      ), call. = FALSE)
       AIR_FAIL <- TRUE
       lcons[[i]] <- as.data.frame(matrix(0, nrow = 2, ncol = 2 + (Ltank * 3)))
       lcons[[i]][, 2] <- c(t1, t2)
