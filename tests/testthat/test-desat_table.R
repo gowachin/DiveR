@@ -139,7 +139,6 @@ test_that("exp_desat_table_maj", {
 
 #### Test majoration ####
 
-
 # Test for correct input
 test_that("err_majoration_depth", {
   err <- "depth must be positive numeric value."
@@ -175,5 +174,96 @@ test_that("exp_majoration", {
   expect_equal(majoration(depth = 40, group = 'Z', inter = 730), 0)
   expect_equal(majoration(depth = 40, group = 'I', inter = 430), 3)
   expect_equal(majoration(depth = 20, group = 'D', inter = 720), 0)
+})
+
+
+#### table_ndive ####
+
+# test for correct input
+test_that("err_ndive_dives", {
+  err <- "dive1 must be a dive object"
+  expect_error(table_ndive("dive(20, 40)", dive(20, 40), inter = 730), err )
+  err <- "dive1 must be a dive object"
+  expect_error(table_ndive("dive(20, 40)", "dive(20, 40)", inter = 730), err )
+  err <- "dive2 must be a dive object"
+  expect_error(table_ndive(dive(20, 40), "dive(20, 40)", inter = 730), err )
+})
+
+test_that("err_ndive_inter", {
+  err <- "inter must be positive numeric value."
+  expect_error(table_ndive(dive(20, 40), dive(20, 40), inter = -10), err )
+  expect_error(table_ndive(dive(20, 40), dive(20, 40), inter = "10"), err )
+  expect_error(table_ndive(dive(20, 40), dive(20, 40), inter = c(10, 20)), err )
+})
+
+test_that("err_ndive_verbose", {
+  err <- "verbose must be TRUE or FALSE"
+  expect_error(table_ndive(dive(20, 40), dive(20, 40), verbose = "TRUE"), err )
+  expect_error(table_ndive(dive(20, 40), dive(20, 40), verbose = NA), err )
+})
+
+test_that("exp_no_conso_table_ndive_no_consec", {
+  dive1 <- dive2 <- dive(20, 40)
+  exp <- list(dive1 = dive1, dive2 = "STOP", inter = 1, type = "solo" )
+  class(exp) <- "ndive"
+  war1 <- 'A minimum of 15 minutes is requiered between dives to consider them
+            as different dives.'
+  war2 <- 'Cumulated time of both dives and interval is larger than table.'
+  w <- capture_warnings(res <- table_ndive(dive1, dive2, inter = 1))
+  expect_match(w, war1, all = FALSE)
+  expect_match(w, war2, all = FALSE)
+  expect_equal(res, exp)
+})
+
+test_that("exp_no_conso_table_ndive_no_success", {
+  dive1 <- dive2 <- dive(20, 40)
+  exp <- list(dive1 = dive1, dive2 = "STOP", inter = 16, type = "solo" )
+  class(exp) <- "ndive"
+  war1 <- 'Second dive impossible due to majoration of time'
+  w <- capture_warnings(res <- table_ndive(dive1, dive2, inter = 16))
+  expect_match(w, war1, all = FALSE)
+  expect_equal(res, exp)
+  
+  dive1 <- dive2 <- dive(61, 5)
+  exp <- list(dive1 = dive1, dive2 = "STOP", inter = 16, type = "solo" )
+  class(exp) <- "ndive"
+  war1 <- 'Second dive impossible in less than 12h after a dive a 60 more meters'
+  w <- capture_warnings(res <- table_ndive(dive1, dive2, inter = 16))
+  expect_match(w, war1, all = FALSE)
+  expect_equal(res, exp)
+})
+
+test_that("exp_no_conso_table_ndive_diff", {
+  dive1 <- dive2 <- dive(20, 40)
+  dive2$hour <- dive1$hour + 730 + max(dive1$hour)
+  exp <- list(dive1 = dive1, dive2 = dive2, inter = 730, type = "diff" )
+  class(exp) <- "ndive"
+  res <- table_ndive(dive1, dive2, inter = 730)
+  expect_equal(res, exp)
+})
+
+test_that("exp_no_conso_table_ndive_success", {
+  dive1 <- dive(20, 40)
+  dive2 <- dive(20, 40, maj = 10)
+  dive2$hour <- dive2$hour + 240 + max(dive1$hour)
+  exp <- list(dive1 = dive1, dive2 = dive2, inter = 240, type = "success" )
+  class(exp) <- "ndive"
+  res <- table_ndive(dive1, dive2, inter = 240)
+  expect_equal(res, exp)
+})
+
+test_that("exp_no_conso_table_ndive_consec", {
+  dive1 <- dive(20, 40)
+  dive2 <- dive(20, 28)
+  exp_dive2 <- dive(20, 28, maj = 47)
+  exp_dive2$params["maj"] <- 0
+  exp_dive2$hour <- exp_dive2$hour + 1 + max(dive1$hour)
+  exp <- list(dive1 = dive1, dive2 = exp_dive2, inter = 1, type = "consec" )
+  class(exp) <- "ndive"
+  war1 <- 'A minimum of 15 minutes is requiered between dives to consider them
+            as different dives.'
+  w <- capture_warnings(res <- table_ndive(dive1, dive2, inter = 1))
+  expect_match(w, war1, all = FALSE)
+  expect_equal(res, exp)
 })
 

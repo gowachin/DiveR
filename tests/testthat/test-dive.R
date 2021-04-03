@@ -162,3 +162,9 @@ test_that("err_ndive_verbose", {
   expect_error(ndive(dive(20, 40), dive(20, 40), verbose = NA), err )
 })
 
+test_that("err_ndive_model", {
+  err <- "There is no other model yet"
+  expect_error(ndive(dive(20, 40), 
+                     suppressMessages(dive(20, 40, desat_model = "other"))), 
+               err )
+})

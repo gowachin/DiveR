@@ -28,6 +28,19 @@ test_that("exp_dtime_dive", {
   expect_equal(dtime(d), 40)
 })
 
+# test for correct input
+test_that("err_depth_time_dive", {
+  err <- "dive must be a dive object"
+  expect_error(depth_at_time("dive(20, 40)", time = 10), err )
+})
+
+test_that("err_depth_time_dive", {
+  err <- "time must be positive numeric value."
+  expect_error(depth_at_time(dive(20, 40), time = -10), err )
+  expect_error(depth_at_time(dive(20, 40), time = "10"), err )
+  expect_error(depth_at_time(dive(20, 40), time = c(10, 20)), err )
+})
+
 test_that("exp_depth_time_dive", {
   d <- dive(20,40)
   expect_equal(depth_at_time(d, 10), 20)
@@ -54,7 +67,7 @@ test_that("exp_dtr_dive", {
 
 #### Summary ####
 
-test_that("exp_summary_conso", {
+test_that("exp_summary_dive", {
   object <- dive(20, 40, secu = FALSE)
   mess <- "--------------------------------------------------
 Maximum depth :  20 m  | Depth dive time :  40 min 
@@ -137,3 +150,30 @@ Maximum depth :  50 m  | Depth dive time :  22 min
     Group : L | Model :   table "
   expect_equal(capture_output(summary(object)), mess)
 })
+
+
+#### rm ####
+
+test_that("err_rm_secu_dive", {
+  err <- "dive must be a dive object"
+  expect_error(rm_secu("dive(20, 40)"), err )
+})
+
+test_that("exp_rm_secu_dive", {
+  expect_equal(rm_secu(dive(20, 40, secu = TRUE)), dive(20, 40, secu = FALSE))
+  expect_equal(rm_secu(dive(39, 22, secu = TRUE)), dive(39, 22, secu = FALSE))
+})
+
+# test for correct input
+test_that("err_rm_desat_dive", {
+  err <- "dive must be a dive object"
+  expect_error(rm_desat("dive(20, 40)"), err )
+})
+
+test_that("exp_rm_desat_dive", {
+  expect_equal(rm_desat(dive(20, 40)), 
+               suppressMessages(dive(20, 40, desat_model = "other",
+                                     secu = FALSE)))
+})
+
+

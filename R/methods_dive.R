@@ -148,6 +148,13 @@ dtr.dive <- function(object) {
 #'
 #' @export
 depth_at_time <- function(dive, time){
+  #### IDIOT PROOF ####
+  if (!is.dive(dive)){
+    stop("dive must be a dive object")
+  }
+  if (any(time < 0) | !is.numeric(time) | length(time) > 1 ) {
+    stop("time must be positive numeric value.")
+  }
   time <- time #+ dive$hour[1]
   times <- dive$dtcurve$times #+ dive$hour[1]
   depths <- dive$dtcurve$depths
@@ -240,4 +247,110 @@ summary.desat <- function(object, ...) {
                   object$group, object$model),
           collapse = '\n')
   )
+}
+
+#' rm_secu
+#' 
+#' Remove the last security desaturation stop (3min at 3m)
+#' 
+#' @param dive \code{\link[DiveR]{dive}} object.
+#' 
+#' @examples 
+#' d1 <- dive(20, 40)
+#' d2 <- rm_secu(d1)
+#' plot(d1)
+#' plot(d2, add = TRUE, col = "darkred")
+#' 
+#' # When there is other desat stops
+#' d1 <- dive(39, 22)
+#' d2 <- rm_secu(d1)
+#' plot(d1)
+#' plot(d2, add = TRUE, col = "darkred")
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+rm_secu <- function(dive){
+  #### IDIOT PROOF ####
+  if (!is.dive(dive)){
+    stop("dive must be a dive object")
+  }
+  class(dive) <- NULL
+  dive <- within(dive, {
+    if (params["secu"]){
+      # modif dtcurve & hour
+      dtcurve <- within(dtcurve, {
+        to_mod <- times > max(desat$desat_stop$hour, na.rm = TRUE)
+        times[to_mod] <- times[to_mod] - 3
+        rm(to_mod) # because within
+      })
+      hour[2] <- hour[2] - 3
+      # modif desat stop
+      desat$desat_stop[3,2] <- desat$desat_stop[3,2] - 3
+      params["dtr"] <- params["dtr"] - 3
+      # when no stop modif dtr, 
+      if(desat$desat_stop[3,2] == 0){
+        # modif dtcurve
+        dtcurve <- dtcurve[dtcurve$times != desat$desat_stop[3,3],]
+        dtcurve$times <- replace(
+          dtcurve$times, length(dtcurve$times),
+          tail(dtcurve$times, 1) - 0.5 + 3/params["ascent_speed"])
+        desat$desat_stop[3,3] <- NA
+        desat$desat_stop <- type.convert(desat$desat_stop) # cause only NA 
+        params["dtr"] <- params["dtr"] - 0.5 + 3/params["ascent_speed"]
+        hour[2] <- hour[2] - 0.5 + 3/params["ascent_speed"]
+        rownames(dtcurve) <- 1:nrow(dtcurve)
+      }
+      # modif secu
+      params["secu"] <- 0
+    }
+  })
+  class(dive) <- 'dive'
+  return(dive)
+}
+
+
+#' rm_desat
+#' 
+#' Remove all desaturation stop.
+#' 
+#' @param dive \code{\link[DiveR]{dive}} object.
+#' 
+#' @examples 
+#' d1 <- dive(20, 40)
+#' d2 <- rm_desat(d1)
+#' plot(d1)
+#' plot(d2, add = TRUE, col = "darkred")
+#' 
+#' # When there is other desat stops
+#' d1 <- dive(39, 22)
+#' d2 <- rm_desat(d1)
+#' plot(d1)
+#' plot(d2, add = TRUE, col = "darkred")
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+rm_desat <- function(dive){
+  #### IDIOT PROOF ####
+  if (!is.dive(dive)){
+    stop("dive must be a dive object")
+  }
+  class(dive) <- NULL
+  dive <- within(dive, {
+    to_mod <- dtcurve$times < min(desat$desat_stop$hour, na.rm = TRUE)
+    dtcurve <- dtcurve[to_mod,]
+    # final 
+    params["dtr"] <- dtr <- tail(dtcurve$depths, 1) / params["ascent_speed"]
+    dtcurve <- rbind(dtcurve, c(0, tail(dtcurve$times, 1) + dtr))
+    hour[2] <- tail(dtcurve$times, 1)
+    params["secu"] <- 0
+    desat = list(desat_stop = data.frame(depth = 0, time = 0, hour = NA,
+                                         row.names = "m0"),
+                 group = 'Z', model = "other")
+    class(desat) = "desat"
+    rm(to_mod, dtr)
+  })
+  class(dive) <- 'dive'
+  return(dive)
 }
