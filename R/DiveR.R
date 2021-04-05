@@ -56,27 +56,33 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
                  ) {
   #### IDIOT PROOF ####
   if (any(depth < 0) | !is.numeric(depth) ) {
-    stop("depth must be positive numeric value(s).")
+    stop("depth must be positive numeric value(s).",
+         call. = interactive())
   }
   if (any(time < 0) | !is.numeric(time) ) {
-    stop("time must be positive numeric value(s).")
+    stop("time must be positive numeric value(s).",
+         call. = interactive())
   }
   if( !is.logical(secu) | is.na(secu) ){
-    stop('secu must be TRUE or FALSE')
+    stop('secu must be TRUE or FALSE',
+         call. = interactive())
   }
   if (any(ascent_speed <= 0) | !is.numeric(ascent_speed) | 
       length(ascent_speed) > 1 ) {
-    stop("ascent_speed must be a single positive numeric value(s).")
+    stop("ascent_speed must be a single positive numeric value(s).",
+         call. = interactive())
   }
   if( any(maj != 0)){
     if (any(maj < 0) | !is.numeric(maj) | length(maj) > 1 ) {
-      stop("maj must be a single positive numeric value.")
+      stop("maj must be a single positive numeric value.", 
+           call. = interactive())
     }
   }
   desat_model <- match.arg(desat_model)
   
   if (any(hour < 0) | !is.numeric(hour) | length(hour) > 1) {
-    stop("hour must be a single positive numeric value in minute.")
+    stop("hour must be a single positive numeric value in minute.",
+         call. = interactive())
   }
   
   way <- match.arg(way)
@@ -86,7 +92,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
       "Ascent speed is usually set between 10 and 20 m/min in",
       "most desaturation models.",
       "\n6m/min is used between 6m and the surface"
-    ))
+    ),call. = interactive())
   }
   # draw raw dtcurve
   raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
@@ -176,13 +182,13 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
 #' @export
 ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
   #### IDIOT PROOF ####
-  if (!is.dive(dive1)) stop("dive1 must be a dive object")
-  if (!is.dive(dive2)) stop("dive2 must be a dive object")
+  if (!is.dive(dive1)) stop("dive1 must be a dive object",call. = interactive())
+  if (!is.dive(dive2)) stop("dive2 must be a dive object",call. = interactive())
   if (any(inter < 0) | !is.numeric(inter) | length(inter) > 1 ) {
-    stop("inter must be positive numeric value.")
+    stop("inter must be positive numeric value.",call. = interactive())
   }
   if( !is.logical(verbose) | is.na(verbose) ){
-    stop('verbose must be TRUE or FALSE')
+    stop('verbose must be TRUE or FALSE',call. = interactive())
   }
   
   desat_model <- dive2$desat$model
@@ -190,7 +196,7 @@ ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
   if (desat_model == "table"){
     ndive <- table_ndive(dive1, dive2, inter = inter, verbose = verbose)
   } else if (desat_model != "table") {
-    stop("There is no other model yet")
+    stop("There is no other model yet",call. = interactive())
   }
   
   return(ndive)

@@ -11,8 +11,8 @@
   rules_print = TRUE,
   hour_print = TRUE,
   line_print = TRUE,
-  depth_print = TRUE,
-  time_print = TRUE,
+  depth_print = FALSE,
+  time_print = FALSE,
   def_cols = FALSE,
   legend = TRUE,
   add = FALSE

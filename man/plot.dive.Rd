@@ -7,7 +7,7 @@
 \method{plot}{dive}(
   x,
   ...,
-  dtr_print = TRUE,
+  dtr_print = FALSE,
   hour_print = TRUE,
   line_print = TRUE,
   deco_print = TRUE,
@@ -33,7 +33,7 @@ dive curve.
   see \code{\link[graphics]{title}}.
   }}
 
-\item{dtr_print}{set to \code{TRUE} by default, whether there is text and 
+\item{dtr_print}{set to \code{FALSE} by default, whether there is text and 
 line for ascent time.}
 
 \item{hour_print}{set to \code{TRUE} by default, whether there is the hour
@@ -62,7 +62,7 @@ on a precedent one.}
 }
 \description{
 Plot the dive curve depending on time and depth. 
-Only represent sqare profile
+Only represent square profile
 }
 \seealso{
 \itemize{

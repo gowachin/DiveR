@@ -87,7 +87,7 @@ dtime <- function(object) {
 #' 
 #' @export
 dtime.dive <- function(object) {
-  unname(diff(object$hour) - object$params["dtr"])
+  round(unname(diff(object$hour) - object$params["dtr"]), 1)
 }
 
 #' @rdname dtime
@@ -202,7 +202,9 @@ summary.dive <- function(object, ...){
       sprintf('Dive ascent : %3.f min | Underwater time : %3.f min\n', 
               dtr(object), diff(object$hour)),
       sprintf(' Majoration : %3.f min | Security stop : %5.5s \n', 
-              object$params["maj"], secu)
+              object$params["maj"], secu),
+      sprintf(' Start : %12.8s | End : %12.8s \n', 
+              minute_to_time(object$hour[1]), minute_to_time(object$hour[2]))
   )
   cat('--------------------------------------------------\n')
   

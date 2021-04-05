@@ -73,6 +73,7 @@ test_that("exp_summary_dive", {
 Maximum depth :  20 m  | Depth dive time :  40 min 
  Dive ascent :   2 min | Underwater time :  42 min
   Majoration :   0 min | Security stop : FALSE 
+  Start :     00:00:00 | End :     00:42:00 
 --------------------------------------------------
 
 |- Desaturation -|
@@ -85,6 +86,7 @@ Maximum depth :  20 m  | Depth dive time :  40 min
 Maximum depth :  20 m  | Depth dive time :  40 min 
  Dive ascent :   5 min | Underwater time :  45 min
   Majoration :   0 min | Security stop :  TRUE 
+  Start :     00:00:00 | End :     00:45:12 
 --------------------------------------------------
 
 |- Desaturation -|
@@ -101,6 +103,7 @@ Maximum depth :  20 m  | Depth dive time :  40 min
 Maximum depth :  20 m  | Depth dive time :  45 min 
  Dive ascent :   6 min | Underwater time :  51 min
   Majoration :   0 min | Security stop :  TRUE 
+  Start :     00:00:00 | End :     00:51:12 
 --------------------------------------------------
 
 |- Desaturation -|
@@ -117,6 +120,7 @@ Maximum depth :  20 m  | Depth dive time :  45 min
 Maximum depth :  39 m  | Depth dive time :  22 min 
  Dive ascent :  28 min | Underwater time :  50 min
   Majoration :   0 min | Security stop :  TRUE 
+  Start :     00:00:00 | End :     00:50:18 
 --------------------------------------------------
 
 |- Desaturation -|
@@ -135,6 +139,7 @@ Maximum depth :  39 m  | Depth dive time :  22 min
 Maximum depth :  50 m  | Depth dive time :  22 min 
  Dive ascent :  50 min | Underwater time :  72 min
   Majoration :   0 min | Security stop :  TRUE 
+  Start :     00:00:00 | End :     01:12:36 
 --------------------------------------------------
 
 |- Desaturation -|

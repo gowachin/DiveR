@@ -174,3 +174,35 @@ test_that("exp_add_desat", {
   class(desat) <- "desat"
   expect_identical(add_desat(dtcurve, desat, secu = TRUE), exp)
 })
+
+#### minute_to_time ####
+
+test_that("err_minute_to_time", {
+  err <- "time must be positive numeric value."
+  expect_error(minute_to_time(- 130), err )
+  expect_error(minute_to_time("20"), err )
+})
+
+test_that("err_minute_to_time_sec", {
+  err <- "sec must be TRUE or FALSE"
+  expect_error(minute_to_time(130, sec = "TRUE"), err )
+  expect_error(minute_to_time(130, sec = NA), err )
+})
+
+test_that("err_minute_to_time_day", {
+  err <- "day must be TRUE or FALSE"
+  expect_error(minute_to_time(130, day = "TRUE"), err )
+  expect_error(minute_to_time(130, day = NA), err )
+})
+
+test_that("exp_minute_to_time", {
+  expect_equal(minute_to_time(130.5, sec = TRUE), "02:10:30")
+  expect_equal(minute_to_time(130.5, sec = FALSE), "02:10")
+  
+  expect_equal(minute_to_time(130.5, sec = TRUE, sep = 'h'), "02h10:30" )
+  expect_equal(minute_to_time(130.5, sec = FALSE, sep = 'h'), "02h10" )
+  
+  expect_equal(minute_to_time(1440, sec = FALSE, sep = 'h'), "00h00" )
+  expect_equal(minute_to_time(1664, sec = FALSE, sep = 'h'), "03h44" )
+})
+

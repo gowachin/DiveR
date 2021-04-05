@@ -43,10 +43,10 @@ tablecheck <- function(depth, time, force = FALSE) {
   table <- DiveR::table
   #### IDIOT PROOF ####
   if (any(depth < 0) | !is.numeric(depth) | length(depth) > 1 ) {
-    stop("depth must be positive numeric value.")
+    stop("depth must be positive numeric value.",call. = interactive())
   }
   if (any(time < 0) | !is.numeric(time) | length(time) > 1 ) {
-    stop("time must be positive numeric value.")
+    stop("time must be positive numeric value.", call. = interactive())
   }
   # get table values
   depths <- as.numeric(rownames(table))
@@ -62,14 +62,14 @@ tablecheck <- function(depth, time, force = FALSE) {
     } else {
       stop("Time or depth values are outside the mn90 table,
 depth must be not exceed 65 and time 3h (180 minutes)
-please read doc with ?tablecheck or help(tablecheck)")
+please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
     }
   } else if( time > maxt) {
     if (force) {
       res <- FALSE
     } else {
       stop(sprintf("Maximum time at %d meters is %d minutes",depth, maxt), 
-           call. = FALSE)
+           call. = interactive())
     }
   }
   return(res)
@@ -99,7 +99,7 @@ max_depth_time <- function(depth, force = FALSE, no_deco = FALSE) {
   table <- DiveR::table[, , 1]
   #### IDIOT PROOF ####
   if (any(depth < 0) | !is.numeric(depth) | length(depth) > 1 ) {
-    stop("depth must be positive numeric value.")
+    stop("depth must be positive numeric value.", call. = interactive())
   }
   
   depths <- as.numeric(rownames(table))
@@ -111,7 +111,7 @@ max_depth_time <- function(depth, force = FALSE, no_deco = FALSE) {
     } else {
       stop("depth value is outside the mn90 table, depth
 must be not exceed 65 meter
-please read doc with ?tablecheck or help(tablecheck)")
+please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
     }
   }
   rdepth <- min(depths)
@@ -123,7 +123,7 @@ please read doc with ?tablecheck or help(tablecheck)")
       if(force){
         return(0)
       } else {
-        stop("no deco dives are possible below 48m")
+        stop("no deco dives are possible below 48m", call. = interactive())
       }
     }
   } else {
@@ -164,20 +164,21 @@ desat_table <- function(dtcurve, maj = 0){
   if (!inherits(dtcurve, 'data.frame') | any(is.na(dtcurve)) | 
       any(colnames(dtcurve) != c('depth', 'time'))){
     stop(paste('dtcurve must be a data.frame with 2 columns named',
-               'depth and time without any NA value'))
+               'depth and time without any NA value'), call. = interactive())
   }
   if (any(dtcurve$depth < 0) | !is.numeric(dtcurve$depth)) {
-    stop("depth must be positive numeric value(s).")
+    stop("depth must be positive numeric value(s).", call. = interactive())
   }
   if (any(dtcurve$time < 0) | !is.numeric(dtcurve$time)) {
-    stop("time must be positive numeric value(s).")
+    stop("time must be positive numeric value(s).", call. = interactive())
   }
   if (any(dtcurve$time != sort(dtcurve$time))) {
-    stop("time values need to be sorted, you don't own a subaquatic dolorean")
+    stop("time values need to be sorted, you don't own a subaquatic dolorean", 
+         call. = interactive())
   }
   
   if (any(maj < 0) | !is.numeric(maj) | length(maj) > 1) {
-    stop("maj must be a single positive numeric value.")
+    stop("maj must be a single positive numeric value.", call. = interactive())
   }
   # extract values
   maxtime <- max(head(dtcurve$time, - 1)) + maj
@@ -233,18 +234,20 @@ majoration <- function(depth, group = "Z", inter = 16) {
   tmaj <- DiveR::maj
   #### IDIOT PROOF ####
   if (any(depth < 0) | !is.numeric(depth) | length(depth) > 1 ) {
-    stop("depth must be positive numeric value.")
+    stop("depth must be positive numeric value.", call. = interactive())
   }
   if(depth > 60) stop('depth must be inferior or equal to 60.')
   if (any(inter < 16) | !is.numeric(inter) | length(inter) > 1 ) {
-    stop("inter must be positive numeric value above 15.")
+    stop("inter must be positive numeric value above 15.",
+         call. = interactive())
   }
   if (!group %in% c(rownames(n2), "Z")) {
-    stop("group must be a capital letter between A and P or Z")
+    stop("group must be a capital letter between A and P or Z",
+         call. = interactive())
   }
   if( group == "Z" & inter < 721){
     stop(paste0('Majoration can not be computed with a group Z',
-                ' and less than 12h interval'))
+                ' and less than 12h interval'), call. = interactive())
   }
   if(inter > 720){ # outside tables
     return(0)
@@ -292,16 +295,17 @@ majoration <- function(depth, group = "Z", inter = 16) {
 #' @export
 table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
   #### IDIOT PROOF ####
-  if (!is.dive(dive1)) stop("dive1 must be a dive object")
-  if (!is.dive(dive2)) stop("dive2 must be a dive object")
+  if (!is.dive(dive1)) stop("dive1 must be a dive object", call. = interactive())
+  if (!is.dive(dive2)) stop("dive2 must be a dive object", call. = interactive())
   if (any(inter < 0) | !is.numeric(inter) | length(inter) > 1 ) {
-    stop("inter must be positive numeric value.")
+    stop("inter must be positive numeric value.", call. = interactive())
   }
   if( !is.logical(verbose) | is.na(verbose) ){
-    stop('verbose must be TRUE or FALSE')
+    stop('verbose must be TRUE or FALSE', call. = interactive())
   }
   if (dive2$desat$model != "table"){
-    stop("This function is intended to use dive2 with the table desaturation model")
+    stop(paste0("This function is intended to use dive2 with the table",
+                " desaturation model"), call. = interactive())
   }
   # # modify dive1 residual N2 to group
   # if (dive1$desat$model != "table"){
@@ -326,7 +330,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
       warning(paste0(
         "Second dive impossible in less than 12h ",
         "after a dive a 60 more meters"
-      ), call. = FALSE)
+      ), call. = interactive())
       ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
       class(ndive) <- "ndive"
       if (verbose) cat("60_no_success\n") # TODO : remove this ?
@@ -353,7 +357,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
     } else {
       if (verbose) cat("maj_no_success\n")
       warning(paste0("Second dive impossible due to majoration of time"), 
-              call. = FALSE)
+              call. = interactive())
       # second dive is impossible here in the table
       ndive <- list(
         dive1 = dive1, dive2 = "STOP", inter = inter,
@@ -391,7 +395,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
       if(verbose) cat('no_consec\n')
       # second dive is impossible here in the table
       warning("Cumulated time of both dives and interval is larger than table.",
-              call. = FALSE)
+              call. = interactive())
       ndive <- list(dive1 = dive1, dive2 = "STOP", inter = inter, type = "solo")
     }
   }

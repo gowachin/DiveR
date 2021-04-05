@@ -5,7 +5,6 @@ devtools::document('.')
 devtools::load_all('.')
 devtools::test()
 
-
 library(covr, testthat)
 # get a shiny to find which line is not yet tested. Very helpfull
 report(x = package_coverage(line_exclusions = list("R/graphic.R")))

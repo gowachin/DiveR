@@ -52,24 +52,27 @@ tank <- function(vol, press, rules = list(
   #### IDIOT PROOF ####
   # vol and press
   if (all(vol <= 0) | !is.numeric(vol) | length(vol) > 1) {
-    stop("vol must be a single positive numeric value.")
+    stop("vol must be a single positive numeric value.",call. = interactive())
   }
   if (all(press < 0) | !is.numeric(press) | length(press) > 1) {
-    stop("press must be a single positive, 0 possible, numeric value.")
+    stop("press must be a single positive, 0 possible, numeric value.",
+         call. = interactive())
   }
   # rules
   if (length(rules) != 2 | any(names(rules) != c("rules", "sys"))) {
     stop(paste(
       "rules must be a list of length 2 with a vector of 2 numeric",
       "named rules and a single character string being % or bar"
-    ))
+    ),call. = interactive())
   }
   rules$sys <- match.arg(rules$sys, c("%", "bar"))
   if (!is.numeric(rules$rules) | length(rules$rules) != 2) {
-    stop("Element rules of rules argument must be a vector of 2 numeric")
+    stop("Element rules of rules argument must be a vector of 2 numeric",
+         call. = interactive())
   }
   if( any(is.na(rules$rules))){
-    warning('NA values in rules are set to 0 with empty names')
+    warning('NA values in rules are set to 0 with empty names',
+            call. = interactive())
     names(rules$rules)[is.na(rules$rules)] <- ""
     rules$rules[is.na(rules$rules)] <- 0
   }
@@ -77,13 +80,15 @@ tank <- function(vol, press, rules = list(
   for (i in 1:length(rules$rules)) {
     # TODO : add a check for NA values too...
     if (rules$rules[i] < 0) {
-      warning("negative rules are not possible and therefor set to 0")
+      warning("negative rules are not possible and therefor set to 0",
+              call. = interactive())
       rules$rules[i] <- 0
     }
   }
   if (is.null(names(rules$rules))) {
     names(rules$rules) <- c("", "")
-    warning("There was no names for rules, consider setting them for later use")
+    warning("There was no names for rules, consider setting them for later use",
+            call. = interactive())
   }
   # gas
   gas <- match.arg(gas)
@@ -99,7 +104,7 @@ tank <- function(vol, press, rules = list(
         warning(paste(
           "The rule is superior to 100 %",
           "Therefore it is changed to the maximum pression"
-        ))
+        ), call. = interactive())
         rules$rules[i] <- 100
       }
     }
@@ -110,13 +115,14 @@ tank <- function(vol, press, rules = list(
         warning(paste(
           "The rule is superior to the pression in the tank.",
           "Therefore it is changed to the maximum pression"
-        ))
+        ), call. = interactive())
         rules$rules[i] <- press
       }
     }
   }
   if (rules$rules[1] < rules$rules[2]){
-    warning('Rule 1 must be superior to rule 2, the order is therefor inversed')
+    warning('Rule 1 must be superior to rule 2, the order is therefor inversed',
+            call. = interactive())
     rules$rules <- rev(rules$rules)
   }
   # limit in time
@@ -171,11 +177,12 @@ expand <- function(tank, dive) {
   if( ! inherits(tank,'tank') & !(
     class(tank) == "list" & all(unique(unlist(lapply(tank, class))) == "tank")
     )){
-    stop('tank must be a single tank object or a list of tanks')
+    stop('tank must be a single tank object or a list of tanks',
+         call. = interactive())
   }
   
   if(! inherits(dive, 'dive')){
-    stop('dive must to be a dive object')
+    stop('dive must to be a dive object', call. = interactive())
   }
   
   dtime <- max(dive$dtcurve$times)
@@ -369,19 +376,20 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
   if(class(tank) != 'tank' & !(
     class(tank) == "list" & all(unique(unlist(lapply(tank, class))) == "tank")
   )){
-    stop('tank must be a single tank object or a list of tanks')
+    stop('tank must be a single tank object or a list of tanks',
+         call. = interactive())
   }
   
   if(! inherits(dive, 'dive')){
-    stop('dive must to be a dive object')
+    stop('dive must to be a dive object', call. = interactive())
   }
   
   if (all(cons <= 0) | !is.numeric(cons) | length(cons) > 1) {
-    stop("cons must be a single positive numeric value.")
+    stop("cons must be a single positive numeric value.", call. = interactive())
   }
   
   if (!is.character(failure_label) | length(failure_label) > 1) {
-    stop("failure_label must be a single character string")
+    stop("failure_label must be a single character string",call. = interactive())
   }
   
   
@@ -467,7 +475,7 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
         warning(paste(
           "No tank is available between", t1, "and", t2,
           "minutes so you died. Try again !"
-        ), call. = FALSE)
+        ), call. = interactive())
         AIR_FAIL <- TRUE
         break
       }
@@ -486,7 +494,7 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
       warning(paste(
         "No tank is available between", round(t1,2), "and", round(t2,2),
         "minutes so you died. Try again !"
-      ), call. = FALSE)
+      ), call. = interactive())
       AIR_FAIL <- TRUE
       lcons[[i]] <- as.data.frame(matrix(0, nrow = 2, ncol = 2 + (Ltank * 3)))
       lcons[[i]][, 2] <- c(t1, t2)

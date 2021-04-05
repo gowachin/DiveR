@@ -98,19 +98,3 @@ dive2 <- dive(10, 5)
 cons_dive <- ndive(dive1, dive2, inter = 10) # this is just round hours ^^
 plot(cons_dive)
 
-## ----dive,  dev='png', out.width="100%"---------------------------------------
-library(DiveR)
-dive20_40 <- dive(depth = 20, time = 40) ; plot(dive20_40)
-dive39_22 <- dive(depth = 39, time = 22) ; plot(dive39_22)
-
-diveC_20_40 <- dive(depth = c(0, 20, 20, 10, 10, 7), 
-                    time = c(0, 2, 15, 20, 35,  40)) ; plot(diveC_20_40)
-diveC_20_40 <- dive(depth = c(0, 20, 18, 10, 2), 
-                    time = c(0, 2, 15, 20, 40)) ; plot(diveC_20_40)
-dtime(diveC_20_40)
-dtr(diveC_20_40)
-diveC_39_22 <- dive(depth = c(0, 39, 30, 15, 7), 
-                    time = c(0, 2, 7, 15, 22)) ; plot(diveC_39_22)
-diveC_39_22 <- dive(depth = c(0, 39, 30, 15, 3), 
-                    time = c(0, 2, 7, 15, 22)) ; plot(diveC_39_22)
-

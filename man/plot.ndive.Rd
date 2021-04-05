@@ -7,7 +7,7 @@
 \method{plot}{ndive}(
   x,
   ...,
-  dtr_print = TRUE,
+  dtr_print = FALSE,
   hour_print = TRUE,
   line_print = TRUE,
   deco_print = TRUE,
