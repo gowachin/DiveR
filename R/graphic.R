@@ -449,7 +449,7 @@ plot.ndive <- function(x,
       # modify interv and xlim to cut the axis
       new_inter <- x$inter - cut_inter
       x$dive2$dtcurve$times <- x$dive2$dtcurve$times - new_inter
-      x$dive2$hour <- x$dive2$hour - new_inter
+      # x$dive2$hour <- x$dive2$hour - new_inter
       delta_x <- (max(x$dive2$dtcurve$times) - min(x$dive1$hour)) * 0.1
       call_par$xlim = c(min(x$dive1$dtcurve$times) - delta_x, 
                     max(x$dive2$dtcurve$times) + delta_x)
@@ -510,112 +510,67 @@ plot.ndive <- function(x,
   consec_call$x <- x$dive1
   do.call(plot, consec_call)
   consec_call$x <- x$dive2
-  # browser()
-  # print('here')
   do.call(plot, consec_call)
   
+  hours <- c(x$dive1$hour[1], x$dive2$hour[2])
+  dIvE <- list(hour = hours)
+  inter_t <- c(tail(x$dive1$dtcurve$times, 1), x$dive2$dtcurve$times[1])
+  # hours 
+  if(hour_print){
+    if(x$inter <= 15){
+      text(
+        x = c(dIvE$hour, x$dive1$hour[2]), y = 0,
+        minute_to_time(c(dIvE$hour, x$dive1$hour[2]), sec = TRUE, sep = ':'),
+        pos = 3, col = call_par$col
+      )
+    } else {
+      w_hours <- c(inter_t[2], tail(x$dive2$dtcurve$times, 1))
+      text( x = x$dive1$hour , y = 0, minute_to_time(x$dive1$hour),
+            pos = 3, col = call_par$col)
+      text(x = w_hours, y = 0, minute_to_time(x$dive2$hour), pos = 3, 
+           col = call_par$col)
+    }
+  }
   
-  # 
-  # if (x$type == 'consec'){
-  #   # hours
-  #   hours <- c(x$dive1$hour[1], x$dive2$hour[2])
-  #   dIvE <- list(hour = hours)
-  #   # axes
-  #   if (call_par$axes){
-  #     cust_axis(dIvE, call_par$col.axis) #, shift = -x$dive1$hour[1] )
-  #     axis(2, col = call_par$col.axis, col.ticks = call_par$col.axis, 
-  #          col.axis = call_par$col.axis)
-  #   }
-  #   # hours add
-  #   if (hour_print){
-  #     text(
-  #       x = dIvE$hour, y = 0, 
-  #       # sprintf("%02.0f:%02.0f", dIvE$hour %/% 60, 
-  #       #         dIvE$hour %% 60),
-  #       minute_to_time(dIvE$hour, sec = TRUE, sep = ':'),
-  #       # sprintf("%02.0f:%02.0f:%02.0f", dIvE$hour %/% 60,
-  #       #         dIvE$hour %% 60, (dIvE$hour %% 60 %% 1) * 60 ),
-  #       pos = 3, col = call_par$col
-  #     )
-  #     
-  #     
-  #   }
-  #   # 
-  #   # hours <- c(x$dive1$hour[1], x$dive2$hour[2],
-  #   #            mean(x$dive1$hour[2], x$dive2$hour[1]))
-  #   # t <- c(x$dive1$hour[1], x$dive2$hour[2], x$inter)
-  #   # text(
-  #   #   x = hours, y = 0,
-  #   #   # x$hour, pos = 3,
-  #   #   sprintf("%s: %g'", c("start", "end", 'inter'), t), pos = 3,
-  #   #   col = call_par$col
-  #   # )
-  # } else {
-  #   inter_t <- c(tail(x$dive1$dtcurve$times, 1), x$dive2$dtcurve$times[1])
-  #   
-  #   text(
-  #     x = mean(inter_t), 
-  #     y = 0, c(paste('inter:', minute_to_time(x$inter, sec = TRUE, sep = ':',
-  #                                             day = F)),
-  #                    # sprintf("%02.0f:%02.0f:%02.0f", x$inter %/% 60, 
-  #                    # x$inter %% 60, (x$inter %% 60 %% 1) * 60 )
-  #                                 paste('maj:', x$dive2$params["maj"])), pos = c(3,1),
-  #     col = call_par$col
-  #   )
-  #   
-  #   w_hours <- c(inter_t[2], tail(x$dive2$dtcurve$times, 1))
-  #   if (hour_print ){
-  #     
-  #     if(x$dive1$hour[1] > 0){
-  #       text(
-  #         x = x$dive1$hour , y = 0,
-  #         # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60,
-  #         minute_to_time(x$dive1$hour, sec = TRUE, sep = ':'),
-  #         # sprintf("%02.0f:%02.0f:%02.0f", x$dive1$hour %/% 60, 
-  #                 # x$dive1$hour %% 60, (x$dive1$hour %% 60 %% 1) * 60 ), 
-  #         pos = 3, col = call_par$col
-  #       )
-  #     }
-  #     
-  #     text(
-  #       x = w_hours, y = 0,
-  #       # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60, 
-  #       minute_to_time(x$dive2$hour, sec = TRUE, sep = ':'),
-  #       # sprintf("%02.0f:%02.0f:%02.0f", x$dive2$hour %/% 60, 
-  #               # x$dive2$hour %% 60, (x$dive2$hour %% 60 %% 1) * 60 ), 
-  #       pos = 3, col = call_par$col
-  #     )
-  #   }
-  #   
-  #   if (call_par$axes){
-  #     if(x$dive1$hour[1] > 0){
-  #       cust_axis(x$dive1, call_par$col.axis )
-  #       axis(2, col = call_par$col.axis, col.ticks = call_par$col.axis, 
-  #            col.axis = call_par$col.axis)
-  #     }
-  #     cust_axis(x$dive2, call_par$col.axis, shift = -new_inter )
-  #   }
-  # 
-  #   if(x$inter > cut_inter){
-  #     # simplified code part from plotrix, but not working on R 3.4.
-  #     breakpos = mean(inter_t)
-  #     xw <- (limits[2] - limits[1]) * 0.05
-  #     yw <- (limits[4] - limits[3]) * 0.05
-  #     br <- c(breakpos - xw / 2, limits[3] - yw / 2, 
-  #             breakpos + xw / 2, limits[3] )
-  #     old.xpd <- par("xpd") ; par(xpd = TRUE)
-  #     # draw the "blank" rectangle
-  #     rect(br[1], br[2], br[3], br[4], col = par("bg"), border = par("bg"))
-  #     # calculate the slash ends
-  #     xbegin <- c(breakpos - xw, breakpos)
-  #     xend <- c(breakpos, breakpos + xw)
-  #     # draw the segments
-  #     segments(xbegin, rep(br[2], 2), xend, rep((br[4]+  yw / 2), 2), 
-  #              col = consec_call$col.axis, lty = 1)
-  #     # restore xpd
-  #     par(xpd = old.xpd)
-  #   }
-  # }
+  if(call_par$axes){
+    axis(2, col = call_par$col.axis, col.ticks = call_par$col.axis,
+         col.axis = call_par$col.axis)
+    if (x$inter <= cut_inter){
+      cust_axis(dIvE, call_par$col.axis) #, shift = -x$dive1$hour[1] )
+    } else {
+      cust_axis(x$dive1, call_par$col.axis )
+      cust_axis(x$dive2, call_par$col.axis, shift = -new_inter )
+    }
+  }
+  
+  if(x$inter > 15){
+    text(
+      x = mean(inter_t), y = 0,
+      c(paste('inter:', minute_to_time(x$inter, day = F)),
+        paste('maj:', x$dive2$params["maj"])), pos = c(3,1),
+      col = call_par$col
+    )
+  }
+  
+  if(x$inter > cut_inter){
+    # simplified code part from plotrix, but not working on R 3.4.
+    breakpos = mean(inter_t)
+    xw <- (limits[2] - limits[1]) * 0.05
+    yw <- (limits[4] - limits[3]) * 0.05
+    br <- c(breakpos - xw / 2, limits[3] - yw / 2,
+            breakpos + xw / 2, limits[3] )
+    old.xpd <- par("xpd") ; par(xpd = TRUE)
+    # draw the "blank" rectangle
+    rect(br[1], br[2], br[3], br[4], col = par("bg"), border = par("bg"))
+    # calculate the slash ends
+    xbegin <- c(breakpos - xw, breakpos)
+    xend <- c(breakpos, breakpos + xw)
+    # draw the segments
+    segments(xbegin, rep(br[2], 2), xend, rep((br[4]+  yw / 2), 2),
+             col = consec_call$col.axis, lty = 1)
+    # restore xpd
+    par(xpd = old.xpd)
+  }
 
   if (def_cols) {par(bg = tmp_bg)}
 }
