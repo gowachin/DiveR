@@ -3,6 +3,8 @@
 S3method(depth,conso)
 S3method(depth,dive)
 S3method(depth,ndive)
+S3method(depth_at_time,conso)
+S3method(depth_at_time,dive)
 S3method(dtime,dive)
 S3method(dtime,ndive)
 S3method(dtr,dive)

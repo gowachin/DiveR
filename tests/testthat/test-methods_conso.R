@@ -246,3 +246,25 @@ test_that("exp_depth_conso", {
   expect_equal(depth(c), 20)
 })
 
+
+# Depth_at_time
+
+test_that("err_depth_time_dive", {
+  t <- tank(15,200)
+  d <- dive(20,40)
+  c <- conso(d, t)
+  err <- "time must be positive numeric value."
+  expect_error(depth_at_time(c, time = -10), err )
+  expect_error(depth_at_time(c, time = "10"), err )
+  expect_error(depth_at_time(c, time = c(10, 20)), err )
+})
+
+test_that("exp_depth_at_time_conso", {
+  t <- tank(15,200)
+  d <- dive(20,40)
+  c <- conso(d, t)
+  expect_equal(depth_at_time(c, 20), 20)
+})
+
+
+

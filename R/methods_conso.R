@@ -359,3 +359,17 @@ summary.conso <- function(object, ...){
 depth.conso <- function(object) {
   return(max(object$dtcurve$depths))
 }
+
+#' @rdname depth_at_time
+#' 
+#' @export
+depth_at_time.conso <- function(object, time){
+  #### IDIOT PROOF ####
+  if (any(time < 0) | !is.numeric(time) | length(time) > 1 ) {
+    stop("time must be positive numeric value.")
+  }
+  dive <- object
+  class(dive) <- "dive"
+  res <- depth_at_time(dive, time)
+  return(res)
+}

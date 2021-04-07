@@ -135,9 +135,10 @@ dtr.dive <- function(object) {
 
 #' depth at time
 #'
-#' Find the depth for a given time and \code{\link[DiveR]{dive}}.
+#' Find the depth for a given time and \code{\link[DiveR]{dive}}. 
+#' Also work on conso
 #'
-#' @param dive \code{\link[DiveR]{dive}} object.
+#' @param object \code{\link[DiveR]{dive}} object.
 #' @param time positive numeric value in minute 
 #' 
 #' @examples 
@@ -147,14 +148,20 @@ dtr.dive <- function(object) {
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
 #' @export
-depth_at_time <- function(dive, time){
+#' 
+depth_at_time <- function(object, time) {
+  UseMethod("depth_at_time")
+}
+
+#' @rdname depth_at_time
+#' 
+#' @export
+depth_at_time.dive <- function(object, time){
   #### IDIOT PROOF ####
-  if (!is.dive(dive)){
-    stop("dive must be a dive object")
-  }
   if (any(time < 0) | !is.numeric(time) | length(time) > 1 ) {
     stop("time must be positive numeric value.")
   }
+  dive <- object
   time <- time #+ dive$hour[1]
   times <- dive$dtcurve$times #+ dive$hour[1]
   depths <- dive$dtcurve$depths

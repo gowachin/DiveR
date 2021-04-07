@@ -36,10 +36,6 @@ test_that("exp_depth_ndive", {
 })
 
 # test for correct input
-test_that("err_depth_time_dive", {
-  err <- "dive must be a dive object"
-  expect_error(depth_at_time("dive(20, 40)", time = 10), err )
-})
 
 test_that("err_depth_time_dive", {
   err <- "time must be positive numeric value."
