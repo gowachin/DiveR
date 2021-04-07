@@ -1,7 +1,7 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height="200px/"/>
+DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height=200px/>
+==========================================================================================================================================
 
 <!-- badges: start -->
 
@@ -32,7 +32,8 @@ on it’s way. Feel free to participate to this project, it is designed to
 be open source under a [CECILL-2
 Licence](https://github.com/gowachin/DiveR/blob/master/LICENCE-CECILL-2.1.txt).
 
-## Installation
+Installation
+------------
 
 ### Dependencies
 
@@ -51,15 +52,15 @@ for (i in c('graphics', 'stats', 'viridisLite') ){
 You can install the development version of `{DiveR}` from
 [github](https://github.com/gowachin/DiveR) with:
 
-``` r
-# install.packages("devtools")
-devtools::install_github('https://github.com/gowachin/DiveR')
-# or 
-# install.packages("remotes")
-remotes::install_github("gowachin/DiveR")
-```
+    # install.packages("devtools")
+    devtools::install_github('https://github.com/gowachin/DiveR')
+    # or 
+    # install.packages("remotes")
+    remotes::install_github("gowachin/DiveR")
 
-<!--## Usage-->
+Usage
+-----
+
 
 Below is a simple example to simulate a dive and the corresponding air
 consumption.
@@ -120,7 +121,8 @@ Read [Gas
 Consumption](https://gowachin.github.io/DiveR/articles/gas_conso.html)
 Vignette to learn how to simulate the use of gas during a dive.
 
-## Disclaimer
+Disclaimer
+----------
 
 This application is intended for use in education about scubadiving
 planification and academic interest only. It is not designed for actual
@@ -143,7 +145,8 @@ model may not be correct predictions.
 
 Note here that all dives simulated will also being at sea level.
 
-## Want to help ?
+Want to help ?
+--------------
 
 Go check the [projects](https://github.com/gowachin/DiveR/projects) of
 this repository ! Any help is welcome and I accept all sort of ideas for
