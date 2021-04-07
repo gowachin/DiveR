@@ -340,18 +340,20 @@ rm_desat <- function(dive){
   }
   class(dive) <- NULL
   dive <- within(dive, {
-    to_mod <- dtcurve$times < min(desat$desat_stop$hour, na.rm = TRUE)
-    dtcurve <- dtcurve[to_mod,]
-    # final 
-    params["dtr"] <- dtr <- tail(dtcurve$depths, 1) / params["ascent_speed"]
-    dtcurve <- rbind(dtcurve, c(0, tail(dtcurve$times, 1) + dtr))
-    hour[2] <- tail(dtcurve$times, 1)
-    params["secu"] <- 0
+    if(any(desat$desat_stop$time > 0)){
+      to_mod <- dtcurve$times < min(desat$desat_stop$hour, na.rm = TRUE)
+      dtcurve <- dtcurve[to_mod,]
+      # final 
+      params["dtr"] <- dtr <- tail(dtcurve$depths, 1) / params["ascent_speed"]
+      dtcurve <- rbind(dtcurve, c(0, tail(dtcurve$times, 1) + dtr))
+      hour[2] <- tail(dtcurve$times, 1)
+      params["secu"] <- 0
+      rm(to_mod, dtr)
+    }
     desat = list(desat_stop = data.frame(depth = 0, time = 0, hour = NA,
                                          row.names = "m0"),
                  group = 'Z', model = "other")
     class(desat) = "desat"
-    rm(to_mod, dtr)
   })
   class(dive) <- 'dive'
   return(dive)

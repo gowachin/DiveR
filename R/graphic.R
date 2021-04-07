@@ -632,8 +632,8 @@ plot.conso <- function(x,
                        rules_print = TRUE,
                        hour_print = TRUE,
                        line_print = TRUE,
-                       depth_print = FALSE,
-                       time_print = FALSE,
+                       depth_print = TRUE,
+                       time_print = TRUE,
                        def_cols = FALSE,
                        legend = TRUE,
                        add = FALSE) {
@@ -649,8 +649,9 @@ plot.conso <- function(x,
   # modify dtcurve to match pression
   b <- max(x$vcons[-c(1:2)], na.rm = TRUE) # find max pressure of all tanks
   a <- b/max(x$dtcurve$depths)
-  raw_dtcurve <- x$dtcurve
+  raw_x <- x
   x$dtcurve$depths <- -a * x$dtcurve$depths + b
+  x$desat$desat_stop$depth <-  -a * x$desat$desat_stop$depth + b
   
   # set global plot ----
   delta_x <- diff(x$hour) * 0.1
@@ -795,20 +796,14 @@ plot.conso <- function(x,
   }
   # depth and time info ----
   if(depth_print & dive_print){
-    # raw_x <- x
-    # raw_x$dtcurve <- raw_dtcurve
-    depth_lab <- depths_inf(list(dtcurve = raw_dtcurve), col = call_par$dive_col)
-    depth_depth <- depths_inf(list(dtcurve = x$dtcurve), col = call_par$dive_col)
-    depth_lab$y <- c(0, -depth_depth$y[2])
+    depth_lab <- depths_inf(raw_x, col = call_par$dive_col)
+    depth_lab$y <- a * depth_lab$y + b
     do.call(text, depth_lab)
   }
   
   if(time_print & dive_print){
-    # raw_x <- x
-    # raw_x$dtcurve <- raw_dtcurve
-    time_lab <- times_inf(list(dtcurve = raw_dtcurve), col = call_par$dive_col)
-    time_depth <- times_inf(list(dtcurve = x$dtcurve), col = call_par$dive_col)
-    time_lab$y <- c(0, -depth_depth$y[2])
+    time_lab <- times_inf(raw_x, col = call_par$dive_col)
+    time_lab$y <- a * time_lab$y + b
     do.call(text, time_lab)
   }
   

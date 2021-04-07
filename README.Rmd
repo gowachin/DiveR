@@ -60,7 +60,7 @@ remotes::install_github("gowachin/DiveR")
 
 Below is a simple example to simulate a dive and the corresponding air consumption.
 
-```{r example_dive}
+```{r example_dive, dev='png', out.width="100%"}
 # Simulation of a dive
 library(DiveR)
 dive <- dive(depth = 39, time = 22, secu = TRUE, 
@@ -72,25 +72,13 @@ summary(conso)
 plot(conso)
 ```
 
-<!--
-### Planning a single dive
-
-Apart from default/advanced settings, a dive can be resumed by it's maximum depth and duration. For example, here is the default dive for this pacakge, a maximum depth at 20 meters for 40 minutes. Note here that despite going underwater at an altitude of -20, we use positive numeric values.
-
-dive(20,40)
-
-### Planning a second dive
-
-A second dive depends heavily on the first one as the desaturation is not perfect and residual azote will impact the second saturation. 
- -->
-
 ## Documentation
 
 For further information, check the vignettes describing above examples in more depth.
 
 ### Dive planification
 
-**A vignette need to be written**
+Read [Dive planification](https://gowachin.github.io/DiveR/articles/dive_planif.html) Vignette to learn how to simulate dives under table desaturation model.
 
 ### Gas Consumption
 

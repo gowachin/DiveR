@@ -14,18 +14,25 @@ test_that("exp_depth_dive", {
   expect_equal(depth(d), 20)
 })
 
-# test_that("exp_depth_ndive", {
-#   d1 <- dive(20,40)
-#   d2 <- dive(30,40)
-#   nd <- ndive(d1, d2, inter = 721)
-#   expect_equal(depth(nd), c(20,30))
-# })
+test_that("exp_depth_ndive", {
+  d1 <- dive(20,40)
+  d2 <- dive(30,40)
+  nd <- ndive(d1, d2, inter = 721)
+  expect_equal(depth(nd), c(20,30))
+})
 
 test_that("exp_dtime_dive", {
   d <- dive(20,40)
   expect_equal(dtime(d), 40)
   d <- dive(c(20, 10),c(10, 40))
   expect_equal(dtime(d), 40)
+})
+
+test_that("exp_depth_ndive", {
+  d1 <- dive(20,40)
+  d2 <- dive(30,40)
+  nd <- ndive(d1, d2, inter = 721)
+  expect_equal(dtime(nd), c(40,40))
 })
 
 # test for correct input

@@ -70,11 +70,22 @@ library(DiveR)
 dive <- dive(depth = 39, time = 22, secu = TRUE, 
              ascent_speed = 10, desat_model = "table")
 summary(dive)
-#> Dive for : 22 minutes at 39 meters
-#> Total dive time is  with a dive ascent of minutes
-#> 2 stops :   2 minutes at 6 meters
-#>            22 minutes at 3 meters 
-#> The dive group is J
+#> --------------------------------------------------
+#> Maximum depth :  39 m  | Depth dive time :  22 min 
+#>  Dive ascent :  28 min | Underwater time :  50 min
+#>   Majoration :   0 min | Security stop :  TRUE 
+#>   Start :     00:00:00 | End :     00:50:18 
+#> --------------------------------------------------
+#> 
+#> |- Desaturation -|
+#> ---------------------------------
+#>  Stop | Depth | Duration |   Time 
+#> ---------------------------------
+#>  n  2 |   6 m |    2 min | 25 min 
+#> ---------------------------------
+#>  n  3 |   3 m |   22 min | 28 min 
+#> ---------------------------------
+#>     Group : J | Model :   table
 tank <- tank(vol = 15, press = 230, name = "15L")
 conso <- conso(dive = dive, tank = tank, cons = 20)
 summary(conso)
@@ -92,18 +103,6 @@ plot(conso)
 
 <img src="inst/images/README-example_dive-1.png" width="100%" />
 
-<!--
-### Planning a single dive
-
-Apart from default/advanced settings, a dive can be resumed by it's maximum depth and duration. For example, here is the default dive for this pacakge, a maximum depth at 20 meters for 40 minutes. Note here that despite going underwater at an altitude of -20, we use positive numeric values.
-
-dive(20,40)
-
-### Planning a second dive
-
-A second dive depends heavily on the first one as the desaturation is not perfect and residual azote will impact the second saturation. 
- -->
-
 ## Documentation
 
 For further information, check the vignettes describing above examples
@@ -111,7 +110,9 @@ in more depth.
 
 ### Dive planification
 
-**A vignette need to be written**
+Read [Dive
+planification](https://gowachin.github.io/DiveR/articles/dive_planif.html)
+Vignette to learn how to simulate dives under table desaturation model.
 
 ### Gas Consumption
 

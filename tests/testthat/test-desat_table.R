@@ -187,6 +187,10 @@ test_that("err_ndive_dives", {
   expect_error(table_ndive("dive(20, 40)", "dive(20, 40)", inter = 730), err )
   err <- "dive2 must be a dive object"
   expect_error(table_ndive(dive(20, 40), "dive(20, 40)", inter = 730), err )
+  err <- "This function is intended to use dive2 with the table desaturation model"
+  expect_error(table_ndive(dive(20, 40), 
+                           suppressMessages(dive(20, 40, desat_model = "other")), 
+                           inter = 730), err )
 })
 
 test_that("err_ndive_inter", {

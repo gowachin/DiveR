@@ -108,7 +108,8 @@ plot(d, main = 'diff cut', def_cols = T) # diff cut
 Tank_12L <- tank(vol = 12, press = 200)
 death <- conso(dive = dive(39, 15), tank = Tank_12L, 
                cons = 20, failure_label = 'Air failure')
-# death <- conso(dive = dive(20, 40), tank = Tank_12L, 
-#                cons = 20, failure_label = 'Air failure')
-plot(death, line_print = FALSE)
+plot(death, line_print = FALSE, depth_print = TRUE)
+death <- conso(dive = dive(20, 40), tank = Tank_12L,
+               cons = 20, failure_label = 'Air failure')
+plot(death, line_print = FALSE, depth_print = TRUE)
 ```
