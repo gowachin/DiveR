@@ -70,7 +70,7 @@ summary(dive)
 
 From the precedent dive you can check if you can survive with certain tank pressure.
 
-```{r example_dive, dev='png', out.width="100%"}
+```{r example_conso, dev='png', out.width="100%"}
 tank <- tank(vol = 15, press = 230, name = "15L")
 conso <- conso(dive = dive, tank = tank, cons = 20)
 summary(conso)
