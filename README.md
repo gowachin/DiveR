@@ -1,7 +1,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height=200px/>
-==========================================================================================================================================
+DiveR <img src="https://raw.githubusercontent.com/gowachin/DiveR/master/inst/images/DiveR_hex.png" alt="logo" align="right" height="200px/"/>
+=============================================================================================================================================
 
 <!-- badges: start -->
 
@@ -31,6 +31,7 @@ Intended to be used by french dive student, traduction of the lexic is
 on it’s way. Feel free to participate to this project, it is designed to
 be open source under a [CECILL-2
 Licence](https://github.com/gowachin/DiveR/blob/master/LICENCE-CECILL-2.1.txt).
+Any help in traduction or documentation is welcome (see end of README).
 
 Installation
 ------------
@@ -40,12 +41,10 @@ Installation
 This package relies on very few packages listed below, that you can
 install with the following code.
 
-``` r
-for (i in c('graphics', 'stats', 'viridisLite') ){
-  if(!require(i,character.only = TRUE))
-    install.packages(i)
-}
-```
+    for (i in c('graphics', 'stats', 'viridisLite') ){
+      if(!require(i,character.only = TRUE))
+        install.packages(i)
+    }
 
 ### Development version
 
@@ -58,53 +57,50 @@ You can install the development version of `{DiveR}` from
     # install.packages("remotes")
     remotes::install_github("gowachin/DiveR")
 
-Usage
------
-
+<!--## Usage-->
 
 Below is a simple example to simulate a dive and the corresponding air
 consumption.
 
-``` r
-# Simulation of a dive
-library(DiveR)
-dive <- dive(depth = 39, time = 22, secu = TRUE, 
-             ascent_speed = 10, desat_model = "table")
-summary(dive)
-#> --------------------------------------------------
-#> Maximum depth :  39 m  | Depth dive time :  22 min 
-#>  Dive ascent :  28 min | Underwater time :  50 min
-#>   Majoration :   0 min | Security stop :  TRUE 
-#>   Start :     00:00:00 | End :     00:50:18 
-#> --------------------------------------------------
-#> 
-#> |- Desaturation -|
-#> ---------------------------------
-#>  Stop | Depth | Duration |   Time 
-#> ---------------------------------
-#>  n  2 |   6 m |    2 min | 25 min 
-#> ---------------------------------
-#>  n  3 |   3 m |   22 min | 28 min 
-#> ---------------------------------
-#>     Group : J | Model :   table
-tank <- tank(vol = 15, press = 230, name = "15L")
-conso <- conso(dive = dive, tank = tank, cons = 20)
-summary(conso)
-#> Consumption simulated on dive at 39 m for 50.3 minutes
-#> ---------------------------------------------------------------------
-#>        Tank name |         Rule | Pressure |    Time | Final pressure 
-#> ---------------------------------------------------------------------
-#>         Tank 15L |          mid |  115 bar |  18 min | 27.83 bar
-#>                  |          res |   58 bar |  33 min |    
-#>                  |           AF |    0 bar |  NA min |     
-#> ---------------------------------------------------------------------
-#> The dive is viable !
-plot(conso)
-```
+    # Simulation of a dive
+    library(DiveR)
+    dive <- dive(depth = 39, time = 22, secu = TRUE, 
+                 ascent_speed = 10, desat_model = "table")
+    summary(dive)
+    #> --------------------------------------------------
+    #> Maximum depth :  39 m  | Depth dive time :  22 min 
+    #>  Dive ascent :  28 min | Underwater time :  50 min
+    #>   Majoration :   0 min | Security stop :  TRUE 
+    #>   Start :     00:00:00 | End :     00:50:18 
+    #> --------------------------------------------------
+    #> 
+    #> |- Desaturation -|
+    #> ---------------------------------
+    #>  Stop | Depth | Duration |   Time 
+    #> ---------------------------------
+    #>  n  2 |   6 m |    2 min | 25 min 
+    #> ---------------------------------
+    #>  n  3 |   3 m |   22 min | 28 min 
+    #> ---------------------------------
+    #>     Group : J | Model :   table
+    tank <- tank(vol = 15, press = 230, name = "15L")
+    conso <- conso(dive = dive, tank = tank, cons = 20)
+    summary(conso)
+    #> Consumption simulated on dive at 39 m for 50.3 minutes
+    #> ---------------------------------------------------------------------
+    #>        Tank name |         Rule | Pressure |    Time | Final pressure 
+    #> ---------------------------------------------------------------------
+    #>         Tank 15L |          mid |  115 bar |  18 min | 27.83 bar
+    #>                  |          res |   58 bar |  33 min |    
+    #>                  |           AF |    0 bar |  NA min |     
+    #> ---------------------------------------------------------------------
+    #> The dive is viable !
+    plot(conso)
 
 <img src="inst/images/README-example_dive-1.png" width="100%" />
 
-## Documentation
+Documentation
+-------------
 
 For further information, check the vignettes describing above examples
 in more depth.
