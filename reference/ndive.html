@@ -40,7 +40,9 @@
 
 
 <meta property="og:title" content="ndive — ndive" />
-<meta property="og:description" content="ndive" />
+<meta property="og:description" content="Combine 2 dives object in a sequence. To do so, it checks if the desaturation
+models are coherent and if the second dive is possible according to 
+residual azote and interval time." />
 
 
 
@@ -95,6 +97,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dive_planif.html">Dive Planification</a>
+    </li>
+    <li>
       <a href="../articles/gas_conso.html">Gas consumption</a>
     </li>
   </ul>
@@ -124,7 +129,9 @@
     </div>
 
     <div class="ref-description">
-    <p>ndive</p>
+    <p>Combine 2 dives object in a sequence. To do so, it checks if the desaturation
+models are coherent and if the second dive is possible according to 
+residual azote and interval time.</p>
     </div>
 
     <pre class="usage"><span class='fu'>ndive</span><span class='op'>(</span><span class='va'>dive1</span>, <span class='va'>dive2</span>, inter <span class='op'>=</span> <span class='fl'>16</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
@@ -134,20 +141,23 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>dive1</th>
-      <td><p>the first dive, obtained by the dive function</p></td>
+      <td><p>the first dive, must be a <code><a href='dive.html'>dive</a></code> object</p></td>
     </tr>
     <tr>
       <th>dive2</th>
-      <td><p>the first dive, obtained by the dive function. This one will be
-modified with a majoration obtained from dive1 and the interval.</p></td>
+      <td><p>the second dive, must be a <code><a href='dive.html'>dive</a></code> object. 
+This one will be modified with a majoration obtained from dive1 and 
+the interval.</p></td>
     </tr>
     <tr>
       <th>inter</th>
-      <td><p>16 by default, interval between dives in minutes</p></td>
+      <td><p>16 by default, interval in minute between the end of the first 
+dive and the beginning of the second.</p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>allow cat return in consol for debug purposes</p></td>
+      <td><p>allow cat return in consol for debug purposes. Show which
+case of sequence is used.</p></td>
     </tr>
     </table>
 
@@ -163,8 +173,8 @@ of a dive.</p>
     <p>Jaunatre Maxime &lt;maxime.jaunatre@yahoo.fr&gt;</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>dive1</span> <span class='op'>=</span> <span class='fu'><a href='dive.html'>dive</a></span><span class='op'>(</span>depth <span class='op'>=</span> <span class='fl'>39</span>, time <span class='op'>=</span> <span class='fl'>22</span>, secu <span class='op'>=</span> <span class='cn'>TRUE</span>, vup <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
-<span class='va'>dive2</span> <span class='op'>=</span> <span class='fu'><a href='dive.html'>dive</a></span><span class='op'>(</span>depth <span class='op'>=</span> <span class='fl'>20</span>, time <span class='op'>=</span> <span class='fl'>40</span>, secu <span class='op'>=</span> <span class='cn'>TRUE</span>, vup <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='va'>dive1</span> <span class='op'>=</span> <span class='fu'><a href='dive.html'>dive</a></span><span class='op'>(</span>depth <span class='op'>=</span> <span class='fl'>39</span>, time <span class='op'>=</span> <span class='fl'>22</span>, secu <span class='op'>=</span> <span class='cn'>TRUE</span>, ascent_speed <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>dive2</span> <span class='op'>=</span> <span class='fu'><a href='dive.html'>dive</a></span><span class='op'>(</span>depth <span class='op'>=</span> <span class='fl'>20</span>, time <span class='op'>=</span> <span class='fl'>40</span>, secu <span class='op'>=</span> <span class='cn'>TRUE</span>, ascent_speed <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
 <span class='va'>divet</span> <span class='op'>=</span> <span class='fu'>ndive</span><span class='op'>(</span><span class='va'>dive1</span>, <span class='va'>dive2</span>, inter <span class='op'>=</span> <span class='fl'>30</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='warning'>Warning: Second dive impossible due to majoration of time</span></div><div class='input'>
 </div></pre>

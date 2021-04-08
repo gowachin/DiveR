@@ -94,6 +94,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dive_planif.html">Dive Planification</a>
+    </li>
+    <li>
       <a href="../articles/gas_conso.html">Gas consumption</a>
     </li>
   </ul>
@@ -121,12 +124,46 @@
       
     </div>
 
-    <div id="diver-030" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.0">
-<a href="#diver-030" class="anchor"></a>DiveR 0.3.0</h1>
+    <div id="diver-040" class="section level1">
+<h1 class="page-header" data-toc-text="0.4.0">
+<a href="#diver-040" class="anchor"></a>DiveR 0.4.0</h1>
 <div id="major-improvements" class="section level2">
 <h2 class="hasAnchor">
 <a href="#major-improvements" class="anchor"></a>Major improvements</h2>
+<ul>
+<li><p>Refactorisation of the dive class and all functions to cope with curve dive (input with multiples depth and time values.)</p></li>
+<li><p>Test all of the dive class functions (except for graphic ones…)</p></li>
+<li><p>Dive Planification Vignette.</p></li>
+</ul>
+</div>
+<div id="historic-modifications" class="section level2">
+<h2 class="hasAnchor">
+<a href="#historic-modifications" class="anchor"></a>Historic Modifications</h2>
+<ul>
+<li><p><code>max_depth_t</code> has been renamed to <code>max_depth_time</code></p></li>
+<li><p>desaturation with table has been rewritten from <code>palier</code> and <code>dtcurve</code> functions to <code>ìnit_dtcurve</code>, <code>add_desat</code> and <code>desat_table</code> functions.</p></li>
+<li><p>replacing all azote text with nitrogen…thinking about non french divers after all.</p></li>
+<li><p>Idiot proof is made with correct functions and <code>check_val</code> function has been removed</p></li>
+<li><p>Most summary are pretty now.</p></li>
+<li><p><code>ndive</code> will now call function depending on the second dive desaturation model.</p></li>
+</ul>
+</div>
+<div id="bugs-fixed" class="section level2">
+<h2 class="hasAnchor">
+<a href="#bugs-fixed" class="anchor"></a>Bugs fixed</h2>
+<ul>
+<li><p>dtime work now on curve dives ( #1 )</p></li>
+<li><p>Consecutive dives was adding interval time to total time, it has been corrected. ( #10 )</p></li>
+<li><p>Correction of additionnal time when using successive dives. Was adding between 4 and 1 minute more than expected when using tables. ( #11 )</p></li>
+</ul>
+</div>
+</div>
+    <div id="diver-030" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.0">
+<a href="#diver-030" class="anchor"></a>DiveR 0.3.0</h1>
+<div id="major-improvements-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#major-improvements-1" class="anchor"></a>Major improvements</h2>
 <ul>
 <li><p>Consumption functions work on single tank dive, multiple tanks dive.</p></li>
 <li><p>Gas consumption vignette.</p></li>
@@ -152,9 +189,9 @@
     <div id="diver-020" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.0">
 <a href="#diver-020" class="anchor"></a>DiveR 0.2.0</h1>
-<div id="major-improvements-1" class="section level2">
+<div id="major-improvements-2" class="section level2">
 <h2 class="hasAnchor">
-<a href="#major-improvements-1" class="anchor"></a>Major improvements</h2>
+<a href="#major-improvements-2" class="anchor"></a>Major improvements</h2>
 <ul>
 <li><p>Added a <code>NEWS.md</code> file to track changes to the package.</p></li>
 <li><p>Vignette about gas consumption in work</p></li>

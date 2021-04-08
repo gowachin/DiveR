@@ -41,7 +41,7 @@
 
 <meta property="og:title" content="tablecheck — tablecheck" />
 <meta property="og:description" content="Check if the parameters are possible with table information.
-Max time present in the table for a given depth." />
+Max time present in the table for a given depth, with or without deco" />
 
 
 
@@ -96,6 +96,9 @@ Max time present in the table for a given depth." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dive_planif.html">Dive Planification</a>
+    </li>
+    <li>
       <a href="../articles/gas_conso.html">Gas consumption</a>
     </li>
   </ul>
@@ -126,34 +129,42 @@ Max time present in the table for a given depth." />
 
     <div class="ref-description">
     <p>Check if the parameters are possible with table information.</p>
-<p>Max time present in the table for a given depth.</p>
+<p>Max time present in the table for a given depth, with or without deco</p>
     </div>
 
     <pre class="usage"><span class='fu'>tablecheck</span><span class='op'>(</span><span class='va'>depth</span>, <span class='va'>time</span>, force <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
-<span class='fu'>max_depth_t</span><span class='op'>(</span><span class='va'>depth</span><span class='op'>)</span></pre>
+<span class='fu'>max_depth_time</span><span class='op'>(</span><span class='va'>depth</span>, force <span class='op'>=</span> <span class='cn'>FALSE</span>, no_deco <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>depth</th>
-      <td><p>in meter. Max is 65m see Detail !</p></td>
+      <td><p>depth in meter. Must be a single positive value 
+with a maximum is 65m.</p></td>
     </tr>
     <tr>
       <th>time</th>
-      <td><p>in minute. Max is 180' see Detail !</p></td>
+      <td><p>time in minute. Must be a single positive value 
+with a maximum is 180 min</p></td>
     </tr>
     <tr>
       <th>force</th>
       <td><p>FALSE by default, if TRUE don't stop the function but 
 return a TRUE/FALSE value</p></td>
     </tr>
+    <tr>
+      <th>no_deco</th>
+      <td><p>FALSE by default, if TRUE return the time without deco</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a single numeric value, the max time possible to dive at the given 
+    <p>Nothing expect when <code>force</code> parameter is TRUE. 
+Is designed to stop code and returns errors</p>
+<p>Single numeric value, the max time possible to dive at the given 
 depth is the MN90 table.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>depth — depth • DiveR</title>
+<title>depth — depth.conso • DiveR</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="depth — depth" />
-<meta property="og:description" content="depth retrieve the maximum depth of a singular or multiple dive sequence." />
+<meta property="og:title" content="depth — depth.conso" />
+<meta property="og:description" content="depth retrieve the maximum depth of a singular or multiple dive 
+sequence. As conso has a dive inside, the depth function also works on it." />
 
 
 
@@ -95,6 +96,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dive_planif.html">Dive Planification</a>
+    </li>
+    <li>
       <a href="../articles/gas_conso.html">Gas consumption</a>
     </li>
   </ul>
@@ -124,15 +128,16 @@
     </div>
 
     <div class="ref-description">
-    <p><code>depth</code> retrieve the maximum depth of a singular or multiple dive sequence.</p>
+    <p><code>depth</code> retrieve the maximum depth of a singular or multiple dive 
+sequence. As conso has a dive inside, the depth function also works on it.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>depth</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
-
-<span class='co'># S3 method for dive</span>
+    <pre class="usage"><span class='co'># S3 method for conso</span>
 <span class='fu'>depth</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
-<span class='co'># S3 method for conso</span>
+<span class='fu'>depth</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
+
+<span class='co'># S3 method for dive</span>
 <span class='fu'>depth</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S3 method for ndive</span>
@@ -144,14 +149,15 @@
     <tr>
       <th>object</th>
       <td><p>is a DiveR object. There are methods for 
-<code><a href='dive.html'>dive</a></code> and <code><a href='ndive.html'>ndive</a></code> objects.</p></td>
+<code><a href='dive.html'>dive</a></code>, <code><a href='ndive.html'>ndive</a></code> and
+ <code><a href='conso.html'>conso</a></code> objects.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>It returns a numeric with the depth of the dive. 
-Is a vector if working on ndive object</p>
+Is a vector if working on <code><a href='ndive.html'>ndive</a></code> object</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Jaunatre Maxime &lt;maxime.jaunatre@yahoo.fr&gt;</p>

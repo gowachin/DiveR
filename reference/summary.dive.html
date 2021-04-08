@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>summary — summary.dive • DiveR</title>
+<title>summary — summary.tank • DiveR</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="summary — summary.dive" />
-<meta property="og:description" content="summary of a dive object" />
+<meta property="og:title" content="summary — summary.tank" />
+<meta property="og:description" content="summary method for class dive." />
 
 
 
@@ -95,6 +95,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dive_planif.html">Dive Planification</a>
+    </li>
+    <li>
       <a href="../articles/gas_conso.html">Gas consumption</a>
     </li>
   </ul>
@@ -124,19 +127,19 @@
     </div>
 
     <div class="ref-description">
-    <p>summary of a dive object</p>
+    <p>summary method for class <code><a href='dive.html'>dive</a></code>.</p>
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for dive</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S3 method for palier</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S3 method for tank</span>
+    <pre class="usage"><span class='co'># S3 method for tank</span>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for conso</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for dive</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for desat</span>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -145,34 +148,29 @@
     <tr>
       <th>object</th>
       <td><p>is a DiveR object. There are methods for 
-<code><a href='dive.html'>dive</a></code>, <code><a href='tank.html'>tank</a></code>,
- <code><a href='conso.html'>conso</a></code> and <code><a href='palier.html'>palier</a></code> objects.</p></td>
+<code><a href='dive.html'>dive</a></code>, <code><a href='tank.html'>tank</a></code> and
+ <code><a href='conso.html'>conso</a></code> objects.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>other arguments passed to the dtr.palier method.</p><dl>
-  <dt>plot</dt><dd><p>FALSE by default</p></dd>
-
-</dl></td>
+      <td><p>other arguments not used</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A brief summary of a dive and its main parameters.</p>
+<p>summary(dive(20, 40, secu = FALSE))
+summary(dive(20, 40, secu = TRUE))
+summary(dive(20, 45))
+summary(dive(39, 22))
+summary(dive(50, 22))</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Jaunatre Maxime &lt;maxime.jaunatre@yahoo.fr&gt;</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='palier.html'>palier</a></span><span class='op'>(</span>depth <span class='op'>=</span> <span class='fl'>20</span>, time <span class='op'>=</span> <span class='fl'>50</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 1 stops :   7 minutes at 3 meters 
-#&gt; The dive group is I</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='palier.html'>palier</a></span><span class='op'>(</span>depth <span class='op'>=</span> <span class='fl'>20</span>, time <span class='op'>=</span> <span class='fl'>40</span>,secu <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 0 stops : no stop for deco.
-#&gt;   Please consider a minimal safety 
-#&gt;                  stop of 3 minute at 3 meter 
-#&gt; The dive group is H</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='tank.html'>tank</a></span><span class='op'>(</span>vol <span class='op'>=</span> <span class='fl'>12</span>, press <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='tank.html'>tank</a></span><span class='op'>(</span>vol <span class='op'>=</span> <span class='fl'>12</span>, press <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Tank : 12 litre at 200 bar
 #&gt; rules : 1 mid : 100 bar
 #&gt;         2 res :  50 bar
@@ -191,6 +189,33 @@
 #&gt;                  |  Air failure |    0 bar |  NA min |     
 #&gt; ---------------------------------------------------------------------
 #&gt; The dive is viable !</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='desat_table.html'>desat_table</a></span><span class='op'>(</span><span class='fu'><a href='init_dtcurve.html'>init_dtcurve</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>40</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; --------- No desat stop ---------
+#&gt;     Group : H | Model :   table </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='desat_table.html'>desat_table</a></span><span class='op'>(</span><span class='fu'><a href='init_dtcurve.html'>init_dtcurve</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>45</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; ---------------------------------
+#&gt;  Stop | Depth | Duration |   Time 
+#&gt; ---------------------------------
+#&gt;  n  3 |   3 m |    1 min | NA min 
+#&gt; ---------------------------------
+#&gt;     Group : I | Model :   table </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='desat_table.html'>desat_table</a></span><span class='op'>(</span><span class='fu'><a href='init_dtcurve.html'>init_dtcurve</a></span><span class='op'>(</span><span class='fl'>39</span>, <span class='fl'>22</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; ---------------------------------
+#&gt;  Stop | Depth | Duration |   Time 
+#&gt; ---------------------------------
+#&gt;  n  2 |   6 m |    2 min | NA min 
+#&gt; ---------------------------------
+#&gt;  n  3 |   3 m |   19 min | NA min 
+#&gt; ---------------------------------
+#&gt;     Group : J | Model :   table </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='desat_table.html'>desat_table</a></span><span class='op'>(</span><span class='fu'><a href='init_dtcurve.html'>init_dtcurve</a></span><span class='op'>(</span><span class='fl'>50</span>, <span class='fl'>22</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; ---------------------------------
+#&gt;  Stop | Depth | Duration |   Time 
+#&gt; ---------------------------------
+#&gt;  n  1 |   9 m |    1 min | NA min 
+#&gt; ---------------------------------
+#&gt;  n  2 |   6 m |    8 min | NA min 
+#&gt; ---------------------------------
+#&gt;  n  3 |   3 m |   32 min | NA min 
+#&gt; ---------------------------------
+#&gt;     Group : L | Model :   table </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

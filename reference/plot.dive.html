@@ -41,7 +41,7 @@
 
 <meta property="og:title" content="plot.dive — plot.dive" />
 <meta property="og:description" content="Plot the dive curve depending on time and depth. 
-Only represent sqare profile" />
+Only represent square profile" />
 
 
 
@@ -96,6 +96,9 @@ Only represent sqare profile" />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dive_planif.html">Dive Planification</a>
+    </li>
+    <li>
       <a href="../articles/gas_conso.html">Gas consumption</a>
     </li>
   </ul>
@@ -126,14 +129,14 @@ Only represent sqare profile" />
 
     <div class="ref-description">
     <p>Plot the dive curve depending on time and depth. 
-Only represent sqare profile</p>
+Only represent square profile</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for dive</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span>
   <span class='va'>x</span>,
   <span class='va'>...</span>,
-  dtr_print <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  dtr_print <span class='op'>=</span> <span class='cn'>FALSE</span>,
   hour_print <span class='op'>=</span> <span class='cn'>TRUE</span>,
   line_print <span class='op'>=</span> <span class='cn'>TRUE</span>,
   deco_print <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -166,7 +169,7 @@ dive curve.</p><ul>
     </tr>
     <tr>
       <th>dtr_print</th>
-      <td><p>set to <code>TRUE</code> by default, whether there is text and 
+      <td><p>set to <code>FALSE</code> by default, whether there is text and 
 line for ascent time.</p></td>
     </tr>
     <tr>

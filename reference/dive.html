@@ -40,7 +40,9 @@
 
 
 <meta property="og:title" content="dive — dive" />
-<meta property="og:description" content="dive" />
+<meta property="og:description" content="Create a dive class object simulating a dive for given depth and times.
+To do so, it create a depth/time curve and find the desaturation stops
+according to a desaturation model." />
 
 
 
@@ -95,6 +97,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dive_planif.html">Dive Planification</a>
+    </li>
+    <li>
       <a href="../articles/gas_conso.html">Gas consumption</a>
     </li>
   </ul>
@@ -124,19 +129,20 @@
     </div>
 
     <div class="ref-description">
-    <p>dive</p>
+    <p>Create a dive class object simulating a dive for given depth and times.
+To do so, it create a depth/time curve and find the desaturation stops
+according to a desaturation model.</p>
     </div>
 
     <pre class="usage"><span class='fu'>dive</span><span class='op'>(</span>
   depth <span class='op'>=</span> <span class='fl'>20</span>,
   time <span class='op'>=</span> <span class='fl'>40</span>,
   secu <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  vup <span class='op'>=</span> <span class='fl'>10</span>,
+  ascent_speed <span class='op'>=</span> <span class='fl'>10</span>,
   maj <span class='op'>=</span> <span class='fl'>0</span>,
-  hour <span class='op'>=</span> <span class='cn'>NULL</span>,
-  dist <span class='op'>=</span> <span class='cn'>NULL</span>,
-  speed <span class='op'>=</span> <span class='cn'>NULL</span>,
-  way <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"AS"</span>, <span class='st'>"AR"</span><span class='op'>)</span>
+  desat_model <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"table"</span>, <span class='st'>"other"</span><span class='op'>)</span>,
+  hour <span class='op'>=</span> <span class='fl'>0</span>,
+  way <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"OW"</span>, <span class='st'>"WB"</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -144,45 +150,53 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>depth</th>
-      <td><p>in meter</p></td>
+      <td><p>Depth of the dive in meter. Need to be positive values.
+A single value is needed for square dive, however if a vector is provided
+a decompression model need to be selected. Default is 20 meter</p></td>
     </tr>
     <tr>
       <th>time</th>
-      <td><p>in minute</p></td>
+      <td><p>Duration of the dive in minute. Need to be positive values.
+A single value is needed for square dive, however if a vector is provided
+a decompression model need to be selected. Default is 40 minutes</p></td>
     </tr>
     <tr>
       <th>secu</th>
-      <td><p>true by default, secu deco stage 3 min at 3 meter</p></td>
+      <td><p>security decompression stop of 3 min at 3 m. FALSE by default.</p></td>
     </tr>
     <tr>
-      <th>vup</th>
-      <td><p>10 m/min by default</p></td>
+      <th>ascent_speed</th>
+      <td><p>Ascent_speed in meter/minute. 10 m/min by default. 
+Most dive table advice to limite this speed to 20M/min maximum.</p></td>
     </tr>
     <tr>
       <th>maj</th>
-      <td><p>0 by default</p></td>
+      <td><p>Time majoration for the dive. 
+Only used by table decompression model.</p></td>
+    </tr>
+    <tr>
+      <th>desat_model</th>
+      <td><p>Which desaturation model is used to compute desaturation
+stops during ascent, to eliminate nitrogen. Default is tables as only
+this one works today.</p></td>
     </tr>
     <tr>
       <th>hour</th>
-      <td><p>NULL not implemented yet</p></td>
-    </tr>
-    <tr>
-      <th>dist</th>
-      <td><p>a distance vector</p></td>
-    </tr>
-    <tr>
-      <th>speed</th>
-      <td><p>speed of the diver</p></td>
+      <td><p>The first immersion hour in minute. Need to be 24h format 
+converted in minutes (hour = hours * 60 + minutes). 0 by default.</p></td>
     </tr>
     <tr>
       <th>way</th>
-      <td><p>if the dive is one way or the diver return by the same depth</p></td>
+      <td><p>If the dive is one way (one way : 'OW') or if the diver return by 
+the same depth (way back : 'WB').</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>dive, a dive class object.</p>
+    <p>dive, a list containing a depth/time curve in a data.frame,
+the desaturation stops acording to the model used, and some information
+about depth to surface time, and input parameters as ascent_speed and secu.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>See <code><a href='tablecheck.html'>tablecheck</a></code> for limit values of depth and time.</p>
@@ -191,7 +205,7 @@
     <p>Jaunatre Maxime &lt;maxime.jaunatre@yahoo.fr&gt;</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>dive</span> <span class='op'>=</span> <span class='fu'>dive</span><span class='op'>(</span>depth <span class='op'>=</span> <span class='fl'>39</span>, time <span class='op'>=</span> <span class='fl'>22</span>, secu <span class='op'>=</span> <span class='cn'>TRUE</span>, vup <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='va'>dive</span> <span class='op'>=</span> <span class='fu'>dive</span><span class='op'>(</span>depth <span class='op'>=</span> <span class='fl'>39</span>, time <span class='op'>=</span> <span class='fl'>22</span>, secu <span class='op'>=</span> <span class='cn'>TRUE</span>, ascent_speed <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
 
 </div></pre>
   </div>

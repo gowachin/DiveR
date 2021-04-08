@@ -40,10 +40,8 @@
 
 
 <meta property="og:title" content="dtr — dtr" />
-<meta property="og:description" content="dtr compute the ascent time from a depth and between deco stages 
-of a dive.
-It can be retrieved from a dive object or computed with a depth and 
-a palier object." />
+<meta property="og:description" content="dtr retrieve time from end dive time to the surface including
+desaturation time" />
 
 
 
@@ -98,6 +96,9 @@ a palier object." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dive_planif.html">Dive Planification</a>
+    </li>
+    <li>
       <a href="../articles/gas_conso.html">Gas consumption</a>
     </li>
   </ul>
@@ -127,56 +128,39 @@ a palier object." />
     </div>
 
     <div class="ref-description">
-    <p><code>dtr</code> compute the ascent time from a depth and between deco stages 
-of a dive.
-It can be retrieved from a dive object or computed with a depth and 
-a palier object.</p>
+    <p><code>dtr</code> retrieve time from end dive time to the surface including
+desaturation time</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dtr</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>dtr</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span>
 
 <span class='co'># S3 method for dive</span>
-<span class='fu'>dtr</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
-
-<span class='co'># S3 method for palier</span>
-<span class='fu'>dtr</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span>, vup <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span></pre>
+<span class='fu'>dtr</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>is a DiveR object. There are methods for 
-<code><a href='dive.html'>dive</a></code> and <code><a href='palier.html'>palier</a></code> objects.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>other arguments passed to the dtr.palier method.</p><dl>
-  <dt>depth</dt><dd><p>a numeric in meter</p></dd>
-  <dt>vup</dt><dd><p>10 meter/minute by default.</p></dd>
-
-</dl></td>
-    </tr>
-    <tr>
-      <th>vup</th>
-      <td><p>speed of ascent, 10 m/min by default</p></td>
+      <td><p>is a DiveR object. This method is defined for 
+<code><a href='dive.html'>dive</a></code> objects.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>It returns a numeric with the duration of the ascent and deco.</p>
+    <p>It returns a numeric with the duration of the ascent 
+to end of the dive.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Jaunatre Maxime &lt;maxime.jaunatre@yahoo.fr&gt;</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>dtr</span><span class='op'>(</span><span class='fu'><a href='dive.html'>dive</a></span><span class='op'>(</span><span class='fl'>20</span>,<span class='fl'>40</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 5.2</div><div class='input'><span class='co'># absurd slowness with vup = 1</span>
-<span class='fu'>dtr</span><span class='op'>(</span><span class='fu'><a href='dive.html'>dive</a></span><span class='op'>(</span><span class='fl'>20</span>,<span class='fl'>40</span>, vup <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 20.5</div><div class='input'><span class='co'># from a palier object</span>
-<span class='fu'>dtr</span><span class='op'>(</span><span class='fu'><a href='palier.html'>palier</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>40</span><span class='op'>)</span>, depth <span class='op'>=</span> <span class='fl'>20</span>, vup <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 5.2</div><div class='input'>
+</div><div class='output co'>#&gt; [1] 5.2</div><div class='input'><span class='co'># absurd slowness with ascent_speed = 1</span>
+<span class='fu'>dtr</span><span class='op'>(</span><span class='fu'><a href='dive.html'>dive</a></span><span class='op'>(</span><span class='fl'>20</span>,<span class='fl'>40</span>, ascent_speed <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: Ascent speed is usually set between 10 and 20 m/min in most desaturation models. </span>
+#&gt; <span class='warning'>6m/min is used between 6m and the surface</span></div><div class='output co'>#&gt; [1] 23</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

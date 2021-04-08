@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="majoration — majoration" />
-<meta property="og:description" content="Compute the time majoration to a second dive at a specific depth." />
+<meta property="og:description" content="Compute the time majoration to a second dive at a specific depth. 
+Is related to the residual nitrogen time." />
 
 
 
@@ -95,6 +96,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/dive_planif.html">Dive Planification</a>
+    </li>
+    <li>
       <a href="../articles/gas_conso.html">Gas consumption</a>
     </li>
   </ul>
@@ -124,7 +128,8 @@
     </div>
 
     <div class="ref-description">
-    <p>Compute the time majoration to a second dive at a specific depth.</p>
+    <p>Compute the time majoration to a second dive at a specific depth. 
+Is related to the residual nitrogen time.</p>
     </div>
 
     <pre class="usage"><span class='fu'>majoration</span><span class='op'>(</span><span class='va'>depth</span>, group <span class='op'>=</span> <span class='st'>"Z"</span>, inter <span class='op'>=</span> <span class='fl'>16</span><span class='op'>)</span></pre>
@@ -134,28 +139,26 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>depth</th>
-      <td><p>in meter. Max is 65m see Detail !</p></td>
+      <td><p>depth in meter. Must be a single positive value 
+with a maximum is 60m.</p></td>
     </tr>
     <tr>
       <th>group</th>
       <td><p>byt default "Z", the deco group indicated by a letter. 
-This value is indicated in a palier object computed with the palier function.</p></td>
+This value is indicated in a desat object computed with the desat_table 
+function.</p></td>
     </tr>
     <tr>
       <th>inter</th>
-      <td><p>16 by default, interval between dives in minutes</p></td>
+      <td><p>surface interval time in minute. Must be a single positive value 
+with a minimum of 16 minutes (default). Above 720 (12h), the function will
+always return 0.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>palier, a list with a vector of depth and a vector of time. 
-Vectors are ordered from deepest deco stage (9m) to the higher (3m).</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This function will stop if the depth &gt; 65 or time &gt; 180 because the table 
-are limited to this extent.
-However for lower values the table can return NA values.</p>
+    <p>a time value to add to the second dive time for using tables.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Jaunatre Maxime &lt;maxime.jaunatre@yahoo.fr&gt;</p>
