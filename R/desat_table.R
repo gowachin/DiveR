@@ -156,7 +156,7 @@ please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
 #' time at which the diver reach surface.
 #' 
 #' @export
-desat_table <- function(dtcurve, maj = 0){
+desat_table <- function(dtcurve, maj = 0, altitude = 0){
   #### LOAD DATA
   table <- DiveR::table
   grp <- DiveR::grp
