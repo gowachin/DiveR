@@ -58,7 +58,7 @@ remotes::install_github("gowachin/DiveR")
 
 <!--## Usage-->
 
-Below is a simple example to simulate a dive and the corresponding air consumption.
+This is a simple example where we simulate a dive. This show also the desaturation stops due in the table model.
 
 ```{r example_dive, dev='png', out.width="100%"}
 # Simulation of a dive
@@ -66,10 +66,15 @@ library(DiveR)
 dive <- dive(depth = 39, time = 22, secu = TRUE, 
              ascent_speed = 10, desat_model = "table")
 summary(dive)
+```
+
+From the precedent dive you can check if you can survive with certain tank pressure.
+
+```{r example_dive, dev='png', out.width="100%"}
 tank <- tank(vol = 15, press = 230, name = "15L")
 conso <- conso(dive = dive, tank = tank, cons = 20)
 summary(conso)
-plot(conso)
+plot(conso, line_print = FALSE)
 ```
 
 ## Documentation
