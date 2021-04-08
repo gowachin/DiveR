@@ -28,7 +28,7 @@
 
 * Consecutive dives was adding interval time to total time, it has been corrected. ( #10 )
 
-* Correction of additionnal time when using successive dives. Was adding between 4 and 1 minute more than expected when using tables. ( #11 )
+* Correction of additional time when using successive dives. Was adding between 4 and 1 minute more than expected when using tables. ( #11 )
 
 # DiveR 0.3.0
 
