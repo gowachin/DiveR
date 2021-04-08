@@ -1,0 +1,115 @@
+---
+title: "Graphic catalogue"
+author: "Maxime Jaunatre"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Graphic catalogue}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{=html}
+<style>
+body {
+text-align: justify}
+</style>
+```
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.height = 6.1,
+  fig.width = 8.5,
+  dpi = 96
+)
+#library(details)
+library(viridisLite)
+```
+<!--
+<details>
+ <summary>Summary Goes Here</summary>
+ ...this is hidden, collapsable content...
+</details>
+-->
+
+# Test
+
+```{r basic_dive,  dev='png', out.width="100%"}
+library(DiveR)
+```
+
+## Simple dive 
+
+```{r dive,  dev='png', out.width="100%"}
+library(DiveR)
+dive20_40 <- dive(depth = 20, time = 40) ; plot(dive20_40)
+dive39_22 <- dive(depth = 39, time = 22) ; plot(dive39_22)
+
+diveC_20_40 <- dive(depth = c(0, 20, 20, 10, 10, 7), 
+                    time = c(0, 2, 15, 20, 35,  40)) ; plot(diveC_20_40)
+
+diveC_20_40 <- dive(depth = c(0, 20, 18, 10, 2), 
+                    time = c(0, 2, 15, 20, 40)) ; plot(diveC_20_40)
+
+diveC_39_22 <- dive(depth = c(0, 39, 30, 15, 7), 
+                    time = c(0, 2, 7, 15, 22)) ; plot(diveC_39_22)
+diveC_39_22 <- dive(depth = c(0, 39, 30, 15, 3), 
+                    time = c(0, 2, 7, 15, 22)) ; plot(diveC_39_22)
+```
+
+## Multiple dive
+
+```{r,  dev='png', out.width="100%"}
+# plot.dive ####
+d <- dive(20, 40, secu = T, hour = 10*60 + 24.5)
+plot(d, def_cols = T)
+# plot.ndive ####
+#par(mfrow = c(4, 2))
+d <- ndive(dive1 = dive(18,11), dive2 = dive(15,40), inter = 1)
+# cat(d$inter,'\n')
+plot(d, def_cols = T, main = 'consec') # consec
+
+d <- ndive(dive1 = dive(18,11, hour = 450), dive2 = dive(15,40), inter = 1)
+# cat(d$inter,'\n')
+plot(d, def_cols = T, main = 'consec') # consec
+
+d <- ndive(dive1 = dive(35,11), dive2 = dive(30,20), inter = 4)
+plot(d, def_cols = T, xlab = 'hello world', main = 'no_consec') # no_consec # SOLO
+
+d <- ndive(dive1 = dive(18,40), dive2 = dive(15,30), inter = 59)
+# cat(d$inter,'\n')
+plot(d, main = 'success no cut') # succes no cut
+
+d <- ndive(dive1 = dive(20,40), dive2 = dive(20,30), inter = 121)
+# cat(d$inter,'\n')
+plot(d, main = 'success cut') # sucess cut
+
+d <- ndive(dive1 = dive(18,40), dive2 = dive(35,30), inter = 120)
+plot(d, def_cols = T, main = 'maj_no_success') # maj_no_success # SOLO
+
+d <- ndive(dive1 = dive(62,11), dive2 = dive(15,30), inter = 120)
+plot(d, def_cols = T, main = '60_no_sucess') # 60_no_sucess # SOLO
+
+d <- ndive(dive1 = dive(18,11), dive2 = dive(47,8), inter = 730)
+# cat(d$inter,'\n')
+plot(d, main = 'diff cut', def_cols = T) # diff cut
+# plot(1, axes = F, type = 'n', xlab = '', ylab = '')
+#par(mfrow = c(1,1))
+
+
+```
+
+
+## Consumption
+
+```{r death_conso, dev='png', out.width="100%"}
+Tank_12L <- tank(vol = 12, press = 200)
+death <- conso(dive = dive(39, 15), tank = Tank_12L, 
+               cons = 20, failure_label = 'Air failure')
+plot(death, line_print = FALSE, depth_print = TRUE)
+death <- conso(dive = dive(20, 40), tank = Tank_12L,
+               cons = 20, failure_label = 'Air failure')
+plot(death, line_print = FALSE, depth_print = TRUE)
+```

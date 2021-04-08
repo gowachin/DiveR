@@ -105,6 +105,7 @@ write.csv(n2, "raw_data/raw_n2.csv")
 azote <- read.csv("raw_data/raw_azote.csv")[,-1] ; azote
 colnames(azote) <- as.numeric(sub("X","",x =colnames(azote)))
 rownames(azote) <- LETTERS[1:nrow(azote)]
+nitrogen <- azote
 
 maj <- read.csv("raw_data/raw_maj.csv", header = TRUE) ; maj
 colnames(maj) <- as.numeric(sub("X","",x =colnames(maj)))
@@ -114,7 +115,7 @@ maj
 # save all 
 usethis::use_data(table, overwrite = TRUE)
 usethis::use_data(grp, overwrite = TRUE)
-usethis::use_data(azote, overwrite = TRUE)
+usethis::use_data(nitrogen, overwrite = TRUE)
 usethis::use_data(maj, overwrite = TRUE)
 
 rm(m3,m6,m9,grp,i, mt, prof, table, time, ut, n2, azote)

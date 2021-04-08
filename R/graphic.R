@@ -5,7 +5,7 @@ NULL
 #' plot.dive
 #' 
 #' Plot the dive curve depending on time and depth. 
-#' Only represent sqare profile
+#' Only represent square profile
 #' 
 #' @param x an object of class dive.
 #' @param ... every argument for the \code{\link[graphics]{plot}} function 
@@ -19,7 +19,7 @@ NULL
 #'   \item \strong{ylab} set to \code{'Depth'} by default, 
 #'   see \code{\link[graphics]{title}}.
 #'   }
-#' @param dtr_print set to \code{TRUE} by default, whether there is text and 
+#' @param dtr_print set to \code{FALSE} by default, whether there is text and 
 #' line for ascent time.
 #' @param hour_print set to \code{TRUE} by default, whether there is the hour
 #' at beginning and end of the dive.
@@ -51,7 +51,7 @@ NULL
 #' @export
 plot.dive <- function(x,
                       ...,
-                      dtr_print = TRUE,
+                      dtr_print = FALSE,
                       hour_print = TRUE,
                       line_print = TRUE,
                       deco_print = TRUE,
@@ -171,7 +171,7 @@ plot.dive <- function(x,
   
   if(depth_print | deco_print){
     depth_i <- depths_inf(x, col = call_par$col, 
-                          only_pal = (!depth_print) & deco_print )
+                          only_desat = (!depth_print) & deco_print )
     do.call(text, depth_i)
   }
   
@@ -179,10 +179,10 @@ plot.dive <- function(x,
     time_i <- times_inf(x, col = call_par$col)
     do.call(text, time_i)
   } else if(deco_print){
-    for (i in x$palier$depth[x$palier$time > 0]) {
+    for (i in x$desat$depth[x$desat$time > 0]) {
       text(
         x = mean(dtcurve$time[dtcurve$depths == i]), y = -i,
-        paste(x$palier$time[x$palier$depth == i], "'", sep = ""), pos = 3,
+        paste(x$desat$time[x$desat$depth == i], "'", sep = ""), pos = 3,
         col = call_par$col
       )
     }
@@ -190,28 +190,29 @@ plot.dive <- function(x,
 
   if (dtr_print) {
     # dtr
-    last <- max(which(dtcurve$depths == max(dtcurve$depths)))
+    # last <- max(which(dtcurve$depths == max(dtcurve$depths)))
+    last <- which(dtcurve$times == dtime(x) + x$hour[1])
     lines(
       x = dtcurve$times[c(last, rep(length(dtcurve$depths), 2))],
       y = -dtcurve$depths[c(last, last, length(dtcurve$depths))],
       lty = 3, col = call_par$col
     )
     text(
-      x = mean(dtcurve$times[c(3, length(dtcurve$depths))]),
-      y = -max(dtcurve$depths),
-      paste(round(x$dtr,2), "'", sep = ""), pos = 3,
-      # paste("dtr = ", x$dtr, "'", sep = ""), pos = 3,
+      x = mean(dtcurve$times[c(last, length(dtcurve$depths))]),
+      y = -dtcurve$depths[last],
+      paste(round(x$params["dtr"],2), "'", sep = ""), pos = 3,
+      # paste("dtr = ", x$params["dtr"], "'", sep = ""), pos = 3,
       col = call_par$col
     )
   }
   # add default legend about ascent speed ----
-  if (legend) {
-    legend("bottomright", sprintf(
-      "%s speed : %g m/min", c("ascent", "deco stop"),
-      unlist(speed(x))
-    ), horiz = T, cex = 0.7, box.col = call_par$col.axis, 
-    text.col = call_par$col.axis)
-  }
+  # if (legend) {
+  #   legend("bottomright", sprintf(
+  #     "%s speed : %g m/min", c("ascent", "deco stop"),
+  #     unlist(speed(x))
+  #   ), horiz = T, cex = 0.7, box.col = call_par$col.axis, 
+  #   text.col = call_par$col.axis)
+  # }
   
   if (def_cols) {par(bg = tmp_bg)}
 }
@@ -271,83 +272,6 @@ cust_axis <- function(dive, col, shift = NULL){
        col = col, col.ticks = col, col.axis = col)
 }
 
-
-#' depths_inf
-#' 
-#' Create information about depth and time to use with text function 
-#' in plot.dive. 
-#' Find the places and labels to show depending on the dive curve.
-#' 
-#' @param x a \code{\link[DiveR]{dive}} object.
-#' @param col a color value
-#' @param only_pal set to \code{FALSE} by default,
-#' 
-#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
-#' 
-#' @export
-depths_inf <- function(x, col, only_pal = FALSE){
-  
-  x$dtcurve <- simpl(x$dtcurve)
-  
-  depths <- unique(x$dtcurve$depths)
-  depths <- depths[depths != 0]
-  if(only_pal){
-    pal <- depths %in% x$palier$depth
-    depths <- depths[pal]
-    first <- NULL
-  } else {
-    first = 1
-  }
-  times <- x$dtcurve$times[x$dtcurve$depths %in% depths]
-  if(length(times) < 3){
-    times <- times[1]
-  } else {
-    times <- times[c(first,seq(length(times), 2 + length(first) , by = -2))]
-  }
-  times <- sort(times)
-  pos <- c(first, rep(4,length(times) - length(first)))
-  
-  
-  depth_inf <- list(x = times, y = -depths, labels = paste(-depths, "m"), 
-                    pos = pos, col = col)
-  
-  return(depth_inf)
-}
-
-#' times_inf
-#'  
-#' @param x a \code{\link[DiveR]{dive}} object.
-#' @param col a color value
-#' 
-#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
-#' @rdname depths_inf
-#' @export
-times_inf <- function(x, col){
-  
-  x$dtcurve <- simpl(x$dtcurve)
-  
-  times <- x$dtcurve$times[-c(1, length(x$dtcurve$times))]
-  depths <- x$dtcurve$depths[-c(1, length(x$dtcurve$depths))]
-  
-  f1 <- rev(seq(length(times), 2, by = -2))
-  f2 <- rev(seq(length(times)-1, 1, by = -2))
-  if((! 2 %in% f1) & (! 1 %in% f2) ){
-    f1 <- c(2,f1) ; f2 <- c(1, f2)
-  }
-  
-  dtimes <- times[f1] - times[f2]
-  times <- times[f2] + dtimes /2
-  
-  ddepths <- depths[f1] - depths[f2]
-  depths <- depths[f2] + ddepths / 2
-  
-  pos <- rep(3,length(dtimes))
-  
-  time_inf <- list(x = times, y = -depths, labels = paste0(round(dtimes,1), "'"), 
-                   pos = pos, col = col)
-  
-  return(time_inf)
-}
 
 #' plot.ndive
 #' 
@@ -423,7 +347,7 @@ times_inf <- function(x, col){
 #' @export
 plot.ndive <- function(x,
                        ...,
-                       dtr_print = TRUE,
+                       dtr_print = FALSE,
                        hour_print = TRUE,
                        line_print = TRUE,
                        deco_print = TRUE,
@@ -434,7 +358,9 @@ plot.ndive <- function(x,
                        legend = FALSE,
                        add = FALSE) {
   
-  check_val(cut_inter)
+  if (cut_inter <= 0 | !is.numeric(cut_inter)) {
+    stop("cut_inter must be a single positive numeric value.")
+  }
   
   # get the call_par
   default_par <- list(
@@ -472,7 +398,7 @@ plot.ndive <- function(x,
     solo_par$cut_inter <- NULL
     
     do.call(plot, solo_par)
-    return()
+    return(invisible(NULL))
   }
   
 
@@ -481,7 +407,6 @@ plot.ndive <- function(x,
   delta_y <- (max(depth(x)) - min(min(x$dive1$dtcurve$depths),
                                   min(x$dive2$dtcurve$depths))) * 0.2
   
-  # maybe an add if here ?
   x$dive1$dtcurve$times <- x$dive1$dtcurve$times + x$dive1$hour[1]
   x$dive2$dtcurve$times <- x$dive2$dtcurve$times + x$dive2$hour[1] 
   
@@ -491,6 +416,7 @@ plot.ndive <- function(x,
                         + delta_y, 
               min(x$dive1$dtcurve$depths, x$dive2$dtcurve$depths) - delta_y)
   
+  # TODO : why a duplicate here from line 457 ?
   call_par <- list(...)
   
   names_defaut_par <- names(default_par)
@@ -523,6 +449,7 @@ plot.ndive <- function(x,
       # modify interv and xlim to cut the axis
       new_inter <- x$inter - cut_inter
       x$dive2$dtcurve$times <- x$dive2$dtcurve$times - new_inter
+      # x$dive2$hour <- x$dive2$hour - new_inter
       delta_x <- (max(x$dive2$dtcurve$times) - min(x$dive1$hour)) * 0.1
       call_par$xlim = c(min(x$dive1$dtcurve$times) - delta_x, 
                     max(x$dive2$dtcurve$times) + delta_x)
@@ -569,121 +496,80 @@ plot.ndive <- function(x,
   
   # Plot the dives ----
   consec_call <- call_par
-  consec_call$add <- TRUE 
-  consec_call$cut_inter <- NULL 
-  consec_call$def_cols <- TRUE
-  if (x$type == 'consec' | x$dive1$hour[1] > 0){
-    cat('consec_plot \n')
-    consec_call$axes <- FALSE
-    consec_call$hour_print <- FALSE
-  }
+  consec_call$add <- TRUE
+  consec_call$cut_inter <- NULL
+  consec_call$def_cols <- def_cols
+  # if (x$type == 'consec' | x$dive1$hour[1] > 0){
+  #   cat('consec_plot \n')
+  #   consec_call$axes <- FALSE
+  #   consec_call$hour_print <- FALSE
+  # }
+  consec_call$axes <- FALSE
+  consec_call$hour_print <- FALSE
   
   consec_call$x <- x$dive1
   do.call(plot, consec_call)
-  consec_call$axes <- FALSE
-  consec_call$hour_print <- FALSE
   consec_call$x <- x$dive2
   do.call(plot, consec_call)
-
-  if (x$type == 'consec'){
-    # hours
-    hours <- c(x$dive1$hour[1], x$dive2$hour[2])
-    dIvE <- list(hour = hours)
-    # axes
-    if (call_par$axes){
+  
+  hours <- c(x$dive1$hour[1], x$dive2$hour[2])
+  dIvE <- list(hour = hours)
+  inter_t <- c(tail(x$dive1$dtcurve$times, 1), x$dive2$dtcurve$times[1])
+  # hours 
+  if(hour_print){
+    if(x$inter <= 15){
+      text(
+        x = c(dIvE$hour, x$dive1$hour[2]), y = 0,
+        minute_to_time(c(dIvE$hour, x$dive1$hour[2]), sec = TRUE, sep = ':'),
+        pos = 3, col = call_par$col
+      )
+    } else {
+      w_hours <- c(inter_t[2], tail(x$dive2$dtcurve$times, 1))
+      text( x = x$dive1$hour , y = 0, minute_to_time(x$dive1$hour),
+            pos = 3, col = call_par$col)
+      text(x = w_hours, y = 0, minute_to_time(x$dive2$hour), pos = 3, 
+           col = call_par$col)
+    }
+  }
+  
+  if(call_par$axes){
+    axis(2, col = call_par$col.axis, col.ticks = call_par$col.axis,
+         col.axis = call_par$col.axis)
+    if (x$inter <= cut_inter){
       cust_axis(dIvE, call_par$col.axis) #, shift = -x$dive1$hour[1] )
-      axis(2, col = call_par$col.axis, col.ticks = call_par$col.axis, 
-           col.axis = call_par$col.axis)
-    }
-    # hours add
-    if (hour_print){
-      text(
-        x = dIvE$hour, y = 0, 
-        # sprintf("%02.0f:%02.0f", dIvE$hour %/% 60, 
-        #         dIvE$hour %% 60),
-        minute_to_time(dIvE$hour, sec = TRUE, sep = ':'),
-        # sprintf("%02.0f:%02.0f:%02.0f", dIvE$hour %/% 60,
-        #         dIvE$hour %% 60, (dIvE$hour %% 60 %% 1) * 60 ),
-        pos = 3, col = call_par$col
-      )
-      
-      
-    }
-    # 
-    # hours <- c(x$dive1$hour[1], x$dive2$hour[2],
-    #            mean(x$dive1$hour[2], x$dive2$hour[1]))
-    # t <- c(x$dive1$hour[1], x$dive2$hour[2], x$inter)
-    # text(
-    #   x = hours, y = 0,
-    #   # x$hour, pos = 3,
-    #   sprintf("%s: %g'", c("start", "end", 'inter'), t), pos = 3,
-    #   col = call_par$col
-    # )
-  } else {
-    inter_t <- c(tail(x$dive1$dtcurve$times, 1), x$dive2$dtcurve$times[1])
-    
-    text(
-      x = mean(inter_t), 
-      y = 0, c(paste('inter:', minute_to_time(x$inter, sec = TRUE, sep = ':',
-                                              day = F)),
-                     # sprintf("%02.0f:%02.0f:%02.0f", x$inter %/% 60, 
-                     # x$inter %% 60, (x$inter %% 60 %% 1) * 60 )
-                                  paste('maj:', x$dive2$maj)), pos = c(3,1),
-      col = call_par$col
-    )
-    
-    w_hours <- c(inter_t[2], tail(x$dive2$dtcurve$times, 1))
-    if (hour_print ){
-      
-      if(x$dive1$hour[1] > 0){
-        text(
-          x = x$dive1$hour , y = 0,
-          # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60,
-          minute_to_time(x$dive1$hour, sec = TRUE, sep = ':'),
-          # sprintf("%02.0f:%02.0f:%02.0f", x$dive1$hour %/% 60, 
-                  # x$dive1$hour %% 60, (x$dive1$hour %% 60 %% 1) * 60 ), 
-          pos = 3, col = call_par$col
-        )
-      }
-      
-      text(
-        x = w_hours, y = 0,
-        # sprintf("%s: %02.0f:%02.0f:%02.0f", c("start", "end"), x$hour %/% 60, 
-        minute_to_time(x$dive2$hour, sec = TRUE, sep = ':'),
-        # sprintf("%02.0f:%02.0f:%02.0f", x$dive2$hour %/% 60, 
-                # x$dive2$hour %% 60, (x$dive2$hour %% 60 %% 1) * 60 ), 
-        pos = 3, col = call_par$col
-      )
-    }
-    
-    if (call_par$axes){
-      if(x$dive1$hour[1] > 0){
-        cust_axis(x$dive1, call_par$col.axis )
-        axis(2, col = call_par$col.axis, col.ticks = call_par$col.axis, 
-             col.axis = call_par$col.axis)
-      }
+    } else {
+      cust_axis(x$dive1, call_par$col.axis )
       cust_axis(x$dive2, call_par$col.axis, shift = -new_inter )
     }
+  }
   
-    if(x$inter > cut_inter){
-      # simplified code part from plotrix, but not working on R 3.4.
-      breakpos = mean(inter_t)
-      xw <- (limits[2] - limits[1]) * 0.05
-      yw <- (limits[4] - limits[3]) * 0.05
-      br <- c(breakpos - xw / 2, limits[3] - yw / 2, 
-              breakpos + xw / 2, limits[3] )
-      old.xpd <- par("xpd") ; par(xpd = TRUE)
-      # draw the "blank" rectangle
-      rect(br[1], br[2], br[3], br[4], col = par("bg"), border = par("bg"))
-      # calculate the slash ends
-      xbegin <- c(breakpos - xw, breakpos)
-      xend <- c(breakpos, breakpos + xw)
-      # draw the segments
-      segments(xbegin, rep(br[2], 2), xend, rep((br[4]+  yw / 2), 2), 
-               col = consec_call$col.axis, lty = 1)
-      # restore xpd
-      par(xpd = old.xpd)
-    }
+  if(x$inter > 15){
+    text(
+      x = mean(inter_t), y = 0,
+      c(paste('inter:', minute_to_time(x$inter, day = F)),
+        paste('maj:', x$dive2$params["maj"])), pos = c(3,1),
+      col = call_par$col
+    )
+  }
+  
+  if(x$inter > cut_inter){
+    # simplified code part from plotrix, but not working on R 3.4.
+    breakpos = mean(inter_t)
+    xw <- (limits[2] - limits[1]) * 0.05
+    yw <- (limits[4] - limits[3]) * 0.05
+    br <- c(breakpos - xw / 2, limits[3] - yw / 2,
+            breakpos + xw / 2, limits[3] )
+    old.xpd <- par("xpd") ; par(xpd = TRUE)
+    # draw the "blank" rectangle
+    rect(br[1], br[2], br[3], br[4], col = par("bg"), border = par("bg"))
+    # calculate the slash ends
+    xbegin <- c(breakpos - xw, breakpos)
+    xend <- c(breakpos, breakpos + xw)
+    # draw the segments
+    segments(xbegin, rep(br[2], 2), xend, rep((br[4]+  yw / 2), 2),
+             col = consec_call$col.axis, lty = 1)
+    # restore xpd
+    par(xpd = old.xpd)
   }
 
   if (def_cols) {par(bg = tmp_bg)}
@@ -763,8 +649,9 @@ plot.conso <- function(x,
   # modify dtcurve to match pression
   b <- max(x$vcons[-c(1:2)], na.rm = TRUE) # find max pressure of all tanks
   a <- b/max(x$dtcurve$depths)
-  raw_dtcurve <- x$dtcurve
+  raw_x <- x
   x$dtcurve$depths <- -a * x$dtcurve$depths + b
+  x$desat$desat_stop$depth <-  -a * x$desat$desat_stop$depth + b
   
   # set global plot ----
   delta_x <- diff(x$hour) * 0.1
@@ -909,16 +796,14 @@ plot.conso <- function(x,
   }
   # depth and time info ----
   if(depth_print & dive_print){
-    depth_lab <- depths_inf(list(dtcurve = raw_dtcurve), col = call_par$dive_col)
-    depth_depth <- depths_inf(list(dtcurve = x$dtcurve), col = call_par$dive_col)
-    depth_lab$y <- c(0, -depth_depth$y[2])
+    depth_lab <- depths_inf(raw_x, col = call_par$dive_col)
+    depth_lab$y <- a * depth_lab$y + b
     do.call(text, depth_lab)
   }
   
   if(time_print & dive_print){
-    time_lab <- times_inf(list(dtcurve = raw_dtcurve), col = call_par$dive_col)
-    time_depth <- times_inf(list(dtcurve = x$dtcurve), col = call_par$dive_col)
-    time_lab$y <- c(0, -depth_depth$y[2])
+    time_lab <- times_inf(raw_x, col = call_par$dive_col)
+    time_lab$y <- a * time_lab$y + b
     do.call(text, time_lab)
   }
   

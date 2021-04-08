@@ -19,6 +19,29 @@ is.tank <- function(x){
   inherits(x, 'tank')
 }
 
+#' is.conso
+#'
+#' check if the object is of \code{\link[DiveR]{conso}} class
+#' 
+#' @param x any R object
+#' 
+#' @return
+#' TRUE or FALSE
+#' 
+#' @examples
+#' t <- tank(12,200)
+#' d <- dive(20, 40)
+#' c <- conso(d, t)
+#' is.tank(c)
+#' is.tank('conso')
+#' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
+#' @export
+is.conso <- function(x){
+  inherits(x, 'conso')
+}
+
 #' pressure
 #' \code{pressure} retrieve the pressure of tank(s).
 #' 
@@ -301,6 +324,7 @@ summary.conso <- function(object, ...){
       diff(object$hour), "minutes\n")
   
   Ltank <- nrow(object$rules)
+  # TODO : check cli for this type of lines
   cat("---------------------------------------------------------------------\n")
   cat("       Tank name |         Rule | Pressure |    Time | Final pressure \n")
   cat("---------------------------------------------------------------------\n")
@@ -327,4 +351,25 @@ summary.conso <- function(object, ...){
   } else {
     cat("The dive is deadly !\n")
   }
+}
+
+#' @rdname depth
+#' 
+#' @export
+depth.conso <- function(object) {
+  return(max(object$dtcurve$depths))
+}
+
+#' @rdname depth_at_time
+#' 
+#' @export
+depth_at_time.conso <- function(object, time){
+  #### IDIOT PROOF ####
+  if (any(time < 0) | !is.numeric(time) | length(time) > 1 ) {
+    stop("time must be positive numeric value.")
+  }
+  dive <- object
+  class(dive) <- "dive"
+  res <- depth_at_time(dive, time)
+  return(res)
 }

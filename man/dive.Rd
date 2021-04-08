@@ -8,44 +8,55 @@ dive(
   depth = 20,
   time = 40,
   secu = TRUE,
-  vup = 10,
+  ascent_speed = 10,
   maj = 0,
-  hour = NULL,
-  dist = NULL,
-  speed = NULL,
-  way = c("AS", "AR")
+  desat_model = c("table", "other"),
+  hour = 0,
+  way = c("OW", "WB")
 )
 }
 \arguments{
-\item{depth}{in meter}
+\item{depth}{Depth of the dive in meter. Need to be positive values.
+A single value is needed for square dive, however if a vector is provided
+a decompression model need to be selected. Default is 20 meter}
 
-\item{time}{in minute}
+\item{time}{Duration of the dive in minute. Need to be positive values.
+A single value is needed for square dive, however if a vector is provided
+a decompression model need to be selected. Default is 40 minutes}
 
-\item{secu}{true by default, secu deco stage 3 min at 3 meter}
+\item{secu}{security decompression stop of 3 min at 3 m. FALSE by default.}
 
-\item{vup}{10 m/min by default}
+\item{ascent_speed}{Ascent_speed in meter/minute. 10 m/min by default. 
+Most dive table advice to limite this speed to 20M/min maximum.}
 
-\item{maj}{0 by default}
+\item{maj}{Time majoration for the dive. 
+Only used by table decompression model.}
 
-\item{hour}{NULL not implemented yet}
+\item{desat_model}{Which desaturation model is used to compute desaturation
+stops during ascent, to eliminate nitrogen. Default is tables as only
+this one works today.}
 
-\item{dist}{a distance vector}
+\item{hour}{The first immersion hour in minute. Need to be 24h format 
+converted in minutes (hour = hours * 60 + minutes). 0 by default.}
 
-\item{speed}{speed of the diver}
-
-\item{way}{if the dive is one way or the diver return by the same depth}
+\item{way}{If the dive is one way (one way : 'OW') or if the diver return by 
+the same depth (way back : 'WB').}
 }
 \value{
-dive, a dive class object.
+dive, a list containing a depth/time curve in a data.frame,
+the desaturation stops acording to the model used, and some information
+about depth to surface time, and input parameters as ascent_speed and secu.
 }
 \description{
-dive
+Create a dive class object simulating a dive for given depth and times.
+To do so, it create a depth/time curve and find the desaturation stops
+according to a desaturation model.
 }
 \details{
 See \code{\link[DiveR]{tablecheck}} for limit values of depth and time.
 }
 \examples{
-dive = dive(depth = 39, time = 22, secu = TRUE, vup = 10)
+dive = dive(depth = 39, time = 22, secu = TRUE, ascent_speed = 10)
 
 }
 \author{

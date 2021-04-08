@@ -237,7 +237,6 @@ test_that("conso_output", {
   # expect_snapshot(conso(dive, back15))
   
   # multiple tank dive
-  
   exp_bi <- structure(list(
     vcons = structure(list(vcons = c(0, 2400, 1440, 840, 240, 73.1, 78, 11.5), 
                            times = c(0, 16, 26, 36, 40, 41.7, 44.7, 45.2), 

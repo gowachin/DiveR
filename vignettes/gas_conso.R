@@ -45,13 +45,13 @@ summary(simp_dive)
 Tank_12L <- tank(vol = 12, press = 200)
 death <- conso(dive = simp_dive, tank = Tank_12L, 
                cons = 20, failure_label = 'Air failure')
-plot(death)
+plot(death, line_print = FALSE)
 
 ## ----viable_conso, dev='png', out.width="100%"--------------------------------
 Tank_15L <- tank(vol = 15, press = 200)
 viable <- conso(dive = simp_dive, tank = Tank_15L, 
                cons = 20, failure_label = 'Air failure')
-plot(viable)
+plot(viable, line_print = FALSE)
 
 ## ----pressure_conso-----------------------------------------------------------
 pressure(death)
@@ -69,7 +69,7 @@ A_10L <- tank(vol = 10, press = 200, name = 'A_10L')
 B_10L <- tank(vol = 10, press = 200, name = 'B_10L')
 bi_conso <- conso(dive = simp_dive, tank = list(A_10L, B_10L), 
                cons = 20, failure_label = 'Air failure')
-plot(bi_conso)
+plot(bi_conso, line_print = FALSE)
 pressure(bi_conso)
 
 ## ----mult_relay, dev='png', out.width="100%"----------------------------------
@@ -86,7 +86,7 @@ Tank_10L <- tank(vol = 10, press = 200, rules = list(
 relay_conso <- conso(dive = simp_dive, 
                      tank = list(Relay, Tank_10L), 
                      cons = 20, failure_label = 'Air failure')
-plot(relay_conso)
+plot(relay_conso, line_print = FALSE)
 summary(relay_conso)
 
 ## ----mult_mrelay, eval = FALSE, include = FALSE-------------------------------

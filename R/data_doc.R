@@ -1,6 +1,6 @@
 #' MN90 Tables
 #' 
-#' A dataset containing an array with the palier time depending on depth 
+#' A dataset containing an array with the desaturation stop time depending on depth 
 #' and time and a data.frame with the group.
 #'
 #' @format  table is an array of dimension 25, 27 and 3:\cr
@@ -49,7 +49,7 @@
 
 #' MN90 table
 #'
-#' A dataset containing an data.frame with the residual azote in blood depending on the interval time and the group.
+#' A dataset containing an data.frame with the residual nitrogen in blood depending on the interval time and the group.
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
@@ -57,12 +57,12 @@
 #' Trucco, Jean-Noël; Biard, Jef; Redureau, Jean-Yves; Fauvel, Yvon (3 May 1999). 
 #' pdf in french :
 #' \href{http://renaud.helstroffer.free.fr/sub_technique/fiche_initiation/mn90.pdf}{"Table Marine National 90 (MN90): Version du 03/05/1999"}
-"azote"
+"nitrogen"
 
 
 #' MN90 table
 #'
-#' A dataset containing an data.frame with the time majoration depending on depth of second dive and residual azote.
+#' A dataset containing an data.frame with the time majoration depending on depth of second dive and residual nitrogen.
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'

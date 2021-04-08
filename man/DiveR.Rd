@@ -5,5 +5,5 @@
 \alias{DiveR}
 \title{DiveR}
 \description{
-A package to code some basic function about dive profiles.
+A package to simulate scuba-diving depth curve and desaturation models.
 }

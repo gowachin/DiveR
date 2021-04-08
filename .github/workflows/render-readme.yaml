@@ -1,5 +1,8 @@
 on:
   push:
+    branches:
+      - main
+      - master
     paths:
       - README.Rmd
 
@@ -15,6 +18,8 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v1
       - name: Install rmarkdown
         run: Rscript -e 'install.packages(c("rmarkdown", "badger"))'
+      - name: Install DiveR
+        run: Rscript -e 'install.packages(c("remotes")) ; remotes::install_github("gowachin/DiveR")'
       - name: Render README
         run: Rscript -e 'rmarkdown::render("README.Rmd", output_format = "md_document")'
       - name: Commit results
