@@ -69,7 +69,7 @@ A_10L <- tank(vol = 10, press = 200, name = 'A_10L')
 B_10L <- tank(vol = 10, press = 200, name = 'B_10L')
 bi_conso <- conso(dive = simp_dive, tank = list(A_10L, B_10L), 
                cons = 20, failure_label = 'Air failure')
-plot(bi_conso, line_print = FALSE)
+plot(bi_conso, line_print = FALSE, def_cols = TRUE)
 pressure(bi_conso)
 
 ## ----mult_relay, dev='png', out.width="100%"----------------------------------
