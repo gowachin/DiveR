@@ -679,15 +679,15 @@ plot.conso <- function(x,
     warning('log can not be used in this plot type') # TODO : testthat here !
   }
   # def bg cols ----
-  # if (def_cols) {
-  #   call_par$col <- "#fd8f0c" # TODO modify def col
-  #   call_par$dive_col <- '#909fa1'# 'peru'
-  #   call_par$col.axis <- "#bd971e"
-  #   tmp_bg <- par('bg') # save bg for later
-  #   par(bg = "#073642")
-  # } else {
-  call_par$col.axis <- par('col.axis')
-  # }
+  if (def_cols) {
+     call_par$col <- "#fd8f0c" # TODO modify def col
+     call_par$dive_col <- '#909fa1'# 'peru'
+     call_par$col.axis <- "#bd971e"
+     tmp_bg <- par('bg') # save bg for later
+     par(bg = "#073642")
+   } else {
+     call_par$col.axis <- par('col.axis')
+   }
   
   if (!add) {
     # init plot ----
@@ -744,11 +744,10 @@ plot.conso <- function(x,
     do.call(lines, line_par)
   }
   
-  # # print the pression line 
   if(Ltank > 1){
     cols <- viridis(Ltank+1)
   } else {
-    cols <- "black"
+    cols <- call_par$col
   }
   
   for( i in 3:ncol(x$vcons)){
@@ -813,5 +812,5 @@ plot.conso <- function(x,
            text.col = cols, cex = 0.8, horiz = TRUE)
   }
   
-  # if (def_cols) {par(bg = tmp_bg)}
+  if (def_cols) {par(bg = tmp_bg)}
 }
