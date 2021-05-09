@@ -12,7 +12,8 @@ dive(
   maj = 0,
   desat_model = c("table", "other"),
   hour = 0,
-  way = c("OW", "WB")
+  way = c("OW", "WB"),
+  gas = "AIR"
 )
 }
 \arguments{
@@ -41,6 +42,12 @@ converted in minutes (hour = hours * 60 + minutes). 0 by default.}
 
 \item{way}{If the dive is one way (one way : 'OW') or if the diver return by 
 the same depth (way back : 'WB').}
+
+\item{gas}{The gas used by the diver, will be used to modify saturation
+computation. Default is 'AIR' but nitrox is possible and can be written as
+'NXy' where y is the O2 percentage. Example 'NX32' is a 32% nitrogen tank.
+Can go up to 'NX100' and be aware that this will limit the depth due to 
+oxygen toxicity wuth a partial pressure of 1.6 bar.}
 }
 \value{
 dive, a list containing a depth/time curve in a data.frame,

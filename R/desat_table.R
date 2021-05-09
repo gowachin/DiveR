@@ -143,6 +143,8 @@ please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
 #' time. Depths values are meters (positive values) and time is in minute.
 #' @param maj majoration time in minute in case of consecutive dive. 
 #' 0 by default.
+#' @param altitude Altitude of the dive in meter. Default is 0 m (sea level).
+#' @param ppn2 Partial pressure of nitrogen in bar. Default is 0.791 bar
 #' 
 #' @return a desat object, which is a list with a data.frame containing 
 #' desaturation stops at 9, 6 and 3 m depth. Next element is the dive groupe
@@ -156,7 +158,7 @@ please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
 #' time at which the diver reach surface.
 #' 
 #' @export
-desat_table <- function(dtcurve, maj = 0, altitude = 0){
+desat_table <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791){
   #### LOAD DATA
   table <- DiveR::table
   grp <- DiveR::grp
@@ -183,6 +185,8 @@ desat_table <- function(dtcurve, maj = 0, altitude = 0){
   # extract values
   maxtime <- max(head(dtcurve$time, - 1)) + maj
   maxdepth <- max(head(dtcurve$depth, - 1)) # lst depth shld = 0 but we trim it.
+  # modify depth with N2
+  maxdepth <- ((maxdepth+10) * ppn2/ 0.791) -10
   # get table values
   depths <- as.numeric(rownames(table))
   times <- as.numeric(colnames(table))
@@ -315,9 +319,18 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
   # retrieve some data avout dive2
   time2 <- dtime(dive2)
   depth2 <- depth(dive2)
+  ppo2 <- ppo2(dive2)
+  depth2 <- ((depth2+10) * (1 - ppo2) / 0.791) -10
   secu2 <- as.logical(dive2$params["secu"])
   speed2 <- unname(dive2$params["ascent_speed"])
   raw_dive2 <- rm_desat(dive2)
+  
+  if (ppo2 == 0.209){
+    gas <- 'AIR'
+  } else {
+    # TODO : dans quel sens arrondir ? function a part ?
+    gas <- paste0("NX", ceiling(ppo2 * 100))
+  }
   
   if (inter > 15) {
     # Compute majoration
@@ -348,7 +361,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
       suc_dive <- dive(
         depth = raw_dive2$dtcurve$depths, time = raw_dive2$dtcurve$times,
         maj = maj, secu = secu2, ascent_speed = speed2, 
-        hour = dive1$hour[2] + inter, desat_model = "table"
+        hour = dive1$hour[2] + inter, desat_model = "table", gas = gas
       )
       ndive <- list(
         dive1 = dive1, dive2 = suc_dive, inter = inter, type = type
@@ -380,7 +393,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
       res <- res[!duplicated(res),]
       
       res <- dive(res$depths, res$times, ascent_speed = speed2, secu = secu2, 
-                  hour = dive1$hour[1])
+                  hour = dive1$hour[1], gas = gas)
       
       res$dtcurve <- res$dtcurve[! (res$dtcurve$times %in% 
                                       head(dive1$dtcurve$times, -1)),]

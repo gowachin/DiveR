@@ -68,6 +68,15 @@ test_that("exp_dtr_dive", {
   expect_equal(dtr(d), 3.9)
 })
 
+test_that("exp_ppo2_dive", {
+  d <- dive(20,40)
+  expect_equal(ppo2(d), 0.209)
+  d <- dive(20,40, gas = "NX40")
+  expect_equal(ppo2(d), 0.4)
+  nd <- ndive(d, d)
+  expect_equal(ppo2(nd), c(0.4, 0.4))
+})
+
 #### Summary ####
 
 test_that("exp_summary_dive", {

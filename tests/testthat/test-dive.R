@@ -21,7 +21,7 @@ test_that("err_dive_secu", {
 })
 
 test_that("err_dive_ascent", {
-  err <- "ascent_speed must be a single positive numeric value\\(s\\)."
+  err <- "ascent_speed must be a single positive numeric value."
   expect_error(dive(20, 40, ascent_speed = 0), err )
   expect_error(dive(20, 40, ascent_speed = -5), err )
   expect_error(dive(20, 40, ascent_speed = c(2,3)), err )
@@ -40,6 +40,16 @@ test_that("err_dive_hour", {
   expect_error(dive(20, 40, hour = -5), err )
   expect_error(dive(20, 40, hour = c(2,3)), err )
   expect_error(dive(20, 40, hour = "10"), err )
+})
+
+test_that("err_dive_gas", {
+  err <- "gas must be a single string value."
+  expect_error(dive(20, 40, gas = 20), err )
+  expect_error(dive(20, 40, gas = c("AIR","NX30")), err )
+  err <- "gas must be a written as 'AIR' or 'NXy' where y is a number
+between 0 and 100"
+  expect_error(dive(20, 40, gas = "NX101"), err )
+  expect_error(dive(20, 40, gas = "NY40"), err )
 })
 
 test_that("war_init_dtcurve_ascent_sp", {
@@ -61,7 +71,7 @@ test_that("dive_square_output", {
                                          row.names = paste0("m", c(9,6,3))),
                  group = "J", model = "table"),
     hour = c(0, 50.3),
-    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 28.3)
+    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 28.3, ppo2 = 0.209)
   )
   class(exp) <- "dive"
   class(exp$desat) <- "desat"
@@ -76,7 +86,7 @@ test_that("dive_square_output", {
                                          row.names = paste0("m", c(0,3))),
                  group = "Z", model = "other"),
     hour = c(0, 45.2),
-    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 5.2)
+    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 5.2, ppo2 = 0.209)
   )
   class(exp) <- "dive"
   class(exp$desat) <- "desat"
@@ -94,7 +104,7 @@ test_that("dive_curve_output", {
                                          row.names = paste0("m", c(9,6,3))),
                  group = "H", model = "table"),
     hour = c(0, 43.9),
-    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 3.9)
+    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 3.9, ppo2 = 0.209)
   )
   class(exp) <- "dive"
   class(exp$desat) <- "desat"
@@ -120,7 +130,7 @@ test_that("dive_curve_output", {
                                          row.names = paste0("m", c(9,6,3))),
                  group = "J", model = "table"),
     hour = c(0, 47.1),
-    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 25.1)
+    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 25.1, ppo2 = 0.209)
   )
   class(exp) <- "dive"
   class(exp$desat) <- "desat"

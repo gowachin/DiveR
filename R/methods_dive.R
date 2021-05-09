@@ -133,6 +133,45 @@ dtr.dive <- function(object) {
 # TODO : define method for desat
 
 
+#' ppo2
+#'
+#' \code{ppo2} retrieve the partial pressure of O2 of a singular or 
+#' multiple dive sequence.
+#'
+#' @param object is a DiveR object. There are methods for 
+#' \code{\link[DiveR]{dive}} objects.
+#'
+#' @return a single numeric value
+#' 
+#' @examples 
+#' # Simple dive
+#' ppo2(dive(20,40))
+#' # Multiple dives
+#' ppo2(ndive(dive(20,40), dive(15, 80), inter = 540))
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+ppo2 <- function(object) {
+  UseMethod("ppo2")
+}
+
+#' @rdname ppo2
+#' 
+#' @export
+ppo2.dive <- function(object) {
+  unname(object$params["ppo2"])
+}
+
+#' @rdname ppo2
+#' 
+#' @export
+ppo2.ndive <- function(object) {
+  d1 <- ppo2(object$dive1)
+  d2 <- ppo2(object$dive2)
+  return(c(d1,d2))
+}
+
 #' depth at time
 #'
 #' Find the depth for a given time and \code{\link[DiveR]{dive}}. 

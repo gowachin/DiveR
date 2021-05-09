@@ -34,7 +34,11 @@ NULL
 #' converted in minutes (hour = hours * 60 + minutes). 0 by default.
 #' @param way If the dive is one way (one way : 'OW') or if the diver return by 
 #' the same depth (way back : 'WB'). 
-#' 
+#' @param gas The gas used by the diver, will be used to modify saturation
+#' computation. Default is 'AIR' but nitrox is possible and can be written as
+#' 'NXy' where y is the O2 percentage. Example 'NX32' is a 32% nitrogen tank.
+#' Can go up to 'NX100' and be aware that this will limit the depth due to 
+#' oxygen toxicity wuth a partial pressure of 1.6 bar. 
 #' 
 #' @details 
 #' See \code{\link[DiveR]{tablecheck}} for limit values of depth and time.
@@ -52,7 +56,8 @@ NULL
 dive <- function(depth = 20, time = 40, secu = TRUE,
                  ascent_speed = 10, maj = 0, 
                  desat_model = c('table', 'other'),
-                 hour = 0, way = c('OW','WB')
+                 hour = 0, way = c('OW','WB'), 
+                 gas = 'AIR'
                  ) {
   #### IDIOT PROOF ####
   if (any(depth < 0) | !is.numeric(depth) ) {
@@ -69,7 +74,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   }
   if (any(ascent_speed <= 0) | !is.numeric(ascent_speed) | 
       length(ascent_speed) > 1 ) {
-    stop("ascent_speed must be a single positive numeric value(s).",
+    stop("ascent_speed must be a single positive numeric value.",
          call. = interactive())
   }
   if( any(maj != 0)){
@@ -84,8 +89,26 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     stop("hour must be a single positive numeric value in minute.",
          call. = interactive())
   }
-  
   way <- match.arg(way)
+  if (!is.character(gas) | length(gas) > 1) {
+    stop("gas must be a single string value.",
+         call. = interactive())
+  }
+  if (gas != 'AIR' & length(grep('^NX[[:digit:]]{1,3}$', gas)) != 1 ){
+    stop("gas must be a written as 'AIR' or 'NXy' where y is a number
+between 0 and 100",
+         call. = interactive())
+  }
+  if (gas == 'AIR'){
+    ppo2 <- 0.209
+  } else {
+    ppo2 <- as.numeric(sub('^(NX)([[:digit:]]{1,3})$', '\\2', gas) ) / 100
+  }
+  if (gas != 'AIR' & ppo2 > 1){
+    stop("gas must be a written as 'AIR' or 'NXy' where y is a number
+between 0 and 100",
+call. = interactive())
+  }
   
   if (ascent_speed < 10 | ascent_speed > 15) {
     warning(paste( 
@@ -98,7 +121,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
   if(desat_model == "table"){
     # time maj and tablecheck is done in dest_table
-    desat_stop <- desat_table(raw_dtcurve, maj)
+    desat_stop <- desat_table(dtcurve = raw_dtcurve, maj = maj, ppn2 = 1 - ppo2)
   } else {
     message("Not yet implemented")
     desat_stop <- list(desat_stop = data.frame(depth = 0, time = 0, hour = NA,
@@ -140,7 +163,8 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   hour <- c(hour, hour + tail(dtcurve$time,1))
   
   # other_info
-  params <- c(maj = maj, secu = secu, ascent_speed = ascent_speed, dtr = dtr)
+  params <- c(maj = maj, secu = secu, ascent_speed = ascent_speed, dtr = dtr,
+              ppo2 = ppo2)
 
   dive <- list(
     dtcurve = dtcurve, desat = desat_stop,
