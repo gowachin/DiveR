@@ -8,7 +8,7 @@ tank(
   vol,
   press,
   rules = list(rules = c(mid = 50, res = 25), sys = "\%"),
-  gas = c("Air"),
+  gas = c("AIR"),
   typ = c("back", "relay"),
   limit = NULL,
   name = NULL
@@ -28,7 +28,7 @@ tank(
 }
 You can set them to 0 if you don't want to use them}
 
-\item{gas}{tank gas, by default "Air". Parameter is here for future dev.}
+\item{gas}{tank gas, by default "AIR". Parameter is here for future dev.}
 
 \item{typ}{tank type, by default "back"
 \describe{

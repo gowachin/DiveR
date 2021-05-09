@@ -210,3 +210,19 @@ plot(cons_dive)
 
 We can observe that despite the second dive being short at 10m, the desaturation stop is very long. This is because here it is a desaturation stop for 40 + 5.2 + 5 = 50.2 minutes ! ( respectively first dive time, ascent time, second dive time). *Don't forget there is also a security stop for 3min.*
 
+## NITROX Dive
+
+This model can be used with other gas mixture than air, like NITROX, where nitrogen and oxygen percentage vary. Below is a rapid example of the result on saturation when using a 32% O2 tank during this king of dive. We observe that you pretty much divide the desaturation stop duration by two.
+
+```{r nitrox_dive,  dev='png', out.width="100%", warning=TRUE}
+dive <- dive(20, 70, gas = "AIR", secu = FALSE)
+nitrox_dive <- dive(20, 70, gas = "NX32", secu = FALSE)
+plot(dive, col = "darkgray")
+plot(nitrox_dive, add = TRUE)
+```
+
+However this usage depends on specific training and different limitations of depths due to oxygen toxicity. When using the same mix as illustrated before, the depth is now limited to 39m.
+
+```{r nitrox_dive,  dev='png', out.width="100%", warning=TRUE}
+nitrox_maxdepth(ppn2 = 1 - 0.32)
+```

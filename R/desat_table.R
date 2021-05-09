@@ -320,7 +320,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
   time2 <- dtime(dive2)
   depth2 <- depth(dive2)
   ppo2 <- ppo2(dive2)
-  depth2 <- ((depth2+10) * (1 - ppo2) / 0.791) -10
+  depth2 <- nitrox_depth(depth = depth2, ppn2 = 1 - ppo2)
   secu2 <- as.logical(dive2$params["secu"])
   speed2 <- unname(dive2$params["ascent_speed"])
   raw_dive2 <- rm_desat(dive2)
@@ -328,7 +328,6 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
   if (ppo2 == 0.209){
     gas <- 'AIR'
   } else {
-    # TODO : dans quel sens arrondir ? function a part ?
     gas <- paste0("NX", ceiling(ppo2 * 100))
   }
   

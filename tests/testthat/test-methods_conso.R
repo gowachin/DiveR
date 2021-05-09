@@ -40,7 +40,7 @@ test_that("exp_summary_tank", {
   mess <- "Tank : 12 litre at 200 bar
 rules : 1 mid : 100 bar
         2 res :  50 bar
-The tank type is back and contain Air 
+The tank type is back and contain AIR 
 Named : back12 "
   expect_equal(capture_output(summary(t)), mess)
 })

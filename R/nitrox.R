@@ -1,3 +1,24 @@
+#' nitrox_maxdepth
+#'
+#' Maximum depth for partial pressure of nitrogen.
+#' 
+#' @param ppn2 Partial pressure of nitrogen in bar. Default is 0.791 bar
+#' 
+#' @return maximum depth in meter
+#' 
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
+#' @export
+nitrox_maxdepth <- function(ppn2 = 0.791){
+  if (any(ppn2 < 0) | !is.numeric(ppn2) | any(ppn2 >= 1) ) {
+    stop("ppn2 must be positive numeric value between 0 and 1.", 
+         call. = interactive())
+  }
+  MOD =  floor((10 * 1.6 / (1 - ppn2)) - 10)
+  
+  return(MOD)
+}
+
 #' MODcheck
 #'
 #' Test if the depth is possible with such partial pressure of nitrogen.
@@ -19,7 +40,7 @@ MODcheck <- function(depth, ppn2 = 0.791, force = FALSE){
     stop("depth must be positive numeric value(s).", call. = interactive())
   }
   if (any(ppn2 < 0) | !is.numeric(ppn2) | any(ppn2 > 1) ) {
-    stop("ppn2 must be positive numeric value(s) between 0 and 1.", 
+    stop("ppn2 must be positive numeric value between 0 and 1.", 
          call. = interactive())
   }
   if( !is.logical(force) | is.na(force) ){
@@ -27,7 +48,7 @@ MODcheck <- function(depth, ppn2 = 0.791, force = FALSE){
          call. = interactive())
   }
   
-  MOD =  floor((10 * 1.6 / (1 - ppn2)) - 10)
+  MOD =  nitrox_maxdepth(ppn2)
   
   res <- TRUE
   if (depth >= MOD) {

@@ -15,7 +15,7 @@ NULL
 #'   between 0 and 100.}
 #' }
 #' You can set them to 0 if you don't want to use them
-#' @param gas tank gas, by default "Air". Parameter is here for future dev.
+#' @param gas tank gas, by default "AIR". Parameter is here for future dev.
 #' @param typ tank type, by default "back"
 #' \describe{
 #'   \item{"solo"}{single tank}
@@ -46,7 +46,7 @@ tank <- function(vol, press, rules = list(
                    rules = c("mid" = 50, "res" = 25),
                    sys = "%"
                  ),
-                 gas = c("Air"), typ = c("back", "relay"),
+                 gas = c("AIR"), typ = c("back", "relay"),
                  limit = NULL, name = NULL) {
 
   #### IDIOT PROOF ####
@@ -144,15 +144,14 @@ tank <- function(vol, press, rules = list(
   typo <- c(gas, typ, names(rules$rules), name)
   names(typo) <- c("gas", "typ", "rule1", "rule2", "name")
 
-  if (gas != "Air") {
+  if (gas != "AIR") {
     # TODO : imput other gas
   } else {
     ppo2 <- c(0.21, 1.6)
     dmin <- (ppo2[1] * 70 / 1.47) - 10 # assimilé a ppo2 > 0.18
-    dmax <- (ppo2[2] * 70 / 1.47) - 10 # assimilé a ppo2 < 1.6
     # round them
     dmin <- ceiling(dmin)
-    dmax <- floor(dmax)
+    dmax <- nitrox_maxdepth()
   }
 
   limit <- c(dmin, dmax, limit)
