@@ -1,0 +1,256 @@
+\documentclass[12pt,a4paper,notitlepage,colorinlistoftodos]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Template pour rendus Master
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[utf8]{inputenc} %encodage
+\usepackage[T1]{fontenc}
+
+\usepackage[square,sort,comma,numbers]{natbib} % bibliography
+\setcitestyle{authoryear,open={(},close={)}}
+\renewcommand{\bibsection}{}
+
+\usepackage[french]{babel} % langue
+% add '\-' to create custom hypernation if a word is difficult to cut or :
+\hyphenation{geo-graphique}
+
+%mise en page générale
+\usepackage{geometry}
+%\geometry{a4paper} % format de feuille
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm} %marges
+\usepackage{mathptmx} % Police Times si compilateur pdfLatex
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{times}
+\setlength{\parindent}{0pt}
+
+\linespread{1} % interligne
+\usepackage{fancyhdr} %en tete et pied de page
+\usepackage{lastpage}  %marche pas chez julia
+\pagestyle{plain} 
+
+\usepackage{lscape} % page en landscape
+
+\usepackage{multicol, multirow}
+\usepackage{hhline}
+\setlength{\columnsep}{1cm}
+
+\usepackage{hyperref,url} % lien cliquables
+\hypersetup{
+colorlinks = true,
+linkcolor = black,
+urlcolor = RoyalBlue
+}
+\usepackage{lipsum} %Lorem ipsum
+
+\usepackage{wrapfig} %position d'images dans le texte
+\usepackage{graphicx, subcaption, setspace, booktabs, wrapfig}
+
+\usepackage[table,dvipsnames]{xcolor}
+
+\usepackage{caption}
+\DeclareCaptionType{annexe}[Annexe][Liste d'annexes] % rajout pour captions annexes
+\DeclareCaptionType{web}[Web][Sites Web] % rajout pour mettre des captions web
+
+\usepackage{todonotes} % notes et commentaires
+%\usepackage[disable]{todonotes} % pour supprimer les commentaires lors de la compil
+
+\usepackage[export]{adjustbox}
+
+\usepackage[para,online,flushleft]{threeparttable}
+
+
+\usepackage{listings}
+\usepackage{color}
+ 
+%http://latexcolor.com/ 
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{cerulean}{rgb}{0.0, 0.48, 0.65}
+\definecolor{beaublue}{rgb}{0.95, 0.95, 0.95}
+\definecolor{amber}{rgb}{1.0, 0.25, 0.0}
+\definecolor{indiagreen}{rgb}{0.07, 0.53, 0.03}
+\definecolor{number}{rgb}{0.01, 0.01, 0.01}
+
+
+\lstset{language=C}
+
+  \lstset{emphstyle=\color{blue},
+  inputencoding=latin1,
+  basicstyle=\footnotesize,
+  breaklines=true,
+  keywordstyle=\bf\color{amber},
+  commentstyle=\color{indiagreen},
+  stringstyle=\color{cerulean},
+  numberstyle=\color{number},
+  backgroundcolor=\color{beaublue},
+  morecomment=[s][\color{black}]{[}{]},
+  morecomment=[s][\color{cerulean}]{[~}{]:},
+  numbers=none,
+  numbersep=5pt,
+  lineskip=0.7pt,
+  columns=fullflexible, % was flexible before but it induce space in '/2entier' like '/2 entier'
+  showstringspaces=false ,
+  literate=%
+         {ê}{{\^e}}1
+         {é}{{\'e}}1}
+        
+          \newcommand{\FSource}[1]{%
+          \lstinputlisting[texcl=true]{#1}
+          }
+          
+\lstdefinelanguage{rshell}{
+	morecomment=[s][\color{cerulean}]{[~}{]:},
+}
+
+%\lstdefinestyle{numbers} {numbers=left, stepnumber=1, numberstyle=\tiny, numbersep=10pt}
+%\lstdefinestyle{MyFrame}{backgroundcolor=\color{yellow},frame=shadowbox}
+%
+%\lstdefinestyle{MyCStyle} {language=C,style=numbers,style=MyFrame,frame=lines}
+%\lstdefinestyle{MyC++Style} {language=C++,style=numbers,style=MyFrame,frame=none,backgroundcolor={}}
+%
+%\lstset{language=C,frame=lines}
+%\lstset{language=C++,frame=none}
+
+
+%%%%%%%%%%%% skip an all paragraphe, between this bornes %%%%%%%%%%%%%%%%%%
+%\iffalse
+%\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% nouvelles commandes spécifique au doc %%%%%%%%%%%%%%%%%%
+
+\DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
+\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}}
+\renewcommand*\contentsname{Table des matières}
+\newcommand{\unit}[1]{\hfill\text{}[\mathrm{#1}]}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Page de garde
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{figure}
+    \begin{minipage}{.75\textwidth}
+    \begin{center}
+    {\Large Fiche Récap' NITROX Elémentaire: \\
+Utilisation d'un gaz enrichie en oxygène en plongée}
+    \end{center}
+    %\vspace{\baselineskip}
+    %\setlength{\parskip}{\smallskipamount}
+    \rule{7em}{.4pt}\par
+     Maxime Jaunatre, Benjamin Mercier-Guyon | USSG \par 
+     %\href{mailto:\href{mailto:maxime.jaunatre@etu.univ-grenoble-alpes.fr}{Mail $^1$} | \today \par 
+     \href{mailto:maxime.jaunatre@yahoo.fr}{Mail} | \today
+\end{minipage}
+\end{figure}
+
+\hrule
+
+\iffalse
+ Maxime Jaunatre <maxime.jaunatre@etu.univ-grenoble-alpes.fr>
+\fi
+
+\section{Aspect Légale}
+Le Nitrox est un gaz enrichie en oxygène. Le pourcentage d'O$_2$ du mélange est alors supérieur à celui de l'air qui est de 20,9\%.
+
+En France, La FFESSM prévoie 3 niveaux pour l'utilisation de ce type de mélange :
+\begin{itemize}
+\item Nitrox élémentaire \\
+Accessible à partir du niveau 2, il permet l'utilisation d'un gaz dont le taux d'oxygène du mélange est compris entre 20.9 et 40\%. Un seul gaz pour toute la plongée la plongée. Pas d'équipement spécifique requis.
+
+\item Nitrox confirmé \\
+Accessible à partir du Nitrox élémentaire (+4 plongée dans cette configuration) il permet l'utilisation de tout type de mélanges binaires, avec plusieurs gaz par plongée (en générale 2). Nécessite un ordinateur, matériel compatible (blocs et détendeurs), outils de planifications optionnels.  
+
+\item Moniteur Nitrox \\
+Accessible à partir du Nitrox confimé et Moniteur fédéral 1. Permet l'enseignement, et la direction de plongée au nitrox.
+\end{itemize} 
+
+\textbf{Nous traiterons ici du premier niveau, c'est à dire du NITROX élementaire}
+
+\section{Rappels et Lexique}
+
+\textbf{Abréviations :}
+
+$\bullet$ NITROX : NITRogen (azote en anglais) / OXygen
+
+$\bullet$ $fO_2$ : fraction d'oxygène du mélange
+
+$\bullet$ $fN_2$ : fraction d'azote du mélange
+
+$\bullet$ $NX_{y}$ (ou $EAN_{y}$ pour les anglo-saxon) désigne un gaz dont la $fO_2$ est de \textit{y}. 
+
+\underline{\textit{Example :}} NX30 --> 30\% d'$O_{2}$
+
+--------------------------------
+
+\textbf{Pressions :}
+
+$\bullet$ $PP0_2$ : pression partiel d'oxygène \\
+$\bullet$ $PPN_2$ : pression partiel d'azote 
+
+$\bullet$ $P_{Hydro} = \frac{Prof.}{10}$
+
+$\bullet$ $P_{Abs} = 1 + P_{Hydro}$
+
+Avec $PP_{gaz} = f_{gaz} \cdot P_{Abs}$  (Lois de Dalton) 
+
+\underline{\textit{Example :}} NX30 à 30 m --> $PP0_2 = 0.3 \cdot 4 = 1.2 \text{ bar}$  \& $PPN_2 = 0.7 \cdot 4 = 2.8 \text{ bar}$
+
+--------------------------------
+
+\textbf{Profondeur maximale :}
+
+\color{red} \textbf{$PP0_2 > 1.6 \text{ bar}$ est TOXIQUE} \color{black}
+
+On considère alors une $PP0_2$FOND max de 1.5b, 1.4 conseillé.
+
+$\bullet$ PMU : profondeur maximal d'utilisation d'un gaz (=MOD Maximum operating depth) 
+
+$\bullet$ $PMU =  \frac{PP0_2}{fO_2}$ 
+
+\underline{\textit{Example :}} NX30 à 1.6b -->   $PMU =  \frac{1.6}{0.3} = 5.3 \text{ bar} = 43.3 m \approx 43 m$
+
+--------------------------------
+
+\textbf{Gaz optimale à une profondeur donnée :}
+
+$\bullet$ BestMix = $\frac{PP0_2 \text{ visée}}{P_{Abs}}$ 
+
+\underline{\textit{Example :}} 1.5 bar à 40 m --> $\frac{1.5}{5} = 0.3$ soit NX30
+
+--------------------------------
+
+$\bullet$ PEA : Profondeur Equivalente à l'Air, effet narcotique du gaz utilisée // calcul de la décompression réel
+
+$PEA = \left(\frac{P_{Abs} \cdot fN_2}{0.791} \cdot 10\right) -10 $
+
+\section{Exercices}
+
+Différence de PEA à 50m selon mélanges :
+
+$\bullet$ Air
+
+$fN_2 = 1 - 0.209 = 0.791$ bar
+
+à 50 m  $P_{Abs} = 5 + 1 = 6 \text{ bar}$
+
+$PEA = \left(\frac{6 \cdot 0.791}{0.791} \cdot 10\right) -10 = 50m$
+\\
+
+$\bullet$ NX26
+
+$PMU = \frac{1.6}{0.26} = 6.15 \approx 51m$ on respecte donc bien la profondeur maximale à 50m.
+
+$fN_2 = 1 - 0.26 = 0.74$ bar
+
+à 50 m  $P_{Abs} = 5 + 1 = 6 \text{ bar}$
+
+$PEA = \left(\frac{6 \cdot 0.74}{0.791} \cdot 10\right) -10 = 46.1 \approx 48 m$
+ (on arrondit pour l'entrée dans les tables)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Références
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newpage
+\cite{}
+%\subsection*{Bibliographie}
+\bibliographystyle{authordate1}
+\bibliography{ICU}
+
+\end{document}
