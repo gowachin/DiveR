@@ -110,6 +110,10 @@ between 0 and 100",
 call. = interactive())
   }
   
+  if (ascent_speed > 120){
+    stop("This is not the sport to do if you want to go to the moon",
+            call. = interactive())
+  }
   if (ascent_speed < 10 | ascent_speed > 15) {
     warning(paste( 
       "Ascent speed is usually set between 10 and 20 m/min in",

@@ -26,6 +26,8 @@ test_that("err_dive_ascent", {
   expect_error(dive(20, 40, ascent_speed = -5), err )
   expect_error(dive(20, 40, ascent_speed = c(2,3)), err )
   expect_error(dive(20, 40, ascent_speed = "10"), err )
+  err <- "This is not the sport to do if you want to go to the moon"
+  expect_error(dive(20, 40, ascent_speed = 150), err )
 })
 
 test_that("err_dive_maj", {
