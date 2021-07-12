@@ -68,7 +68,7 @@ please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
     if (force) {
       res <- FALSE
     } else {
-      stop(sprintf("Maximum time at %d meters is %d minutes",depth, maxt), 
+      stop(sprintf("Maximum time at %d meters is %d minutes",max(depth), maxt), 
            call. = interactive())
     }
   }

@@ -98,3 +98,12 @@ dive2 <- dive(10, 5)
 cons_dive <- ndive(dive1, dive2, inter = 10) # this is just round hours ^^
 plot(cons_dive)
 
+## ----nitrox_dive,  dev='png', out.width="100%", warning=TRUE------------------
+dive <- dive(20, 70, gas = "AIR", secu = FALSE)
+nitrox_dive <- dive(20, 70, gas = "NX32", secu = FALSE)
+plot(dive, col = "darkgray")
+plot(nitrox_dive, add = TRUE)
+
+## ----NXdepth_dive,  dev='png', out.width="100%", warning=TRUE-----------------
+nitrox_maxdepth(ppn2 = 1 - 0.32)
+

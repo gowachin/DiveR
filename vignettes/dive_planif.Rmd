@@ -223,6 +223,6 @@ plot(nitrox_dive, add = TRUE)
 
 However this usage depends on specific training and different limitations of depths due to oxygen toxicity. When using the same mix as illustrated before, the depth is now limited to 39m.
 
-```{r nitrox_dive,  dev='png', out.width="100%", warning=TRUE}
+```{r NXdepth_dive,  dev='png', out.width="100%", warning=TRUE}
 nitrox_maxdepth(ppn2 = 1 - 0.32)
 ```
