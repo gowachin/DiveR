@@ -3,7 +3,7 @@ library(DiveR)
 ## parameters
 depth <- 40
 time <- 15
-secu <- TRUE
+secu <- FALSE
 ascent_speed <- 10
 desat_model <- 'Haldane'
 hour <- 0
@@ -13,6 +13,10 @@ way <- 'OW'
 # https://en.wikipedia.org/wiki/B%C3%BChlmann_decompression_algorithm#Tables
 
 raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
+
+desat_stop <- desat_table(dtcurve = raw_dtcurve, maj = maj, ppn2 = 0.791)
+desat_stop$desat_stop$time[3] <- 3
+raw_dtcurve <- add_desat(raw_dtcurve, desat_stop, ascent_speed, secu)
 
 desat_stop <- list(desat_stop = data.frame(depth = 0, time = 0, hour = NA,
                                            row.names = "m0"),
@@ -92,7 +96,7 @@ cut.dtcurve <- function(dtcurve, delta = 1, cut_h = FALSE){
   return(res)
 }
 
-raw_dtcurve <- cut.dtcurve(dtcurve = raw_dtcurve, delta = .5, cut_h = TRUE)
+raw_dtcurve <- cut.dtcurve(dtcurve = raw_dtcurve, delta = .05, cut_h = TRUE)
 raw_dtcurve
 
 # dv <- c(0)
@@ -134,10 +138,14 @@ half_life <- function(period, time){
 #' @param altitude
 #' @param ppn2
 #' 
+#' @details There is a modification of the last compartement, with an half-life
+#' of 60 instead of 75 min. This is because the Sc value was not found for such
+#' time.
+#' 
 #' @return a desat object (list)
 #' 
 #' @export
-desat_haldane <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791){
+# desat_haldane <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791){
   #### IDIOT PROOF ####
   # TODO : copy from desat_table
   #
@@ -147,28 +155,60 @@ desat_haldane <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791){
   altitude = 0          #
   ppn2 = 0.791          #
   
+  comp <- c(5, 10, 20, 40, 60)
+  Scomp <- c(Sc5 = 2.72, Sc10 = 2.38, Sc20 = 2.04, Sc40 = 1.68, Sc60 = 1.58)
+  depths <- -c(3, 6, 9)
+  
+  
+  # pal = 7
+  # dtcurve <- rbind(dtcurve, dtcurve[41,])
+  # dtcurve[41,1:2] <- c(3, 19 + pal)
+  # dtcurve[42, 2] <- dtcurve[42, 2] + pal
+  
   # adding cols for haldane
   dtcurve <- cbind(dtcurve, dt = c(NA, diff(dtcurve$time)),
                    ppn2 = round((dtcurve$depth/10 + 1) * ppn2,3), 
-                   c5 = NA, c10 = NA, c20 = NA, c40 = NA, c75 = NA, 
-                   Sc5 = NA, Sc10 = NA, Sc20 = NA, Sc40 = NA, Sc75 = NA
-                   # Sc5 = 2.72, Sc10 = 2.38, Sc20 = 2.04, Sc40 = 1.68, Sc75 = NA
+                   c5 = NA, c10 = NA, c20 = NA, c40 = NA, c60 = NA,
+                   S5 = 1, S10 = 1, S20 = 1, S40 = 1, S60 = 1, 
+                   anarchy = FALSE, drive = 0
                    )
   dtcurve[1, 5:9] <- 0.791
   
-  plot(0,xlim = c(-2, 24), ylim = c(0.7, 4), type = 'n')
+
   
-  comp <- c(5, 10, 20, 40, 75)
+  # Graphic
+  plot(0,xlim = c(-2, 30), ylim = c(0, 4), type = 'n')
   
-  for(i in 2:nrow(dtcurve)){
+  i = 2
+  while(i <= nrow(dtcurve)){
+    # compute 
     dtcurve[i, 5:9] <- (dtcurve$ppn2[i] - dtcurve[i-1, 5:9]) *
       half_life(comp, dtcurve$dt[i])/100  + dtcurve[i-1, 5:9]
+    dtcurve[i, 10:14] <- dtcurve[i, 5:9] / (dtcurve$ppn2[i]/dtcurve$ppn2[1]) # S = Tn2 / Pabs
+    anar <- dtcurve[i, 10:14] >= Scomp
+    dtcurve$anarchy[i] <- any(anar)
+    # if(dtcurve$anarchy[i]){
+    #   depth <- (max(dtcurve[i, 10:14][anar] / Scomp[anar]) - 1) * 10
+    #   depth <- - max(depths[(depth + depths) < 0 ])
+    #   
+    #   1.3 * log(1 + ((2.647 - 2.38)/ (0.791 - 2.647))) / log(.5)
+    #   
+    # }
+    
+    # Graphic
     points(rep(dtcurve$time[i], 5), dtcurve[i, 5:9], col = c(1:5), pch = 20)
+    points(rep(dtcurve$time[i], 5), dtcurve[i, 10:14], col = c(1:5), pch = 10, 
+           cex = .5 + (dtcurve[i, 10:14] >= Scomp))
+    
+    i <- i + 1
   }
+  # Graphic
   abline(h = c(0.791,5*0.791), col = 'red', lty = 3)
-  # dtcurve
+  abline(h = Scomp, col = c(1:5), lty = 5)
   
-}
+  dtcurve
+  
+# } 
 
 desat_dtcurve <- add_desat(raw_dtcurve, desat_stop, ascent_speed, secu)
 dtr <- max(desat_dtcurve$time) - tail(raw_dtcurve$time, 2)[1]
