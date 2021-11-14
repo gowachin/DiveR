@@ -38,11 +38,8 @@ init_dtcurve <- function(depth, time, ascent_speed = 10, way = c("OW", "WB")) {
 
   if (length(depth) == 1) {
     # square profile
-    if (depth > 6) { # ascent speed above 6m is 6m/min
-      ascent_time <- ((depth - 6) / ascent_speed) + 1
-    } else {
-      ascent_time <- depth / 6
-    }
+    ascent_time <- depth / ascent_speed
+    
     dtcurve <- data.frame(
       depth = c(0, depth, depth, 0),
       time = c(0, 0, time, time + ascent_time)
@@ -67,11 +64,11 @@ init_dtcurve <- function(depth, time, ascent_speed = 10, way = c("OW", "WB")) {
     # check for end point
     if (tail(dtcurve$depth, 1) > 0) {
       tmp_d <- tail(dtcurve$depth, 1)
-      if (tmp_d > 6) { # ascent speed above 6m is 6m/min
-        ascent_time <- ((tmp_d - 6) / ascent_speed) + 1
-      } else {
-        ascent_time <- tmp_d / 6
-      }
+      # if (tmp_d > 6) { # ascent speed above 6m is 6m/min
+        ascent_time <- tmp_d  / ascent_speed
+      # } else {
+      #   ascent_time <- tmp_d / 6
+      # }
       dtcurve <- rbind(dtcurve, c(0, tail(dtcurve$time, 1) + ascent_time))
     }
   }

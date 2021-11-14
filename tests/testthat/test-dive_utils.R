@@ -37,18 +37,18 @@ test_that("err_init_dtcurve_depth_time", {
 
 test_that("exp_init_dtcurve_depth_time", {
   exp <- data.frame(depth = c(0, 20,20, 0), 
-                    time = c(0, 0, 40, 42.4))
+                    time = c(0, 0, 40, 42))
   expect_identical(init_dtcurve(20, 40), exp)
-  expect_identical(init_dtcurve(c(0, 20,20, 0), c(0, 0, 40, 42.4)), exp)
-  expect_identical(init_dtcurve(c(20,20, 0), c(0, 40, 42.4)), exp)
+  expect_identical(init_dtcurve(c(0, 20,20, 0), c(0, 0, 40, 42)), exp)
+  expect_identical(init_dtcurve(c(20,20, 0), c(0, 40, 42)), exp)
   expect_identical(init_dtcurve(c(20,20), c(0, 40)), exp)
   
-  exp$time[4] <- 41
+  exp$time[4] <- 40.6
   exp$depth <- c(0, 6, 6, 0)
   expect_identical(init_dtcurve(c(6,6), c(0, 40)), exp)
   
   exp <- data.frame(depth = c(0, 6,6, 0), 
-                    time = c(0, 0, 40, 41))
+                    time = c(0, 0, 40, 40.6))
   expect_identical(init_dtcurve(6, 40), exp)
   expect_identical(init_dtcurve(c(6,6), c(0, 40)), exp)
   
