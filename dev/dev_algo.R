@@ -1,27 +1,6 @@
 # HALDANE
 library(DiveR)
-## parameters
-depth <- 40
-time <- 15
-secu <- FALSE
-ascent_speed <- 10
-desat_model <- 'Haldane'
-hour <- 0
-gas <- 'AIR'
-way <- 'OW'
-
-# https://en.wikipedia.org/wiki/B%C3%BChlmann_decompression_algorithm#Tables
-
-raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
-
-desat_stop <- desat_table(dtcurve = raw_dtcurve, maj = 0, ppn2 = 0.791)
-desat_stop$desat_stop$time[3] <- 0
-raw_dtcurve <- add_desat(raw_dtcurve, desat_stop, ascent_speed, secu)
-
-desat_stop <- list(desat_stop = data.frame(depth = 0, time = 0, hour = NA,
-                                           row.names = "m0"),
-                   group = 'Z', model = "other")
-class(desat_stop) <- "desat"
+rm(list = ls())
 
 ## modify desat_stop
 
@@ -96,9 +75,7 @@ cut.dtcurve <- function(dtcurve, delta = 1, cut_h = FALSE){
   return(res)
 }
 
-raw_dtcurve <- cut.dtcurve(dtcurve = raw_dtcurve, delta = .05, cut_h = TRUE)
-raw_dtcurve
-
+# # testing the demi-life formula
 # dv <- c(0)
 # for(i in 1:7){
 #   if(i == 1){
@@ -128,11 +105,9 @@ raw_dtcurve
 #' @export
 half_life <- function(period, time){
   return((1 - 2^(-time/period)) * 100)
+  # # old version
+  # return((1 - exp(-(log(2)/period) *time)) * 100)
 }
-
-# half_lifeb <- function(period, time){
-#   return((1 - exp(-(log(2)/period) *time)) * 100)
-# }
 
 
 #' desat_haldane
@@ -141,6 +116,7 @@ half_life <- function(period, time){
 #' @param maj
 #' @param altitude
 #' @param ppn2
+#' @param ncomp
 #' 
 #' @details There is a modification of the last compartement, with an half-life
 #' of 60 instead of 75 min. This is because the Sc value was not found for such
@@ -152,26 +128,44 @@ half_life <- function(period, time){
 #' @return a desat object (list)
 #' 
 #' @export
-# desat_haldane <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791){
+# desat_haldane <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791, ncomp = 5){
   #### IDIOT PROOF ####
   # TODO : copy from desat_table
-  #
-  
-  dtcurve = raw_dtcurve #
+
+# done before
+## parameters
+depth <- 60
+time <- 25
+secu <- FALSE
+ascent_speed <- 10
+desat_model <- 'Haldane'
+hour <- 0
+gas <- 'AIR'
+way <- 'OW'
+raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
+# EOF done before
+
+  dtcurve <- cut.dtcurve(dtcurve = raw_dtcurve, delta = .1, cut_h = FALSE)
+  dtcurve
   maj = 0               #
   altitude = 0          #
   ppn2 = 0.791          #
+  ncomp = 5             #
+  bpal_speed <- 6 # speed between deco stops
   
-  comp <- c(5, 10, 20, 40, 60)
-  Scomp <- c(Sc5 = 2.72, Sc10 = 2.38, Sc20 = 2.04, Sc40 = 1.68, Sc60 = 1.58)
+  # TODO : put this out in a data ?
+  if(ncomp == 5){
+    comp <- c(5, 10, 20, 40, 60)
+    Scomp <- c(Sc5 = 2.72, Sc10 = 2.38, Sc20 = 2.04, Sc40 = 1.68, Sc60 = 1.58)
+    # names(comp) <- paste0("S",comp)
+  } else if(ncomp == 12){
+    comp <- c(5, 7, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120)
+    Scomp <- c(Sc5 = 2.72, Sc7 = 2.54, Sc10 = 2.38, Sc15 = 2.2,  Sc20 = 2.04,
+               Sc30 = 1.82, Sc40 = 1.68, Sc50 = 1.61, Sc60 = 1.58, Sc80 = 1.56,
+               Sc100 = 1.55, Sc120 = 1.54)
+  }
   depths <- c(0, 3, 6, 9)
-  
-  
-  # pal = 7
-  # dtcurve <- rbind(dtcurve, dtcurve[41,])
-  # dtcurve[41,1:2] <- c(3, 19 + pal)
-  # dtcurve[42, 2] <- dtcurve[42, 2] + pal
-  
+
   # adding cols for haldane
   dtcurve <- cbind(dtcurve, dt = c(NA, diff(dtcurve$time)),
                    ppn2 = round((dtcurve$depth/10 + 1) * ppn2,3), 
@@ -180,31 +174,31 @@ half_life <- function(period, time){
                    anarchy = FALSE, drive = 0, Pabs_pal = 0, max_depth = 0,
                    nex_pal = 0, need_pal = FALSE, time_pal = 0
                    )
-  dtcurve[1, 5:9] <- 0.791
-  
-  # pre-insert stop part
-  rows <- head(which(dtcurve$depth %in% depths)[-1], -1)
-  #' copy from SO 
-  #' https://stackoverflow.com/questions/11561856/add-new-row-to-dataframe-at-specific-row-index-not-appended
-  insertRow <- function(existingDF, newrow, r) {
-    existingDF[seq(r+1,nrow(existingDF)+1),] <- existingDF[seq(r,nrow(existingDF)),]
-    existingDF[r,] <- newrow
-    existingDF
-  }
-  
-  for(r in 1:length(rows)){
-    dtcurve <- insertRow(dtcurve, dtcurve[rows[r],], rows[r])
-    dtcurve$dt[rows[r]+1] <- 0
-    rows <- rows+ 1
-  }
-  dtcurve[360: 380, 1:4]
+  dtcurve[1, 5:9] <- 0.791 # depends on gas used !
   
   # Graphic
-  plot(0,xlim = c(-2, 30), ylim = c(0, 4), type = 'n')
+  plot(0,xlim = c(-2, 95), ylim = c(0, 4), type = 'n', xlab = "Time",
+       ylab = "Compartiment Sat")
   
   i = 2
+  ne_pal <- TRUE # limit warnings in loop
+  need_pal <- FALSE
+  bpal <-FALSE
   while(i <= nrow(dtcurve)){
-    # compute 
+    if(dtcurve$time_pal[i-1] > 0){
+      dtcurve <- insertRow(dtcurve, dtcurve[i-1,], i)
+      dtcurve$dt[i] <- dtcurve$time_pal[i]
+      bpal <- TRUE
+    }
+    
+    if((dtcurve$depth[i-1] - dtcurve$depth[i]) / dtcurve$dt[i] > bpal_speed &
+       bpal){ # adapt speed if between palier
+      dtcurve$dt[i] <- (dtcurve$depth[i-1] - dtcurve$depth[i]) / bpal_speed
+    } else if(dtcurve$depth[i-1] > dtcurve$depth[i]){
+      bpal <- FALSE
+    }
+    
+    # compute new compart sat.
     dtcurve[i, 5:9] <- (dtcurve$ppn2[i] - dtcurve[i-1, 5:9]) *
       half_life(comp, dtcurve$dt[i])/100  + dtcurve[i-1, 5:9]
     dtcurve[i, 10:14] <- dtcurve[i, 5:9] / (dtcurve$ppn2[i]/dtcurve$ppn2[1]) # S = Tn2 / Pabs
@@ -218,42 +212,160 @@ half_life <- function(period, time){
     if( dtcurve$max_depth[i] < 0 | round(dtcurve$max_depth[i], 3) == 0){
       dtcurve$max_depth[i] <- 0
     } 
-    # okay on c'est quand il faut un palier et sa profondeur !
-    dtcurve$nex_pal[i] <- min(depths[(dtcurve$max_depth[i] - depths) <= 0])
     
+    # okay on c'est quand il faut un palier et sa profondeur !
+    if(dtcurve$max_depth[i] > max(depths)){
+      dtcurve$nex_pal[i] <- ceiling(dtcurve$max_depth[i])
+      if(ne_pal){ # only set this warning once !
+        warning(paste("Saturation model limit reach with a ceiling depth",
+                      "below maximum deco stop depth.",
+                      "Ascent speed below 15m/min should cancel this issue."))
+        ne_pal <- FALSE
+      }
+    } else {
+      dtcurve$nex_pal[i] <- min(depths[(dtcurve$max_depth[i] - depths) <= 0])
+    }
     
     # Graphic
     points(rep(dtcurve$time[i], 5), dtcurve[i, 5:9], col = c(1:5), pch = 20)
     points(rep(dtcurve$time[i], 5), dtcurve[i, 10:14], col = c(1:5), pch = 10, 
            cex = .5 + (dtcurve[i, 10:14] >= Scomp))
     
-     # on est a la profondeur d'un palier requis
-    dtcurve$need_pal[i] <- dtcurve$depth[i] <= dtcurve$nex_pal[i]
-    if(dtcurve$need_pal[i] & dtcurve$depth[i] != 0){
-      cat('shit...')
+     # we matched the depth with next deco stop depth.
+    dtcurve$need_pal[i] <- need_pal <- dtcurve$depth[i] <= dtcurve$nex_pal[i]
+    
+    # only happens if need_pal ! will be but in another loop
+    if(dtcurve$need_pal[i] & dtcurve$depth[i] != 0 & need_pal){
       next_pal <- depths[which(depths == dtcurve$nex_pal[i]) -1]
       pal_time <- -comp[dtcurve$drive[i]] * (log(1-(((Scomp[dtcurve$drive[i]] * (next_pal / 10 +1) )-
                                                        dtcurve[i,5:9][dtcurve$drive[i]])/
                                                       (dtcurve$ppn2[i] - dtcurve[i,5:9][dtcurve$drive[i]])))/
                                                log(2))
-      # print(str(pal_time))
-      cat(" - t: ", unlist(pal_time), "\n")
+      # cat(" - t: ", unlist(pal_time)," d: ",dtcurve$depth[i], "\n")
       dtcurve$time_pal[i] <- unname(unlist(pal_time))
-      dtcurve$dt[i+1] <- unname(unlist(pal_time))
-    } 
+    } else {
+      dtcurve$time_pal[i] <- 0
+    }
     
     # TODO : probleme d'arrondis dans les diffs
-    if(dtcurve$depth[i] != 0 & round(dtcurve$dt[i], 3) > round(dtcurve$time[i+1] - dtcurve$time[i], 3)){
-      dtcurve$time[(i+1):nrow(dtcurve)] <- dtcurve$time[(i+1):nrow(dtcurve)] + dtcurve$dt[i]
+    if(dtcurve$depth[i] != 0 & ((
+      round(dtcurve$dt[i], 3) > round(dtcurve$time[i+1] - dtcurve$time[i], 3) &
+      need_pal) | bpal)){
+      dtcurve$time[(i+1):nrow(dtcurve)] <- dtcurve$time[(i+1):nrow(dtcurve)] + 
+        dtcurve$dt[i] # TODO : ceiling decimal at same dec as cut interval !
     }
     
     i <- i + 1
   }
+  
   # Graphic
   abline(h = c(0.791,5*0.791), col = 'red', lty = 3) # pression atmo et a profondeur (saturation max)
   abline(h = Scomp, col = c(1:5), lty = 5) # S limit a ne pas depasser
-  dtcurve[375:nrow(dtcurve),-c(5:14) ]
+  legend("right", col = c(1:5), pch = 21, names(Scomp))
+  # dtcurve[375:nrow(dtcurve),-c(5:14) ]
   
+  # plot(dtcurve$time, -dtcurve$depth, type = "l", ylim = c(-15, 0))
+  # lines(dtcurve$time, -dtcurve$max_depth, col = "red")
+  # abline(h= -c(9,6,3), lty = 3)
+  
+  # extract the pal time to compare mn90
+  pal <- depths
+  names(pal) <- paste0("m",pal)
+  for(d in seq_along(depths)){
+    pal[d] <- sum(dtcurve$time_pal[dtcurve$depth ==depths[d]])
+  }
+  print(round(pal[-1], 2))
+  print(DiveR::table[as.character(depth),as.character(time),])
+  
+  desat <- list(
+    desat_stop = data.frame(
+      depth = depths[-1], 
+      time = pal[-1], 
+      hour = rep(NA, 3)
+    ),
+    group = "Z", model = paste0("Hal",ncomp)
+    # TODO : add last saturation values and ncomp in ?
+  )
+  
+  # begin the part where a pal is needed.
+  # two case are possible. if all depth diff are < 0,
+  # ascent speed is constant at 6m/min.
+  # but if diver start going down...we don't bother.
+  # save(dtcurve, file = "dev/dtcurve.RData")
+  # load("dev/dtcurve.RData")
+  # dtcurve <- dtcurve[which(dtcurve$need_pal):nrow(dtcurve),]
+  # i = 2
+  # bpal <-FALSE
+  # bpal_speed <- 6
+  # need_pal <- FALSE
+  # # while(i <= 14){
+  # while(i <= nrow(dtcurve)){
+  #   cat(i, " ")
+  #   if(dtcurve$time_pal[i-1] > 0){
+  #     dtcurve <- insertRow(dtcurve, dtcurve[i-1,], i)
+  #     dtcurve$dt[i] <- dtcurve$time_pal[i]
+  #     bpal <- TRUE
+  #   }
+  #   
+  #   if((dtcurve$depth[i-1] - dtcurve$depth[i]) / dtcurve$dt[i] > bpal_speed &
+  #      bpal){ # adapt speed if 
+  #     dtcurve$dt[i] <- (dtcurve$depth[i-1] - dtcurve$depth[i]) / bpal_speed
+  #   } else if(dtcurve$depth[i-1] > dtcurve$depth[i]){
+  #     bpal <- FALSE
+  #   }
+  #   
+  #   # compute new compart sat.
+  #   dtcurve[i, 5:9] <- (dtcurve$ppn2[i] - dtcurve[i-1, 5:9]) *
+  #     half_life(comp, dtcurve$dt[i])/100  + dtcurve[i-1, 5:9]
+  #   dtcurve[i, 10:14] <- dtcurve[i, 5:9] / (dtcurve$ppn2[i]/ppn2) # S = Tn2 / Pabs
+  #   anar <- dtcurve[i, 10:14] >= Scomp
+  #   dtcurve$anarchy[i] <- any(anar) # is any compartement anar
+  #   
+  #   Pabs_pal <- dtcurve[i, 5:9] / Scomp # Pabs = Tn2 / Sc compart
+  #   dtcurve$drive[i] <- which.max(Pabs_pal)
+  #   dtcurve$Pabs_pal[i] <- max(Pabs_pal)
+  #   dtcurve$max_depth[i] <- (dtcurve$Pabs_pal[i] - 1) * 10
+  #   if( dtcurve$max_depth[i] < 0 | round(dtcurve$max_depth[i], 3) == 0){
+  #     dtcurve$max_depth[i] <- 0
+  #   } 
+  #   # okay c'est quand il faut un palier et sa profondeur !
+  #   if(dtcurve$max_depth[i] > max(depths)){
+  #     dtcurve$nex_pal[i] <- ceiling(dtcurve$max_depth[i])
+  #     if(ne_pal){ # only set this warning once !
+  #       warning(paste("Saturation model limit reach with a ceiling depth",
+  #                     "below maximum deco stop depth.", 
+  #                     "Ascent speed below 15m/min should cancel this issue."))
+  #       ne_pal <- FALSE
+  #     }
+  #   } else {
+  #     dtcurve$nex_pal[i] <- min(depths[(dtcurve$max_depth[i] - depths) <= 0])
+  #   }
+  #   # on est a la profondeur d'un palier requis
+  #   dtcurve$need_pal[i] <- need_pal <- dtcurve$depth[i] <= dtcurve$nex_pal[i]
+  #   # only happens if need_pal ! will be but in another loop
+  #   if(dtcurve$need_pal[i] & dtcurve$depth[i] != 0 & need_pal){
+  #     next_pal <- depths[which(depths == dtcurve$nex_pal[i]) -1]
+  #     pal_time <- -comp[dtcurve$drive[i]] * (log(1-(((Scomp[dtcurve$drive[i]] * (next_pal / 10 +1) )-
+  #                                                      dtcurve[i,5:9][dtcurve$drive[i]])/
+  #                                                     (dtcurve$ppn2[i] - dtcurve[i,5:9][dtcurve$drive[i]])))/
+  #                                              log(2))
+  #     # print(str(pal_time))
+  #     cat(" - t: ", unlist(pal_time)," d: ",dtcurve$depth[i])
+  #     dtcurve$time_pal[i] <- unname(unlist(pal_time))
+  #     # dtcurve$dt[i+1] <- unname(unlist(pal_time))
+  #   } else {
+  #     dtcurve$time_pal[i] <- 0
+  #   }
+  #   
+  #   if(dtcurve$depth[i] != 0 & ((
+  #      round(dtcurve$dt[i], 3) > round(dtcurve$time[i+1] - dtcurve$time[i], 3) &
+  #      need_pal) | bpal)){
+  #     dtcurve$time[(i+1):nrow(dtcurve)] <- dtcurve$time[(i+1):nrow(dtcurve)] + dtcurve$dt[i]
+  #   }
+  #   
+  #   i <- i + 1
+  #   cat("\n")
+  # }
 # } 
 
 # desat_dtcurve <- add_desat(raw_dtcurve, desat_stop, ascent_speed, secu)
@@ -262,11 +374,11 @@ half_life <- function(period, time){
 
 # plot de palier obligatoire, 
 # TODO : use this idea !!!
-plot(dtcurve$max_depth, xlim = c(300, 400), ylim = c(0,40),
-     cex = .5 + dtcurve$anarchy, pch = 3)
-lines(dtcurve$depth , lty = 3)
-lines(dtcurve$nex_pal, lty = 2)
-abline(h = 3)
+# plot(dtcurve$max_depth, xlim = c(300, 400), ylim = c(0,40),
+#      cex = .5 + dtcurve$anarchy, pch = 3)
+# lines(dtcurve$depth , lty = 3)
+# lines(dtcurve$nex_pal, lty = 2)
+# abline(h = 3)
 
 
 # Explorer le temps qu'il faut pour desat !
@@ -300,10 +412,3 @@ abline(h = 3)
 # 2.73 + (1.028-2.73) * (1- 2^(-3.4/10))
 # 
 # j = 1
-
-# -10 * (log(1-((2.38-2.73)/(1.028 - 2.73)))/log(2))
-# next_stop <- 0
-# -comp[tmp$drive[j]] * (log(1-(((Scomp[tmp$drive[j]] * (next_stop / 10 +1) )-
-#                                  tmp[j,5:9][tmp$drive[j]])/
-#                                 (tmp$ppn2[j] - tmp[j,5:9][tmp$drive[j]])))/
-#                          log(2))
