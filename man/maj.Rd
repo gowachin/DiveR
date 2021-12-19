@@ -16,7 +16,8 @@ pdf in french :
 maj
 }
 \description{
-A dataset containing an data.frame with the time majoration depending on depth of second dive and residual nitrogen.
+A dataset containing an data.frame with the time majoration depending on 
+depth of second dive and residual nitrogen.
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>

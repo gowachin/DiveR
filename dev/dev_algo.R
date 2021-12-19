@@ -153,28 +153,27 @@ raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
   ncomp = 5             #
   bpal_speed <- 6 # speed between deco stops
   
-  # TODO : put this out in a data ?
-  if(ncomp == 5){
-    comp <- c(5, 10, 20, 40, 60)
-    Scomp <- c(Sc5 = 2.72, Sc10 = 2.38, Sc20 = 2.04, Sc40 = 1.68, Sc60 = 1.58)
-    # names(comp) <- paste0("S",comp)
-  } else if(ncomp == 12){
-    comp <- c(5, 7, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120)
-    Scomp <- c(Sc5 = 2.72, Sc7 = 2.54, Sc10 = 2.38, Sc15 = 2.2,  Sc20 = 2.04,
-               Sc30 = 1.82, Sc40 = 1.68, Sc50 = 1.61, Sc60 = 1.58, Sc80 = 1.56,
-               Sc100 = 1.55, Sc120 = 1.54)
-  }
+  Haldane <- switch(as.character(ncomp),
+                    "5" = DiveR::Haldane5,
+                    "12" = DiveR::Haldane12,
+                    DiveR::Haldane5
+  )
+  comp <- Haldane5$comp
+  Scomp <- Haldane$Scomp
   depths <- c(0, 3, 6, 9)
 
   # adding cols for haldane
   dtcurve <- cbind(dtcurve, dt = c(NA, diff(dtcurve$time)),
                    ppn2 = round((dtcurve$depth/10 + 1) * ppn2,3), 
-                   c5 = NA, c10 = NA, c20 = NA, c40 = NA, c60 = NA,
-                   S5 = 1, S10 = 1, S20 = 1, S40 = 1, S60 = 1, 
                    anarchy = FALSE, drive = 0, Pabs_pal = 0, max_depth = 0,
                    nex_pal = 0, need_pal = FALSE, time_pal = 0
                    )
-  dtcurve[1, 5:9] <- 0.791 # depends on gas used !
+  n <- nrow(dtcurve)
+  Ccurve <- Scurve <- as.data.frame(matrix(
+    NA, ncol = ncomp, nrow = n, dimnames = list(1:n, comp))
+  ) ; rm(n)
+  Ccurve[1,] <- 0.791 # TODO : depends on gas used !
+  Scurve[1,] <- 1
   
   # Graphic
   plot(0,xlim = c(-2, 95), ylim = c(0, 4), type = 'n', xlab = "Time",
@@ -185,8 +184,11 @@ raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
   need_pal <- FALSE
   bpal <-FALSE
   while(i <= nrow(dtcurve)){
+    
     if(dtcurve$time_pal[i-1] > 0){
       dtcurve <- insertRow(dtcurve, dtcurve[i-1,], i)
+      Ccurve <- insertRow(Ccurve, Ccurve[i-1,], i)
+      Scurve <- insertRow(Scurve, Scurve[i-1,], i)
       dtcurve$dt[i] <- dtcurve$time_pal[i]
       bpal <- TRUE
     }
@@ -199,13 +201,13 @@ raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
     }
     
     # compute new compart sat.
-    dtcurve[i, 5:9] <- (dtcurve$ppn2[i] - dtcurve[i-1, 5:9]) *
-      half_life(comp, dtcurve$dt[i])/100  + dtcurve[i-1, 5:9]
-    dtcurve[i, 10:14] <- dtcurve[i, 5:9] / (dtcurve$ppn2[i]/dtcurve$ppn2[1]) # S = Tn2 / Pabs
-    anar <- dtcurve[i, 10:14] >= Scomp
+    Ccurve[i,] <- (dtcurve$ppn2[i] - Ccurve[i-1,]) *
+      half_life(comp, dtcurve$dt[i])/100  + Ccurve[i-1,]
+    Scurve[i,] <- Ccurve[i,] / (dtcurve$ppn2[i]/dtcurve$ppn2[1]) # S = Tn2 / Pabs
+    anar <- Scurve[i,] >= Scomp
     dtcurve$anarchy[i] <- any(anar) # is any compartement anar
     
-    Pabs_pal <- dtcurve[i, 5:9] / Scomp # Pabs = Tn2 / Sc compart
+    Pabs_pal <- Ccurve[i,] / Scomp # Pabs = Tn2 / Sc compart
     dtcurve$drive[i] <- which.max(Pabs_pal)
     dtcurve$Pabs_pal[i] <- max(Pabs_pal)
     dtcurve$max_depth[i] <- (dtcurve$Pabs_pal[i] - 1) * 10
@@ -227,9 +229,9 @@ raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
     }
     
     # Graphic
-    points(rep(dtcurve$time[i], 5), dtcurve[i, 5:9], col = c(1:5), pch = 20)
-    points(rep(dtcurve$time[i], 5), dtcurve[i, 10:14], col = c(1:5), pch = 10, 
-           cex = .5 + (dtcurve[i, 10:14] >= Scomp))
+    points(rep(dtcurve$time[i], 5), Ccurve[i,], col = c(1:5), pch = 20)
+    points(rep(dtcurve$time[i], 5), Scurve[i,], col = c(1:5), pch = 10, 
+           cex = .5 + (Scurve[i,] >= Scomp))
     
      # we matched the depth with next deco stop depth.
     dtcurve$need_pal[i] <- need_pal <- dtcurve$depth[i] <= dtcurve$nex_pal[i]
@@ -237,10 +239,12 @@ raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
     # only happens if need_pal ! will be but in another loop
     if(dtcurve$need_pal[i] & dtcurve$depth[i] != 0 & need_pal){
       next_pal <- depths[which(depths == dtcurve$nex_pal[i]) -1]
-      pal_time <- -comp[dtcurve$drive[i]] * (log(1-(((Scomp[dtcurve$drive[i]] * (next_pal / 10 +1) )-
-                                                       dtcurve[i,5:9][dtcurve$drive[i]])/
-                                                      (dtcurve$ppn2[i] - dtcurve[i,5:9][dtcurve$drive[i]])))/
-                                               log(2))
+      pal_time <- -comp[dtcurve$drive[i]] * (
+        log(1-(((Scomp[dtcurve$drive[i]] * (next_pal / 10 +1) )-
+                  Ccurve[i,][dtcurve$drive[i]])/
+                 (dtcurve$ppn2[i] - Ccurve[i,][dtcurve$drive[i]])))/
+          log(2)
+        )
       # cat(" - t: ", unlist(pal_time)," d: ",dtcurve$depth[i], "\n")
       dtcurve$time_pal[i] <- unname(unlist(pal_time))
     } else {

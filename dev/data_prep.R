@@ -1,19 +1,18 @@
-### examples ####
 library(DiveR)
 
 pa20 <- dive(depth = 19, time = 43, secu = TRUE, vup = 10)
 plot(pa20)
 usethis::use_data(pa20, overwrite = TRUE)
 
-#### Table preparation ##### 
-# pdf at : http://renaud.helstroffer.free.fr/sub_technique/fiche_initiation/mn90.pdf
-
-# convert hour to minutes
+# convert hour to minutes ####
 h <- function(x,m = 0){
   return(x*60+m)
 }
 
-# possible depth
+# Table prep ####
+# pdf at : http://renaud.helstroffer.free.fr/sub_technique/fiche_initiation/mn90.pdf
+
+## possible depth ####
 prof <- c(6,8,10, 
           12,15, 18, 20, 
           22, 25, 28, 30, 
@@ -21,7 +20,7 @@ prof <- c(6,8,10,
           42, 45, 48, 50, 
           52, 55, 58, 60, 
           62, 65)
-# possible times per depth
+## possible times per depth ####
 time <- c(15,30,45,h(1,15),h(1,45),h(2,15),h(3), # 6
           15, 30, 45,h(1),h(1,30),h(1,45),h(2,15),h(2,45), # 8
           15, 30, 45, h(1),h(1,15),h(1,45), h(2),h(2,15),h(2,45), # 10
@@ -48,7 +47,7 @@ time <- c(15,30,45,h(1,15),h(1,45),h(2,15),h(3), # 6
           5,10, 15, # 62
           5,10, 15 # 65
 )
-# max time per depth
+## max time per depth ####
 mt <- c(h(3), # 6
         h(2,45), # 8
         h(2,45), # 10
@@ -119,3 +118,22 @@ usethis::use_data(nitrogen, overwrite = TRUE)
 usethis::use_data(maj, overwrite = TRUE)
 
 rm(m3,m6,m9,grp,i, mt, prof, table, time, ut, n2, azote)
+
+
+# S_values prep ####
+
+Haldane5 <- data.frame(
+  comp = c(5, 10, 20, 40, 60),
+  Scomp = c(2.72, 2.38, 2.04, 1.68, 1.58)
+)
+# names(comp) <- paste0("S",comp)
+Haldane12 <- data.frame(
+  comp = c(5, 7, 10, 15, 20, 30, 40, 50, 60, 80, 100, 120),
+  Scomp = c(2.72, 2.54, 2.38, 2.2,  2.04, 1.82, 1.68, 1.61, 1.58, 1.56, 1.55, 
+            1.54)
+)
+
+usethis::use_data(Haldane5, overwrite = TRUE)
+usethis::use_data(Haldane12, overwrite = TRUE)
+
+rm(Haldane5, Haldane12)
