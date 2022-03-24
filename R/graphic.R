@@ -64,6 +64,7 @@ plot.dive <- function(x,
   if (!add) {x$dtcurve$times <- x$dtcurve$times + x$hour[1]}
   
   dtcurve <- x$dtcurve
+  desat <- x$desat$desat_stop
   # set global plot ----
   delta_x <- diff(x$hour) * 0.1
   delta_y <- (depth(x) - min(dtcurve$depths)) * 0.2
@@ -178,11 +179,15 @@ plot.dive <- function(x,
   if(time_print){
     time_i <- times_inf(x, col = call_par$col)
     do.call(text, time_i)
-  } else if(deco_print){
-    for (i in x$desat$depth[x$desat$time > 0]) {
+  } 
+  if(deco_print){
+    for (i in desat$depth[desat$time > 0]) {
       text(
-        x = mean(dtcurve$time[dtcurve$depths == i]), y = -i,
-        paste(x$desat$time[x$desat$depth == i], "'", sep = ""), pos = 3,
+        x = mean(c(desat$hour[desat$depth == i], 
+                 desat$hour[desat$depth == i] + desat$time[desat$depth == i])) +
+          x$hour[1], 
+        y = -i,
+        labels = paste(desat$time[desat$depth == i], "'", sep = ""), pos = 3,
         col = call_par$col
       )
     }
@@ -391,6 +396,7 @@ plot.ndive <- function(x,
                 def_cols = def_cols, cut_inter = cut_inter, legend = legend,
                 add = add)
   
+  
   # SOLO plot only call plot.dive
   if (x$type == 'solo'){
     solo_par <- call_par
@@ -417,7 +423,7 @@ plot.ndive <- function(x,
               min(x$dive1$dtcurve$depths, x$dive2$dtcurve$depths) - delta_y)
   
   # TODO : why a duplicate here from line 457 ?
-  call_par <- list(...)
+  # call_par <- list(...)
   
   names_defaut_par <- names(default_par)
   for (i in seq_along(default_par)) {

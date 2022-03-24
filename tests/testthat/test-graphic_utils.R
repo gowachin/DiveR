@@ -43,10 +43,10 @@ test_that("depth_inf_output", {
 test_that("time_inf_output", {
   d <- dive(depth = c(0, 20, 19, 10, 7), 
             time = c(0, 2, 15, 20,  40)) 
-  exp <- data.frame(x = c(8.5, 17.5, 30.0, 41.9, NA), 
-                    y = c(-19.5, -14.5, -8.5, -3.0, -9.0),
-                    labels = c("13'", "5'", "20'", "3'", "0'"), 
-                    pos = rep(3, 5), col = rep("black", 5), 
+  exp <- data.frame(x = c(8.5, 17.5, 30.0, 41.9), 
+                    y = c(-19.5, -14.5, -8.5, -3.0),
+                    labels = c("13'", "5'", "20'", "3'"), 
+                    pos = rep(3, 4), col = rep("black", 4), 
                     stringsAsFactors = FALSE)
   expect_equal(times_inf(d), exp)
 })
