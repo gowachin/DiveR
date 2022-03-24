@@ -66,13 +66,7 @@ times_inf <- function(x, col = "black"){
   
   desat <- x$desat$desat_stop
   
-  times <- c(times, (desat$time + 2 *desat$hour ) /2 )
-  depths <- c(depths, desat$depth)
-  dtimes <- c(dtimes, desat$time)
-  
-  times <- times[!duplicated(dtimes)] + x$hour[1]
-  depths <- depths[!duplicated(dtimes)]
-  dtimes <- dtimes[!duplicated(dtimes)]
+  times <- times + x$hour[1]
   
   pos <- rep(3,length(dtimes))
   

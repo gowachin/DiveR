@@ -1,7 +1,7 @@
 Package: DiveR
 Type: Package
 Title: Simulation Tool for Scuba Diving and Gas Desaturation
-Version: 0.4.0
+Version: 0.4.1
 Author: Maxime Jaunatre 
 Maintainer: Maxime Jaunatre <maxime.jaunatre@yahoo.fr>
 Description: Package for scubadiving planification.
