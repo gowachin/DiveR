@@ -304,8 +304,10 @@ rm_secu <- function(dive){
         dtcurve$times <- replace(
           dtcurve$times, length(dtcurve$times),
           tail(dtcurve$times, 1) - 0.5 + 3/params["ascent_speed"])
+        
         desat$desat_stop[3,3] <- NA
-        desat$desat_stop <- type.convert(desat$desat_stop) # cause only NA 
+        desat$desat_stop <- type.convert(desat$desat_stop, as.is = NA) 
+        # cause only logical NA
         params["dtr"] <- params["dtr"] - 0.5 + 3/params["ascent_speed"]
         hour[2] <- hour[2] - 0.5 + 3/params["ascent_speed"]
         rownames(dtcurve) <- 1:nrow(dtcurve)
