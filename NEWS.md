@@ -1,3 +1,9 @@
+# DiveR 0.4.1
+
+## Bugs fixed
+
+* Plot was sometimes missing information. ( #16 )
+
 # DiveR 0.4.0
 
 ## Major improvements
