@@ -147,10 +147,10 @@ please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
 #' @param ppn2 Partial pressure of nitrogen in bar. Default is 0.791 bar
 #' 
 #' @return a desat object, which is a list with a data.frame containing 
-#' desaturation stops at 9, 6 and 3 m depth. Next element is the dive groupe
+#' desaturation stops at 9, 6 and 3 m depth. Next element is the dive group
 #' for possible second dive and lastly the times at which the desaturation
-#' stops occur during the dive. The last element is NULL because it's made with 
-#' tables.
+#' stops occur during the dive. The last element is "table" because it's made with 
+#' tables. TODO : this has been modified with refacto !
 #' 
 #' @details 
 #' Dive time used in table is the maximum time in the dtcurve table, exept the 

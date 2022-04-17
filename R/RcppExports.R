@@ -9,19 +9,25 @@ vecdiv <- function(num, denum) {
     .Call(`_DiveR_vecdiv`, num, denum)
 }
 
+#' half_life
+#' 
+#' @param period period in minute for the compartment.
+#' @param time time at which user want the load of nitrogen
+#' 
+#' @examples 
+#' cpp_half_life(period = 1, time = c(1,2))
+#' 
+#' @rdname half_life
+#' @export
 cpp_half_life <- function(period, time) {
     .Call(`_DiveR_cpp_half_life`, period, time)
 }
 
-cpp_haldane_desat <- function(dtcurve, comp, Scomp, depths) {
-    .Call(`_DiveR_cpp_haldane_desat`, dtcurve, comp, Scomp, depths)
+cpp_haldane_desat <- function(dtcurve, comp, Scomp, depths, ppn2_ini = 0.791, bpal_speed = 6.0) {
+    .Call(`_DiveR_cpp_haldane_desat`, dtcurve, comp, Scomp, depths, ppn2_ini, bpal_speed)
 }
 
 insertCell <- function(x, n) {
     .Call(`_DiveR_insertCell`, x, n)
-}
-
-cpp_insertRow <- function(df, newrow, r) {
-    .Call(`_DiveR_cpp_insertRow`, df, newrow, r)
 }
 

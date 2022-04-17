@@ -125,9 +125,18 @@ call. = interactive())
   }
   # draw raw dtcurve
   raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
+  
+  
   if(desat_model == "table"){
-    # time maj and tablecheck is done in dest_table
+    # time maj and tablecheck is done in desat_table
     desat_stop <- desat_table(dtcurve = raw_dtcurve, maj = maj, ppn2 = 1 - ppo2)
+  } else if(desat_model == "haldane"){
+    message("Not yet implemented")
+    desat_stop <- list(
+      desat_stop = data.frame(depth = 0, time = 0, hour = NA, 
+                              row.names = "m0"),
+      group = 'Z', model = "haldane"
+      )
   } else {
     message("Not yet implemented")
     desat_stop <- list(desat_stop = data.frame(depth = 0, time = 0, hour = NA,

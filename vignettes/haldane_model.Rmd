@@ -1,0 +1,169 @@
+---
+title: "Testing limits of Haldane Model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{haldane_model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(DiveR)
+library(tidyverse)
+library(viridis)
+library(microbenchmark)
+```
+
+This vignette is more an exploratory work for setting an Haldane model in the `dive` function.
+
+
+# Finding formulas
+
+First I need to define an half life forumula, which is used in computing gaz variation of a compartment.
+
+```{r hl_plot}
+# testing the demi-life formula ####
+n = 10
+dv <- rep(0,n)
+for(i in 2:n){
+  if(i == 1){
+    dv[i] <- 50
+  } else {
+    dv[i] <- dv[i-1] + (100 - dv[i-1])/2
+  }
+}
+dv <- round(dv, 3)
+a = 10
+plot(seq(0,(n-1)*a, by = a), dv, type = 'b')
+t <- 0:100
+p <-  (1 - 2^(-t / n)) * 100
+lines(t, p, col = 'red')
+```
+
+The resulting function is `half_life`. 
+
+```{r half_life}
+half_life
+c <- DiveR::Haldane5$comp # dataset of the different haldane compartement models
+c
+half_life(c, 5) # get percentage over 5 min difference
+```
+
+```{r bench_hl, include = FALSE}
+microbenchmark(
+  r = half_life(c, 5),
+  cpp = cpp_half_life(c, 5),
+  times = 1000
+)
+```
+
+# Testing Haldane versus mn90 tables
+
+As the DiveR package has different models, we can check if deco stops are longer in some models. It also allow for me to check if the computed values are not totally absurd.
+
+First I can open all values I have in mn90 tables and compute the deco times for my different models. I do this for Haldane with 5 and 12 compartments.
+
+```{r, compute, warning=FALSE}
+# Getting all depths and times values.
+cases <- dimnames(DiveR::table)
+depths <- as.numeric(cases[[1]])
+times <- as.numeric(cases[[2]])
+
+cases <- expand.grid(depths, times)
+colnames(cases) <- c("depths", "times")
+in_table <- apply(cases, 1, function(x) tablecheck(x[1], x[2], force = TRUE))
+cases <- cases[in_table,]
+# function to call the differents models and extract deco stop times
+get_deco <- function(depth, time){
+  raw_dtcurve <- init_dtcurve(depth, time, 10, "OW")
+  # compute times
+  tbl <- desat_table(dtcurve = raw_dtcurve)$desat_stop$time
+  hld5 <- desat_haldane(dtcurve = raw_dtcurve, ncomp = 5)$desat_stop$time
+  hld12 <- desat_haldane(dtcurve = raw_dtcurve, ncomp = 12)$desat_stop$time
+  
+  return(c(tbl, hld5, hld12))
+}
+
+res = t(apply(cases, 1, function(x) get_deco(x[1], x[2]) ))
+colnames(res) <- paste0(c(9,6,3), "m", rep(c("tbl", "hl5", "hl12"), each = 3))
+
+deco <- cbind(cases, res)
+```
+
+Then, I reformat this and compute the difference between the table values and the computed values. This if the `diff` column. `perc` column is the percentage of variation from the table values.
+
+$$
+perc = \left(\frac{value_{haldane} - value_{mn90} }{ value_{mn90} } + 1\right) \times 100
+$$
+
+As there is no negative time value, the percentage minimum will be `r -100`\%. I correct the values for this. 
+
+```{r format}
+diff_model <- pivot_longer(deco, cols = -c('depths', "times")) %>%
+  # cut my columns
+  mutate(deco_d = as.numeric(sub("m.*$", "", name)),
+         model = sub("^.m", "", name)) %>%
+  select(-name) %>%
+  # compute difference and diff percentage
+  group_by(depths, times, deco_d) %>%
+  summarise( diff = value - value[model == "tbl"],
+             perc = (diff / value[model == "tbl"] +1) * 100, 
+             mod = model, .groups = "keep") %>%
+  filter(mod != "tbl") %>%
+  ungroup() 
+```
+
+We can observe that there is larger differences for slower deco stops, but this is also where there is the least points. We also see very few values above 0, indicating greater deco stop in Haldane model than in mn90 tables.
+
+```{r diff_dens_plot, echo = FALSE, fig.dim = c(8, 6)}
+n_point <- diff_model %>%
+  group_by(mod, deco_d) %>%
+  summarise(n = sum(diff != 0), .groups = "keep")
+
+filter(diff_model, diff != 0) %>%
+ggplot( aes(x = diff)) +
+  facet_grid( mod ~ deco_d) +
+  geom_density(fill="#69b3a2") +
+  geom_text(x = -5, y = 1.5, aes(label = paste("n =", n)), data = n_point) +
+  NULL
+```
+
+Observing the places of difference in depth and time, it's difficult to see a pattern.
+
+```{r diff_plot, echo = FALSE,  fig.dim = c(8, 6)}
+diff_model %>%
+  mutate(diff = replace(diff, diff == 0, NaN)) %>%
+ggplot(aes(x = times, y = -depths, fill = diff)) +
+  facet_grid( mod ~ deco_d) +
+  geom_tile() +
+  # geom_point(aes(alpha = diff == 0), size = 0.1) +
+  scale_fill_viridis() +
+  NULL
+```
+
+```{r echo = TRUE}
+min_d_100 <- min(diff_model$perc[diff_model$perc > 100 ], na.rm = TRUE)
+min_d_100 <- diff_model$depths[diff_model$perc == min_d_100 & !is.na (diff_model$perc)]
+```
+
+
+Interpretation is simpler when looking at percentage values. Here we clearly see that once the table indicate a deco stop for a depth, Haldane model take a longer time to show equivalent time. For a given depth, Haldane model will minor the deco stop, then converge with the table value. For deeper depths ($depth > $ `r min_d_100`) and the 3m deco stop, the Haldane model will even reach table values and get above by `r max(diff_model$perc, na.rm = TRUE) - 100` before diminishing.   
+
+```{r perc_plot, echo = FALSE,  fig.dim = c(8, 6)}
+ggplot(diff_model, aes(x = times, y = -depths, fill = perc)) +
+  facet_grid( mod ~ deco_d) +
+  geom_tile() +
+  # geom_point(aes(alpha = diff == 0), size = 0.1) +
+  scale_fill_viridis() +
+  NULL
+```
+
+This difference could be caused by the fact that the Haldane model coded in DiveR takes the ascent at the end of the dive in the computation. During this ascent, desaturation start and it could help minor deco stop duration. A modification of the ascent speed could correct the differences.
+

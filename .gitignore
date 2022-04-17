@@ -4,3 +4,6 @@
 .Ruserdata
 dev/tryhard.R
 docs
+inst/doc
+
+src/*.o

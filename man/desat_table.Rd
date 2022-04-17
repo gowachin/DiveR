@@ -19,10 +19,10 @@ time. Depths values are meters (positive values) and time is in minute.}
 }
 \value{
 a desat object, which is a list with a data.frame containing 
-desaturation stops at 9, 6 and 3 m depth. Next element is the dive groupe
+desaturation stops at 9, 6 and 3 m depth. Next element is the dive group
 for possible second dive and lastly the times at which the desaturation
-stops occur during the dive. The last element is NULL because it's made with 
-tables.
+stops occur during the dive. The last element is "table" because it's made with 
+tables. TODO : this has been modified with refacto !
 }
 \description{
 Extract time for desat stop using the MN90 tables. Desat stop expected are

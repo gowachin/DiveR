@@ -12,7 +12,7 @@ Imports: graphics,
          stats,
          viridisLite,
          Rcpp
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Depends: R (>= 3.5)
 Suggests: 
     knitr,

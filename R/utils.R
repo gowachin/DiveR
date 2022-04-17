@@ -1,29 +1,3 @@
-#' insertRow
-#' 
-#' Insert a row at a row number. This an intern function.
-#' 
-#' @param existingDF The data.frame to insert row in.
-#' @param newrow row to insert. Must be of length == ncol(existingDF)
-#' @param r place where to insert the row
-#' 
-#' @return data.frame
-#' 
-#' @examples 
-#' existingDF <- as.data.frame(matrix(seq(20),nrow=5,ncol=4))
-#' insertRow(existingDF, newrow = seq(4), r = 3)
-#' 
-#' @details 
-#' copied from SO
-#' \url{https://stackoverflow.com/questions/11561856/add-new-row-to-dataframe-at-specific-row-index-not-appended}
-#' 
-#' @export
-insertRow <- function(existingDF, newrow, r) {
-  existingDF[seq(r+1,nrow(existingDF)+1),] <- existingDF[seq(r,nrow(existingDF)),]
-  existingDF[r,] <- newrow
-  existingDF
-}
-
-
 #' ceiling_dec
 #' 
 #' Ceiling at a specific decimal level

@@ -12,6 +12,7 @@
 #' 
 #' @return percentage load.
 #' 
+#' @rdname half_life
 #' @export
 half_life <- function(period, time){
   return((1 - 2^(-time/period)) * 100)
@@ -35,7 +36,7 @@ half_life <- function(period, time){
 #' @return discretised dtcurve table.
 #' 
 #' @export
-cut.dtcurve <- function(dtcurve, delta = 1, cut_h = FALSE){
+cut_dtcurve <- function(dtcurve, delta = 1, cut_h = FALSE){
   #### IDIOT PROOF ####
   if (!inherits(dtcurve, 'data.frame') | any(is.na(dtcurve)) | 
       any(colnames(dtcurve) != c('depth', 'time'))){
@@ -89,4 +90,89 @@ cut.dtcurve <- function(dtcurve, delta = 1, cut_h = FALSE){
   tmp <- unique(merge(res, dtcurve, all = TRUE))
   res <- tmp[order(tmp$time),]
   return(res)
+}
+
+#' desat_haldane
+#' 
+#' @param dtcurve a depth time curve in a data.frame with 2 columns depth and 
+#' time. Depths values are meters (positive values) and time is in minute.
+#' @param maj TODO : ignored parameter for now
+#' @param altitude Altitude of the dive in meter. Default is 0 m (sea level).
+#' @param ppn2 Partial pressure of nitrogen in bar. Default is 0.791 bar
+#' @param ncomp Number of compartment for the model. Choice between 5 and 12.
+#' 
+#' @details There is a modification of the last compartment, with an half-life
+#' of 60 instead of 75 min. This is because the Sc value was not found for such
+#' time.
+#' 
+#' Limitation is imposed because we use Haldane model with constant depths,
+#' and not the Schreiner equation using depth evolution.
+#' 
+#' @return a desat object, which is a list with a data.frame containing 
+#' desaturation stops at 9, 6 and 3 m depth. Next element is the dive group
+#' for possible second dive and lastly the times at which the desaturation
+#' stops occur during the dive. The last element is NULL because it's made with 
+#' tables.
+#' 
+#' @export
+desat_haldane <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791, ncomp = 5){
+  #### IDIOT PROOF ####
+  # TODO : copy from desat_table
+  
+  # # done before
+  # ## parameters
+  # depth <- 60
+  # time <- 25
+  # secu <- FALSE
+  # ascent_speed <- 10
+  # desat_model <- 'Haldane'
+  # hour <- 0
+  # gas <- 'AIR'
+  # way <- 'OW'
+  # raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
+  # # EOF done before
+  
+  dtcurve <- cut_dtcurve(dtcurve, delta = .1, cut_h = FALSE)
+
+  bpal_speed <- 6 # speed between deco stops
+  
+  # adding cols for haldane
+  dtcurve <- cbind(dtcurve, dt = c(NA, diff(dtcurve$time)),
+                   ppn2 = round((dtcurve$depth/10 + 1) * ppn2,3), 
+                   anarchy = FALSE, drive = 0, Pabs_pal = 0, max_depth = 0,
+                   nex_pal = 0, need_pal = FALSE, time_pal = 0
+  )
+  
+  # Choose nomber of compartement
+  Haldane <- switch(as.character(ncomp),
+                    "5" = DiveR::Haldane5,
+                    "12" = DiveR::Haldane12,
+                    DiveR::Haldane5
+  )
+  comp <- Haldane$comp
+  Scomp <- Haldane$Scomp
+  depths <- c(0, 3, 6, 9)
+  
+  dtcurve <- cpp_haldane_desat(dtcurve, comp, Scomp, depths, ppn2, bpal_speed)
+  
+  # extract the pal time to compare mn90
+  pal <- depths
+  names(pal) <- paste0("m",pal)
+  for(d in seq_along(depths)){
+    pal[d] <- sum(dtcurve$time_pal[dtcurve$depth == depths[d]])
+  }
+  
+  desat <- list(
+    desat_stop = data.frame(
+      depth = rev(depths)[-4],
+      time = rev(pal)[-4],
+      hour = rep(NA, 3)
+    ),
+    group = "Z", model = paste0("Hal",ncomp)
+    # TODO : add last saturation values and ncomp in ?
+  )
+  
+  class(desat) <- "desat"
+  # end
+  return(desat)
 }

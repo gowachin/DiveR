@@ -47,8 +47,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_haldane_desat
-DataFrame cpp_haldane_desat(DataFrame dtcurve, NumericVector comp, NumericVector Scomp, NumericVector depths);
-RcppExport SEXP _DiveR_cpp_haldane_desat(SEXP dtcurveSEXP, SEXP compSEXP, SEXP ScompSEXP, SEXP depthsSEXP) {
+DataFrame cpp_haldane_desat(DataFrame dtcurve, NumericVector comp, NumericVector Scomp, NumericVector depths, NumericVector ppn2_ini, NumericVector bpal_speed);
+RcppExport SEXP _DiveR_cpp_haldane_desat(SEXP dtcurveSEXP, SEXP compSEXP, SEXP ScompSEXP, SEXP depthsSEXP, SEXP ppn2_iniSEXP, SEXP bpal_speedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -56,7 +56,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type comp(compSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Scomp(ScompSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type depths(depthsSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_haldane_desat(dtcurve, comp, Scomp, depths));
+    Rcpp::traits::input_parameter< NumericVector >::type ppn2_ini(ppn2_iniSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type bpal_speed(bpal_speedSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_haldane_desat(dtcurve, comp, Scomp, depths, ppn2_ini, bpal_speed));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -72,19 +74,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cpp_insertRow
-DataFrame cpp_insertRow(DataFrame df, DataFrame newrow, NumericVector r);
-RcppExport SEXP _DiveR_cpp_insertRow(SEXP dfSEXP, SEXP newrowSEXP, SEXP rSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< DataFrame >::type df(dfSEXP);
-    Rcpp::traits::input_parameter< DataFrame >::type newrow(newrowSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type r(rSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_insertRow(df, newrow, r));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
@@ -92,9 +81,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DiveR_vecpow2", (DL_FUNC) &_DiveR_vecpow2, 2},
     {"_DiveR_vecdiv", (DL_FUNC) &_DiveR_vecdiv, 2},
     {"_DiveR_cpp_half_life", (DL_FUNC) &_DiveR_cpp_half_life, 2},
-    {"_DiveR_cpp_haldane_desat", (DL_FUNC) &_DiveR_cpp_haldane_desat, 4},
+    {"_DiveR_cpp_haldane_desat", (DL_FUNC) &_DiveR_cpp_haldane_desat, 6},
     {"_DiveR_insertCell", (DL_FUNC) &_DiveR_insertCell, 2},
-    {"_DiveR_cpp_insertRow", (DL_FUNC) &_DiveR_cpp_insertRow, 3},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

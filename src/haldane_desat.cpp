@@ -41,6 +41,16 @@ NumericVector vecdiv(const NumericVector num, const NumericVector denum) {
   return out;
 }
 
+//' half_life
+//' 
+//' @param period period in minute for the compartment.
+//' @param time time at which user want the load of nitrogen
+//' 
+//' @examples 
+//' cpp_half_life(period = 1, time = c(1,2))
+//' 
+//' @rdname half_life
+//' @export
 // [[Rcpp::export]]
 NumericVector cpp_half_life(NumericVector period, NumericVector time){
 
@@ -54,21 +64,18 @@ NumericVector cpp_half_life(NumericVector period, NumericVector time){
 
 // [[Rcpp::export]]
 DataFrame cpp_haldane_desat(
-    DataFrame dtcurve, NumericVector comp, NumericVector Scomp, NumericVector depths
+    DataFrame dtcurve, NumericVector comp, NumericVector Scomp, 
+    NumericVector depths, 
+    NumericVector ppn2_ini = 0.791, NumericVector bpal_speed = 6.0
 ){
   
   int ncomp = comp.length();
   
   NumericVector Scurve (ncomp, 1.0);
-  NumericVector Ccurve (ncomp, 0.792);
+  NumericVector Ccurve (ncomp, ppn2_ini[0]);
   
   bool ne_pal = true; // limit warnings in loop
   bool bpal = false;
-  NumericVector bpal_speed = {6.0};
-  
-  // NumericVector depths = {0, 3, 6, 9};
-  NumericVector tmp_Pabs_pal;
-  NumericVector max_d, next_pal;
   
   DataFrame C_dtcurve = clone(dtcurve);
   
@@ -84,6 +91,8 @@ DataFrame cpp_haldane_desat(
   LogicalVector need_pal = C_dtcurve["need_pal"];
   NumericVector time_pal = C_dtcurve["time_pal"];
   
+  NumericVector tmp_Pabs_pal;
+  NumericVector max_d, next_pal;
   NumericVector subdt, subppn2 (1);
   NumericVector min_palt (4);
   
@@ -183,7 +192,7 @@ DataFrame cpp_haldane_desat(
     Named("dt") = dt,
     Named("ppn2") = ppn2,
     Named("anarchy") = anarchy,
-    Named("drive") = drive +1,
+    Named("drive") = drive + 1,
     Named("Pabs_pal") = Pabs_pal,
     Named("max_depth") = max_depth,
     Named("nex_pal") = nex_pal,

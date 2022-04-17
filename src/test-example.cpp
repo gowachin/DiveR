@@ -10,57 +10,41 @@
 // All test files should include the <testthat.h>
 // header file.
 #include <testthat.h>
-#include <Rcpp.h>
+#include "haldane_desat.h"
 #include "insertrow.h"
 
-
-using namespace Rcpp;
-
-
-// Initialize a unit test context. This is similar to how you
-// might begin an R test file with 'context()', expect the
-// associated context should be wrapped in braced.
-context("rcpp_insertRows") {
+context("insertCell") {
   
-  test_that("Adding a rows") {
-    NumericVector n1 = {1.0,2.0,3.0};
-    IntegerVector i1 = {1,2,3};
-    CharacterVector c1 = {"A", "B", "C"};
-    LogicalVector l1 = {false, true, false};
-    DataFrame dfi = DataFrame::create( Named("V1") = n1 ,
-                                       _["V2"] = i1, 
-                                       _["V3"] = c1,
-                                       _["V4"] = l1 ,
-                                       Named("stringsAsFactors") = false);
+  test_that("insertCell num") {
+    int i = 1;
+    SEXP v = PROTECT(Rf_allocVector(REALSXP, 4));
+    for (int i = 0; i < 4; i++) {
+      REAL(v)[i] = i + 1;
+    }
+    SEXP r = PROTECT(Rf_allocVector(REALSXP, 5));
+    for (int i = 0; i < 5; i++) {
+      REAL(r)[i] = i;
+    }
+    REAL(r)[1] = 1;
     
-    NumericVector n2 = {42.0};
-    IntegerVector i2 = {42};
-    CharacterVector c2 = {"I"};
-    LogicalVector l2 = {true};
-    DataFrame dfin = DataFrame::create( Named("V1") = n2 , 
-                                        _["V2"] = i2, 
-                                        _["V3"] = c2,
-                                        _["V4"] = l2,
-                                        Named("stringsAsFactors") = false);
+    SEXP d = insertCell(v, i);
+    // expect_true(d == r); 
+    // TODO : test this function...
     
-    NumericVector n3 = {1.0,2.0,42.0,3.0};
-    IntegerVector i3 = {1,2,42,3};
-    CharacterVector c3 = {"A", "B", "I", "C"};
-    LogicalVector l3 = {false, true, true, false};
-    DataFrame dfe = DataFrame::create( Named("V1") = n3 ,
-                                       _["V2"] = i3, 
-                                       _["V3"] = c3,
-                                       _["V4"] = l3,
-                                       Named("stringsAsFactors") = false);
+    UNPROTECT(2);
+  }
+  
+}
+
+
+context("Haldane half_life") {
+
+  test_that("testing half_life") {
+    NumericVector p = 1;
+    NumericVector t = 1;
+    NumericVector r = 50;
     
-    NumericVector rr = {2};
-    DataFrame res = cpp_insertRow(dfi, dfin, rr);
-    
-    Function identical("identical");
-    
-    LogicalVector tada = identical(res, dfe);
-    
-    expect_true(tada[0]);
+    // expect_true(cpp_half_life(p, t) == r);
   }
 
 }
