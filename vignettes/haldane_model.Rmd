@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(DiveR)
+# library(DiveR)
 library(tidyverse)
 library(viridis)
 library(microbenchmark)
@@ -81,8 +81,8 @@ colnames(cases) <- c("depths", "times")
 in_table <- apply(cases, 1, function(x) tablecheck(x[1], x[2], force = TRUE))
 cases <- cases[in_table,]
 # function to call the differents models and extract deco stop times
-get_deco <- function(depth, time){
-  raw_dtcurve <- init_dtcurve(depth, time, 10, "OW")
+get_deco <- function(depth, time, speed = 10){
+  raw_dtcurve <- init_dtcurve(depth, time, speed, "OW")
   # compute times
   tbl <- desat_table(dtcurve = raw_dtcurve)$desat_stop$time
   hld5 <- desat_haldane(dtcurve = raw_dtcurve, ncomp = 5)$desat_stop$time

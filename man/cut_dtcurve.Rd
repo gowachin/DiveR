@@ -4,7 +4,7 @@
 \alias{cut_dtcurve}
 \title{cut_dtcurve}
 \usage{
-cut_dtcurve(dtcurve, delta = 1, cut_h = FALSE)
+cut_dtcurve(dtcurve, delta = 1, cut_h = FALSE, mandatory = c(9, 6, 3))
 }
 \arguments{
 \item{dtcurve}{a depth time curve in a data.frame with 2 columns depth and 
@@ -16,6 +16,9 @@ approximate desaturation.}
 
 \item{cut_h}{is the algorithme going to cut horizontal part of the dtcurve. 
 FALSE by default.}
+
+\item{mandatory}{is depths that are important to add in the dtcurve. 
+This is essential to add deco stop classical depths.}
 }
 \value{
 discretised dtcurve table.

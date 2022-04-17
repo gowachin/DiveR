@@ -32,11 +32,14 @@ half_life <- function(period, time){
 #' approximate desaturation.
 #' @param cut_h is the algorithme going to cut horizontal part of the dtcurve. 
 #' FALSE by default.
+#' @param mandatory is depths that are important to add in the dtcurve. 
+#' This is essential to add deco stop classical depths.
 #' 
 #' @return discretised dtcurve table.
 #' 
 #' @export
-cut_dtcurve <- function(dtcurve, delta = 1, cut_h = FALSE){
+cut_dtcurve <- function(dtcurve, delta = 1, cut_h = FALSE, 
+                        mandatory = c(9, 6, 3)){
   #### IDIOT PROOF ####
   if (!inherits(dtcurve, 'data.frame') | any(is.na(dtcurve)) | 
       any(colnames(dtcurve) != c('depth', 'time'))){
@@ -77,20 +80,39 @@ cut_dtcurve <- function(dtcurve, delta = 1, cut_h = FALSE){
       depths <- c(depths, dtcurve$depth[i])
     }
   }
+  
   # duplicate last point in case of round value in seq
   times <- c(times, dtcurve$time[i])
   depths <- c(depths, dtcurve$depth[i])
   res <- data.frame(depth = depths, time = times)
+  
   # completing depths
   for(i in 1:nrow(res)){
     if(is.na(res$depth[i])){
       res$depth[i] <- round(depth_at_time(d, res$time[i]), 2)
     }
   }
+  # browser()
+  # add mandatory depths
+  mand <- list()
+  for(i in mandatory){
+    tmp <- time_at_depth(d, i)
+    mand[[paste0("m",i)]] <- data.frame(
+      depth = rep(i, length(tmp)),
+      time = tmp
+    )
+  }
+  mand <- do.call(rbind, mand)
+  res <- rbind(res, mand)
+
+  
+  
   tmp <- unique(merge(res, dtcurve, all = TRUE))
   res <- tmp[order(tmp$time),]
   return(res)
 }
+
+# TODO : add special cut for deco stops !
 
 #' desat_haldane
 #' 
@@ -131,9 +153,10 @@ desat_haldane <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791, ncomp = 
   # way <- 'OW'
   # raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
   # # EOF done before
-  
+  # dtcurve <- init_dtcurve(62, 15, 15, "OW")
   dtcurve <- cut_dtcurve(dtcurve, delta = .1, cut_h = FALSE)
-
+  # dtcurve[-c(1:38),]
+  
   bpal_speed <- 6 # speed between deco stops
   
   # adding cols for haldane
