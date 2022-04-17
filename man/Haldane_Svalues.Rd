@@ -29,6 +29,12 @@ A dataset containing different data.frames for Haldane S values.
  \item{Haldane12 - Compartments from 5 to 120 minutes}
 }
 }
+\note{
+For the Haldane5 :
+There is a modification of the last compartment, with an half-life
+of 60 instead of 75 min. This is because the Sc value was not found for such
+time.
+}
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 }

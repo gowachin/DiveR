@@ -1,5 +1,7 @@
 #' @import graphics
 #' @import utils
+#' @useDynLib DiveR, .registration=TRUE
+#' @importFrom Rcpp sourceCpp
 NULL
 
 #' DiveR
