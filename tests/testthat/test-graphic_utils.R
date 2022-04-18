@@ -6,12 +6,6 @@
 #   expect_error(depths_inf("dive(20, 40)"), err )
 # })
 
-test_that("err_depth_inf_only_desat", {
-  err <- "only_desat must be TRUE or FALSE"
-  expect_error(depths_inf(dive(20, 40), only_desat = "TRUE"), err )
-  expect_error(depths_inf(dive(20, 40), only_desat = NA), err )
-})
-
 test_that("depth_inf_output", {
   d <- dive(depth = c(0, 20, 19, 10, 7), 
             time = c(0, 2, 15, 20,  40)) 
