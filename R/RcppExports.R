@@ -27,6 +27,10 @@ cpp_haldane_desat <- function(dtcurve, comp, Scomp, depths, ppn2_ini = 0.791, bp
     .Call(`_DiveR_cpp_haldane_desat`, dtcurve, comp, Scomp, depths, ppn2_ini, bpal_speed)
 }
 
+cpp_haldane_Scurve <- function(dtcurve, comp, Scomp, depths, ppn2_ini = 0.791, bpal_speed = 6.0) {
+    .Call(`_DiveR_cpp_haldane_Scurve`, dtcurve, comp, Scomp, depths, ppn2_ini, bpal_speed)
+}
+
 insertCell <- function(x, n) {
     .Call(`_DiveR_insertCell`, x, n)
 }

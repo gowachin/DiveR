@@ -4,7 +4,7 @@
 \alias{desat_table}
 \title{desat_table}
 \usage{
-desat_table(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791)
+desat_table(dtcurve, maj = 0, altitude = 0, ppo2 = 0.209)
 }
 \arguments{
 \item{dtcurve}{a depth time curve in a data.frame with 2 columns depth and 
@@ -15,7 +15,7 @@ time. Depths values are meters (positive values) and time is in minute.}
 
 \item{altitude}{Altitude of the dive in meter. Default is 0 m (sea level).}
 
-\item{ppn2}{Partial pressure of nitrogen in bar. Default is 0.791 bar}
+\item{ppo2}{Partial pressure of dioxygen in bar. Default is 0.209 bar}
 }
 \value{
 a desat object, which is a list with a data.frame containing 

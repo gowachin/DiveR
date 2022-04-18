@@ -1,0 +1,118 @@
+---
+title: "Nitrox and gas mix"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Nitrox and gas mix}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(DiveR)
+```
+
+Diving has 2 limitations : duration and depths. The first one is a limitation due to the gas consumption and nitrogen tissue saturation. During the dive, nitrogen disolve in body tissue, which is why divers require desaturation stops during the ascent. Theses stops duration limit the dive length the deeper we go. 
+
+The second limit in depth is caused by oxygen toxicity for the body. This toxicity arise when the partial pressure in dioxygen (here after $PPO_2$) exceed 1.6b.
+
+$$PPO_2 > 1.6b \to \text{ Toxicity}$$
+
+As a reminder, $PPO_2$ at sea level is `r 1 - 0.791`b in air, but as the absolute pressure increase with depth, so does the $PPO_2$. For example at 40m below the surface we can compute the different partial pressures :
+
+$$
+depth = 40 \text{ m} \\
+P_{abs} = P_{atmo} + P_{hydro} = 1 + \frac{depth}{10} = 1 + 4 = 5 \text{ bar} \\
+\\ ~ \\
+\text{Dalton law : }
+\\
+PPO_2 = 0.209 \times P_{abs} = 1.045 \text{ bar} \\
+PPN_2 = 0.791 \times P_{abs} = 3.955 \text{ bar}
+$$
+
+This explain the depths limitation in scuba diving with air gas mix (20.9 \% $O_2$ and 79.1 \% $N_2$, other gases being ignored.) The maximum depth using air is `r nitrox_maxdepth()`m. This value is named **MOD** for *Maximum operating depth* for a given gas mix.
+
+For safety minor MOD are recommended, the most commonly used is 1.4 b.
+
+# NITROX
+
+## Important principles
+
+NITROX is a mixture of NITrogen and OXygen and is different from air because it is an oxygen-enriched air mixture. 
+
+This mixture allow to limit tissue saturation over time because less nitrogen is breathed. But because the $PPO_2$ increase, the MOD is lower. This allow longer and shallower dives.
+
+```{r MODplot, echo = FALSE, fig.dim = c(8, 6)}
+ppo2 <- seq(0.209, 1, by = 0.01)
+
+plot(ppo2, -nitrox_maxdepth(1 -ppo2, MOD = 1.6), 
+     type = 'n', ylim = c(-70, 5), col = "red", ylab = "depth",
+     main = "MOD evolution")
+abline(v = 0.209, col = "cornflowerblue" )
+text(0.209, -20, "air", pos = 2, srt = 90, offset = 0.4)
+abline(h = 0, col = "darkblue")
+
+for (i in seq(from = 0, to = -80, by = -5)) {
+  abline(h = i, lty = 3, lwd = 0.1)
+}
+for (i in seq(from = 0, to = -80, by = -10)) {
+  abline(h = i, lty = 2, lwd = 0.3)
+}
+lines(ppo2, -nitrox_maxdepth(ppo2, MOD = 1.6), lwd = 1.5, col = "red")
+lines(ppo2, -nitrox_maxdepth(ppo2, MOD = 1.5), lwd = 1.5, col = "coral")
+lines(ppo2, -nitrox_maxdepth(ppo2, MOD = 1.4), lwd = 1.5, col = "chartreuse")
+
+legend("bottomright", c("MOD = 1.6", "MOD = 1.5", "MOD = 1.4"),
+       fill = c("red", "coral", "chartreuse"))
+
+```
+
+
+## Functions
+
+This package have few function to implement basic checks before setting a dive with NITROX. All of them require `ppo2` and `MOD` arguments. Both these arguments are set by default with air value and maximum MOD, which are 0.209b and 1.6b.
+
+For example this function compute the maximum depth for a given $PPO_2$ and MOD.
+
+```{r, nitrox_maxdepth}
+nitrox_maxdepth()
+nitrox_maxdepth(ppo2 = 0.3)
+nitrox_maxdepth(ppo2 = 0.3, MOD = 1.4)
+nitrox_maxdepth(ppo2 = 1)
+```
+
+There is also a function to check if the MOD is reached at a given depth. by default, force is set to FALSE and will trigger and error.
+
+```{r MODcheck}
+MODcheck(70, ppo2 = 0.209, force = TRUE)
+MODcheck(65, ppo2 = 0.209, force = TRUE)
+MODcheck(30, ppo2 = 0.3, MOD = 1.4)
+```
+
+Finally we can planify a dive by using table desaturation model. This is possible because we can compute the air depth equivalence for a depth and a $PPO_2$. 
+
+```{r nitrox_depth}
+nitrox_depth(20, ppo2 = 0.209) # depth with air
+nitrox_depth(20, ppo2 = 0.3) # percepted depth with NX30.
+```
+
+This depth modification is important when desaturation stop begins to arise. For example below there is the comparison between two similar dives with only a gas modification.
+
+```{r dive_comp, fig.dim = c(5.3, 4)}
+dive_air <- dive(depth = 20, time = 50, gas = "AIR", secu = FALSE)
+dive_NX30 <- dive(depth = 20, time = 50, gas = "NX30", secu = FALSE)
+
+plot(dive_air)
+plot(dive_NX30, col = "darkgreen")
+
+summary(dive_air)
+summary(dive_NX30)
+```
+
+The dive with NITROX 30\% benefits an absent desaturation stop for the same time at maximum depth.

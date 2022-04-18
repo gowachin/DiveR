@@ -4,22 +4,31 @@
 \alias{MODcheck}
 \title{MODcheck}
 \usage{
-MODcheck(depth, ppn2 = 0.791, force = FALSE)
+MODcheck(depth, ppo2 = 0.209, force = FALSE, MOD = 1.6)
 }
 \arguments{
 \item{depth}{Depth of the dive in meter. Need to be positive values.}
 
-\item{ppn2}{Partial pressure of nitrogen in bar. Default is 0.791 bar}
+\item{ppo2}{Partial pressure of dioxygen in bar. Default is 0.791 bar}
 
 \item{force}{FALSE by default, if TRUE don't stop the function but 
 return a TRUE/FALSE value}
+
+\item{MOD}{maximum operating depth. This is the maximal ppo2 value in bar
+default is 1.6}
 }
 \value{
 Nothing expect when \code{force} parameter is TRUE. 
 Is designed to stop code and returns errors
 }
 \description{
-Test if the depth is possible with such partial pressure of nitrogen.
+Test if the depth is possible with such partial pressure of dioxygen.
+}
+\examples{
+MODcheck(70, ppo2 = 0.209, force = TRUE)
+MODcheck(65, ppo2 = 0.209, force = TRUE)
+MODcheck(30, ppo2 = 0.3, MOD = 1.4)
+ 
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>

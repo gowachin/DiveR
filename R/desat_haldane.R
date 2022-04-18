@@ -141,6 +141,10 @@ desat_haldane <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791, ncomp = 
   #### IDIOT PROOF ####
   # TODO : copy from desat_table
   
+  if(maj != 0){
+    stop("maj is not set for haldane model, this can't be done")
+  }
+  
   # # done before
   # ## parameters
   # depth <- 60

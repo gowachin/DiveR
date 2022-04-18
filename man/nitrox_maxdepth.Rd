@@ -4,16 +4,25 @@
 \alias{nitrox_maxdepth}
 \title{nitrox_maxdepth}
 \usage{
-nitrox_maxdepth(ppn2 = 0.791)
+nitrox_maxdepth(ppo2 = 0.209, MOD = 1.6)
 }
 \arguments{
-\item{ppn2}{Partial pressure of nitrogen in bar. Default is 0.791 bar}
+\item{ppo2}{Partial pressure of dioxygen in bar. Default is 0.791 bar}
+
+\item{MOD}{maximum operating depth. This is the maximal ppo2 value in bar
+default is 1.6}
 }
 \value{
 maximum depth in meter
 }
 \description{
-Maximum depth for partial pressure of nitrogen.
+Maximum depth for partial pressure of dioxygen.
+}
+\examples{
+nitrox_maxdepth()
+nitrox_maxdepth(0.3)
+nitrox_maxdepth(1)
+
 }
 \author{
 Jaunatre Maxime <maxime.jaunatre@yahoo.fr>

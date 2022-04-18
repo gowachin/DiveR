@@ -4,12 +4,15 @@
 \alias{nitrox_depth}
 \title{nitrox_depth}
 \usage{
-nitrox_depth(depth, ppn2 = 0.791)
+nitrox_depth(depth, ppo2 = 0.209, MOD = 1.6)
 }
 \arguments{
 \item{depth}{Depth of the dive in meter. Need to be positive values.}
 
-\item{ppn2}{Partial pressure of nitrogen in bar. Default is 0.791 bar}
+\item{ppo2}{Partial pressure of dioxygen in bar. Default is 0.209 bar}
+
+\item{MOD}{maximum operating depth. This is the maximal ppo2 value in bar
+default is 1.6}
 }
 \value{
 The equivalent depth in meter when using this nitrox partial pressure

@@ -144,7 +144,7 @@ please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
 #' @param maj majoration time in minute in case of consecutive dive. 
 #' 0 by default.
 #' @param altitude Altitude of the dive in meter. Default is 0 m (sea level).
-#' @param ppn2 Partial pressure of nitrogen in bar. Default is 0.791 bar
+#' @param ppo2 Partial pressure of dioxygen in bar. Default is 0.209 bar
 #' 
 #' @return a desat object, which is a list with a data.frame containing 
 #' desaturation stops at 9, 6 and 3 m depth. Next element is the dive group
@@ -158,7 +158,7 @@ please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
 #' time at which the diver reach surface.
 #' 
 #' @export
-desat_table <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791){
+desat_table <- function(dtcurve, maj = 0, altitude = 0, ppo2 = 0.209){
   #### LOAD DATA
   table <- DiveR::table
   grp <- DiveR::grp
@@ -186,7 +186,7 @@ desat_table <- function(dtcurve, maj = 0, altitude = 0, ppn2 = 0.791){
   maxtime <- max(head(dtcurve$time, - 1)) + maj
   maxdepth <- max(head(dtcurve$depth, - 1)) # lst depth shld = 0 but we trim it.
   # modify depth with N2
-  maxdepth <- ((maxdepth+10) * ppn2/ 0.791) -10
+  maxdepth <- nitrox_depth(maxdepth, ppo2)
   # get table values
   depths <- as.numeric(rownames(table))
   times <- as.numeric(colnames(table))
@@ -320,7 +320,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
   time2 <- dtime(dive2)
   depth2 <- depth(dive2)
   ppo2 <- ppo2(dive2)
-  depth2 <- nitrox_depth(depth = depth2, ppn2 = 1 - ppo2)
+  depth2 <- nitrox_depth(depth = depth2, ppo2 = ppo2)
   secu2 <- as.logical(dive2$params["secu"])
   speed2 <- unname(dive2$params["ascent_speed"])
   raw_dive2 <- rm_desat(dive2)

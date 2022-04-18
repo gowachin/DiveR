@@ -62,6 +62,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_haldane_Scurve
+DataFrame cpp_haldane_Scurve(DataFrame dtcurve, NumericVector comp, NumericVector Scomp, NumericVector depths, NumericVector ppn2_ini, NumericVector bpal_speed);
+RcppExport SEXP _DiveR_cpp_haldane_Scurve(SEXP dtcurveSEXP, SEXP compSEXP, SEXP ScompSEXP, SEXP depthsSEXP, SEXP ppn2_iniSEXP, SEXP bpal_speedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type dtcurve(dtcurveSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type comp(compSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Scomp(ScompSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type depths(depthsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ppn2_ini(ppn2_iniSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type bpal_speed(bpal_speedSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_haldane_Scurve(dtcurve, comp, Scomp, depths, ppn2_ini, bpal_speed));
+    return rcpp_result_gen;
+END_RCPP
+}
 // insertCell
 SEXP insertCell(SEXP x, int n);
 RcppExport SEXP _DiveR_insertCell(SEXP xSEXP, SEXP nSEXP) {
@@ -82,6 +98,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DiveR_vecdiv", (DL_FUNC) &_DiveR_vecdiv, 2},
     {"_DiveR_cpp_half_life", (DL_FUNC) &_DiveR_cpp_half_life, 2},
     {"_DiveR_cpp_haldane_desat", (DL_FUNC) &_DiveR_cpp_haldane_desat, 6},
+    {"_DiveR_cpp_haldane_Scurve", (DL_FUNC) &_DiveR_cpp_haldane_Scurve, 6},
     {"_DiveR_insertCell", (DL_FUNC) &_DiveR_insertCell, 2},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}

@@ -2,7 +2,7 @@
 title: "Testing limits of Haldane Model"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{haldane_model}
+  %\VignetteIndexEntry{Testing limits of Haldane Model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -166,4 +166,3 @@ ggplot(diff_model, aes(x = times, y = -depths, fill = perc)) +
 ```
 
 This difference could be caused by the fact that the Haldane model coded in DiveR takes the ascent at the end of the dive in the computation. During this ascent, desaturation start and it could help minor deco stop duration. A modification of the ascent speed could correct the differences.
-
