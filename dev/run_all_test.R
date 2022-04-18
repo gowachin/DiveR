@@ -18,13 +18,14 @@ report(x = package_coverage())
 
 # df_cov[df_cov$functions=='tank',]
 
-file_coverage('R/conso.R', 'tests/testthat/test-conso.R')
+x <- file_coverage('R/conso.R', 'tests/testthat/test-conso.R')
 file_coverage('R/methods_conso.R', 'tests/testthat/test-methods_conso.R')
 x <- file_coverage('R/dive_utils.R', 'tests/testthat/test-dive_utils.R')
 x <- file_coverage('R/DiveR.R', 'tests/testthat/test-dive.R')
 x <- file_coverage('R/desat_table.R', 'tests/testthat/test-desat_table.R')
 x <- file_coverage('R/methods_dive.R', 'tests/testthat/test-methods_dive.R')
 x <- file_coverage('R/nitrox.R', 'tests/testthat/test-nitrox.R')
+x <- file_coverage('R/utils.R', 'tests/testthat/test-utils.R')
 # x <- file_coverage('R/deco.R', 'tests/testthat/test-deco.R')
 report(x)
 # zero_coverage() shows only uncovered lines.

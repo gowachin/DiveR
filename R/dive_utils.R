@@ -13,22 +13,16 @@
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
+#' @import checkmate
 #' @export
 init_dtcurve <- function(depth, time, ascent_speed = 10, way = c("OW", "WB")) {
   #### IDIOT PROOF ####
-  if (any(depth < 0) | !is.numeric(depth)) {
-    stop("depth must be positive numeric value(s).")
-  }
-  if (any(time < 0) | !is.numeric(time)) {
-    stop("time must be positive numeric value(s).")
-  }
+  assertNumeric(depth, lower = 0)
+  assertNumeric(time, lower = 0)
   if (any(time != sort(time))) {
     stop("time values need to be sorted, you don't own a subaquatic dolorean")
   }
-  if (any(ascent_speed <= 0) | !is.numeric(ascent_speed) |
-    length(ascent_speed) > 1) {
-    stop("ascent_speed must be a single positive numeric value(s).")
-  }
+  assertNumber(ascent_speed, lower = 1e-6)
 
   way <- match.arg(way)
 
@@ -93,6 +87,7 @@ init_dtcurve <- function(depth, time, ascent_speed = 10, way = c("OW", "WB")) {
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #'
+#' @import checkmate
 #' @export
 add_desat <- function(dtcurve, desat, ascent_speed = 10, secu = FALSE) {
   #### IDIOT PROOF ####
@@ -101,12 +96,8 @@ add_desat <- function(dtcurve, desat, ascent_speed = 10, secu = FALSE) {
     stop(paste('dtcurve must be a data.frame with 2 columns named',
                'depth and time without any NA value'))
   }
-  if (any(dtcurve$depth < 0) | !is.numeric(dtcurve$depth)) {
-    stop("depth must be positive numeric value(s).")
-  }
-  if (any(dtcurve$time < 0) | !is.numeric(dtcurve$time)) {
-    stop("time must be positive numeric value(s).")
-  }
+  assertNumeric(dtcurve$depth, lower = 0)
+  assertNumeric(dtcurve$time, lower = 0)
   if (any(dtcurve$time != sort(dtcurve$time))) {
     stop("time values need to be sorted, you don't own a subaquatic dolorean")
   }
@@ -115,12 +106,8 @@ add_desat <- function(dtcurve, desat, ascent_speed = 10, secu = FALSE) {
     stop("desat must be of class desat made with desat_model function")
   }
   
-  if (any(ascent_speed <= 0) | !is.numeric(ascent_speed) |
-      length(ascent_speed) > 1) {
-    stop("ascent_speed must be a single positive numeric value(s).")
-  }
-  if( !is.logical(secu) | is.na(secu) )
-    stop('secu must be TRUE or FALSE')
+  assertNumber(ascent_speed, lower = 1e-6)
+  assertLogical(secu, any.missing = FALSE)
   
   # adding security desat
   if(secu){
@@ -187,20 +174,15 @@ add_desat <- function(dtcurve, desat, ascent_speed = 10, secu = FALSE) {
 #' minute_to_time(1664, sec = FALSE, sep = 'h')
 #'
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
-#'
+#' 
+#' @import checkmate
 #' @export
 minute_to_time <- function(time, sec = TRUE, sep = c(':', 'h'), day = TRUE){
   #### IDIOT PROOF ####
-  if (any(time < 0) | !is.numeric(time)) {
-    stop("time must be positive numeric value.")
-  }
-  if( !is.logical(sec) | is.na(sec) ){
-    stop('sec must be TRUE or FALSE',call. = interactive())
-  }
+  assertNumeric(time, lower = 0)
+  assertLogical(sec, any.missing = FALSE)
   sep <- match.arg(sep)
-  if( !is.logical(day) | is.na(day) ){
-    stop('day must be TRUE or FALSE',call. = interactive())
-  }
+  assertLogical(day, any.missing = FALSE)
   
   while(any(time >= 1440) & day){
     time[time >= 1440 ] <- time[time >= 1440] - 1440

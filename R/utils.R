@@ -19,6 +19,12 @@
 #' copied from SO
 #' \url{https://stackoverflow.com/questions/35807523/r-decimal-ceiling}
 #' 
+#' @import checkmate
+#' 
 #' @export
-ceiling_dec <- function(x, level=1) round(x + 5*10^(-level-1), level)
+ceiling_dec <- function(x, level=1) {
+  assertNumeric(x)
+  assertNumber(level)
+  round(x + 5*10^(-level-1), level)
+  }
 

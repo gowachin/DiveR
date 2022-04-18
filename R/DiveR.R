@@ -2,6 +2,7 @@
 #' @import utils
 #' @useDynLib DiveR, .registration=TRUE
 #' @importFrom Rcpp sourceCpp
+#' @import checkmate
 NULL
 
 #' DiveR
@@ -54,6 +55,7 @@ NULL
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
+#' @import checkmate
 #' @export
 dive <- function(depth = 20, time = 40, secu = TRUE,
                  ascent_speed = 10, maj = 0, 
@@ -62,40 +64,18 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
                  gas = 'AIR'
                  ) {
   #### IDIOT PROOF ####
-  if (any(depth < 0) | !is.numeric(depth) ) {
-    stop("depth must be positive numeric value(s).",
-         call. = interactive())
-  }
-  if (any(time < 0) | !is.numeric(time) ) {
-    stop("time must be positive numeric value(s).",
-         call. = interactive())
-  }
-  if( !is.logical(secu) | is.na(secu) ){
-    stop('secu must be TRUE or FALSE',
-         call. = interactive())
-  }
-  if (any(ascent_speed <= 0) | !is.numeric(ascent_speed) | 
-      length(ascent_speed) > 1 ) {
-    stop("ascent_speed must be a single positive numeric value.",
-         call. = interactive())
-  }
-  if( any(maj != 0)){
-    if (any(maj < 0) | !is.numeric(maj) | length(maj) > 1 ) {
-      stop("maj must be a single positive numeric value.", 
-           call. = interactive())
-    }
-  }
+  assertNumeric(depth, lower = 0)
+  assertNumeric(time, lower = 0)
+  assertLogical(secu, any.missing = FALSE)
+  assertNumber(ascent_speed, lower = 1e-6)
+  
+  assertNumber(maj, lower = 0)
   desat_model <- match.arg(desat_model)
   
-  if (any(hour < 0) | !is.numeric(hour) | length(hour) > 1) {
-    stop("hour must be a single positive numeric value in minute.",
-         call. = interactive())
-  }
+  assertNumber(hour, lower = -1e-6)
+  
   way <- match.arg(way)
-  if (!is.character(gas) | length(gas) > 1) {
-    stop("gas must be a single string value.",
-         call. = interactive())
-  }
+  assertCharacter(gas)
   if (gas != 'AIR' & length(grep('^NX[[:digit:]]{1,3}$', gas)) != 1 ){
     stop("gas must be a written as 'AIR' or 'NXy' where y is a number
 between 0 and 100",
@@ -218,17 +198,15 @@ call. = interactive())
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
+#' @import checkmate
 #' @export
 ndive <- function(dive1, dive2, inter = 16, verbose = FALSE) {
   #### IDIOT PROOF ####
   if (!is.dive(dive1)) stop("dive1 must be a dive object",call. = interactive())
   if (!is.dive(dive2)) stop("dive2 must be a dive object",call. = interactive())
-  if (any(inter < 0) | !is.numeric(inter) | length(inter) > 1 ) {
-    stop("inter must be positive numeric value.",call. = interactive())
-  }
-  if( !is.logical(verbose) | is.na(verbose) ){
-    stop('verbose must be TRUE or FALSE',call. = interactive())
-  }
+
+  assertNumber(inter, lower = 0)
+  assertLogical(verbose, any.missing = FALSE)
   
   desat_model <- dive2$desat$model
   
