@@ -74,6 +74,24 @@ legend("bottomright", c("MOD = 1.6", "MOD = 1.5", "MOD = 1.4"),
 ```
 
 
+## Gas definition
+
+Gas can be declared with this package as two different things.
+
+First, one can set a gas by it's name. There is 3 conventions here :
+
+* air is a special gas with the name "AIR". It define a mixture of 79.1\% nitrogen, 20.9\% dioxygen. 
+<!-- and 1\% of other gases. -->
+
+* $EAN_y$ Enriched Air Nitrox with $y \%$ or dioxygen, is the standard english name for Nitrox mixture with more than 21\% of dioxygen. 
+
+* $NX_y$ NitroX with $y \%$ or dioxygen, is the standard french name for Nitrox mixture with more than 21\% of dioxygen. 
+
+```{r gas}
+
+```
+
+
 ## Functions
 
 This package have few function to implement basic checks before setting a dive with NITROX. All of them require `ppo2` and `MOD` arguments. Both these arguments are set by default with air value and maximum MOD, which are 0.209b and 1.6b.
@@ -116,3 +134,5 @@ summary(dive_NX30)
 ```
 
 The dive with NITROX 30\% benefits an absent desaturation stop for the same time at maximum depth.
+
+

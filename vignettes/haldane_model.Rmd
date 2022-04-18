@@ -57,11 +57,15 @@ half_life(c, 5) # get percentage over 5 min difference
 ```
 
 ```{r bench_hl, include = FALSE}
-microbenchmark(
-  r = half_life(c, 5),
-  cpp = cpp_half_life(c, 5),
+period = 50 ; time = c(100, 50)
+half_life(period, time)
+cpp_half_life(period, time)
+
+microbenchmark::microbenchmark(
+  r = half_life(period, time),
+  cpp = cpp_half_life(period, time),
   times = 1000
-)
+) # urgh it's not even faster....
 ```
 
 # Testing Haldane versus mn90 tables
@@ -125,17 +129,20 @@ We can observe that there is larger differences for slower deco stops, but this 
 ```{r diff_dens_plot, echo = FALSE, fig.dim = c(8, 6)}
 n_point <- diff_model %>%
   group_by(mod, deco_d) %>%
-  summarise(n = sum(diff != 0), .groups = "keep")
+  summarise(n = sum(diff != 0), 
+            inf3 = round(sum(diff > -3 & diff != 0) / sum(diff != 0) * 100, 1),
+            .groups = "keep")
 
 filter(diff_model, diff != 0) %>%
 ggplot( aes(x = diff)) +
   facet_grid( mod ~ deco_d) +
   geom_density(fill="#69b3a2") +
   geom_text(x = -5, y = 1.5, aes(label = paste("n =", n)), data = n_point) +
+  geom_text(x = -5, y = 1, aes(label = paste("% > -3 =", inf3)), data = n_point) +
   NULL
 ```
 
-Observing the places of difference in depth and time, it's difficult to see a pattern.
+Observing the places of difference in depth and time, it's difficult to see a pattern. However a positive return is that most values are above -3 in difference for 3m depth, which mean that a secu stop of 3min at 3m could compensate all model error. It's also possible to see on the plot below that a shorter deep stop is often compensated with a longer stop at 3m.
 
 ```{r diff_plot, echo = FALSE,  fig.dim = c(8, 6)}
 diff_model %>%
@@ -165,4 +172,6 @@ ggplot(diff_model, aes(x = times, y = -depths, fill = perc)) +
   NULL
 ```
 
-This difference could be caused by the fact that the Haldane model coded in DiveR takes the ascent at the end of the dive in the computation. During this ascent, desaturation start and it could help minor deco stop duration. A modification of the ascent speed could correct the differences.
+This difference could be caused by the fact that the Haldane model coded in DiveR takes the ascent at the end of the dive in the computation. During this ascent, desaturation start and it could help minor deco stop duration. A modification of the ascent speed could correct the differences, but there is no difference.
+
+A second hypothesis could be the S maximum values for compartments. The present algorithm will compute the time at deco stop until the drive compartment reach S. This is not very safe and a margin could be used to prevent this.
