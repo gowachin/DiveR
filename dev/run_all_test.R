@@ -28,6 +28,11 @@ x <- file_coverage('R/nitrox.R', 'tests/testthat/test-nitrox.R')
 x <- file_coverage('R/utils.R', 'tests/testthat/test-utils.R')
 # x <- file_coverage('R/deco.R', 'tests/testthat/test-deco.R')
 report(x)
+
+91.95
+l 134:135
+l 228:237
+l 301: 302
 # zero_coverage() shows only uncovered lines.
 # If run within RStudio, `zero_coverage()` will open a marker pane with the
 # uncovered lines.

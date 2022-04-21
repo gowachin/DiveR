@@ -2,33 +2,13 @@
 #### Test tank object ####
 
 # Test for correct input
-test_that("err_tank_vol", {
-  err <- "vol must be a single positive numeric value."
-  expect_error(tank(vol = 0, press = 200), err )
-  expect_error(tank(vol = -5, press = 200), err )
-  expect_error(tank(vol = '12', press = 200), err )
-  expect_error(tank(vol = c(7.5, 7.5), press = 200), err )
-})
-
-test_that("err_tank_press", {
-  err <- 'press must be a single positive, 0 possible, numeric value.'
-  expect_error(tank(vol = 12, press = -50), err )
-  expect_error(tank(vol = 12, press = '12'), err )
-  expect_error(tank(vol = 12, press = c(100, 100)), err )
-})
 
 test_that("err_tank_rules", {
   # Errors
   err <- paste('rules must be a list of length 2 with a vector of 2 numeric',
                'named rules and a single character string being % or bar')
   expect_error(tank(vol = 12, press = 200, 
-                    rules = list(rules = c('mid' = 50,'res' = 25))), err )
-  expect_error(tank(vol = 12, press = 200, 
                     rules = list(rules = c('mid' = 50,'res' = 25), syst = '%')),
-               err )
-  err <- 'Element rules of rules argument must be a vector of 2 numeric'
-  expect_error(tank(vol = 12, press = 200, 
-                    rules = list(rules = c('mid' = 50), sys = '%')),
                err )
 })
 
@@ -38,12 +18,6 @@ test_that("war_tank_rules", {
   expect_warning(t <- tank(vol = 12, press = 200, 
                       rules = list(rules= c('mid' = 50, 'res' = NA), sys = '%')),
                  war )
-  expect_equal(unname(t$carac['rule2']), 0)
-  
-  war <- 'negative rules are not possible and therefor set to 0'
-  expect_warning(t <- tank(vol = 12, press = 200, 
-                    rules = list(rules= c('mid' = 50, 'res' = -10), sys = '%')),
-               war )
   expect_equal(unname(t$carac['rule2']), 0)
   
   war <- 'There was no names for rules, consider setting them for later use'
@@ -167,15 +141,6 @@ test_that("err_conso", {
   expect_error(conso(dive, list("A", "B")), err )
   expect_error(conso(dive, list(t1, "B")), err )
   
-  err <- "cons must be a single positive numeric value."
-  expect_error(conso(dive, list(t1, t2), cons = -5), err )
-  expect_error(conso(dive, list(t1, t2), cons = '20'), err )
-  expect_error(conso(dive, list(t1, t2), cons = c(10, 20)), err )
-  
-  err <- "failure_label must be a single character string"
-  expect_error(conso(dive, list(t1, t2), failure_label = 0), err )
-  expect_error(conso(dive, list(t1, t2), 
-                     failure_label = c('Death', "not proud")), err )
 })
 
 

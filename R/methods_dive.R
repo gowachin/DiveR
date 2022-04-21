@@ -197,9 +197,8 @@ depth_at_time <- function(object, time) {
 #' @export
 depth_at_time.dive <- function(object, time){
   #### IDIOT PROOF ####
-  if (any(time < 0) | !is.numeric(time) | length(time) > 1 ) {
-    stop("time must be positive numeric value.")
-  }
+  assertNumber(time, lower = 0)
+  
   dive <- object
   time <- time #+ dive$hour[1]
   times <- dive$dtcurve$times #+ dive$hour[1]

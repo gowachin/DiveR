@@ -51,25 +51,18 @@ tank <- function(vol, press, rules = list(
 
   #### IDIOT PROOF ####
   # vol and press
-  if (all(vol <= 0) | !is.numeric(vol) | length(vol) > 1) {
-    stop("vol must be a single positive numeric value.",call. = interactive())
-  }
-  if (all(press < 0) | !is.numeric(press) | length(press) > 1) {
-    stop("press must be a single positive, 0 possible, numeric value.",
-         call. = interactive())
-  }
+  assertNumber(vol, lower = 0)
+  assertNumber(press, lower = 0)
+  assertList(rules, len = 2)
   # rules
-  if (length(rules) != 2 | any(names(rules) != c("rules", "sys"))) {
+  if (any(names(rules) != c("rules", "sys"))) {
     stop(paste(
       "rules must be a list of length 2 with a vector of 2 numeric",
       "named rules and a single character string being % or bar"
     ),call. = interactive())
   }
   rules$sys <- match.arg(rules$sys, c("%", "bar"))
-  if (!is.numeric(rules$rules) | length(rules$rules) != 2) {
-    stop("Element rules of rules argument must be a vector of 2 numeric",
-         call. = interactive())
-  }
+  assertNumeric(rules$rules, lower = 0, len = 2)
   if( any(is.na(rules$rules))){
     warning('NA values in rules are set to 0 with empty names',
             call. = interactive())
@@ -77,14 +70,6 @@ tank <- function(vol, press, rules = list(
     rules$rules[is.na(rules$rules)] <- 0
   }
   
-  for (i in 1:length(rules$rules)) {
-    # TODO : add a check for NA values too...
-    if (rules$rules[i] < 0) {
-      warning("negative rules are not possible and therefor set to 0",
-              call. = interactive())
-      rules$rules[i] <- 0
-    }
-  }
   if (is.null(names(rules$rules))) {
     names(rules$rules) <- c("", "")
     warning("There was no names for rules, consider setting them for later use",
@@ -383,13 +368,8 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
     stop('dive must to be a dive object', call. = interactive())
   }
   
-  if (all(cons <= 0) | !is.numeric(cons) | length(cons) > 1) {
-    stop("cons must be a single positive numeric value.", call. = interactive())
-  }
-  
-  if (!is.character(failure_label) | length(failure_label) > 1) {
-    stop("failure_label must be a single character string",call. = interactive())
-  }
+  assertNumber(cons, lower = 1e-6)
+  assertCharacter(failure_label, any.missing = FALSE)
   
   
   # set variable to limite redondant call
