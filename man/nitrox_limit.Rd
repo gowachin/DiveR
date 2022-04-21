@@ -2,9 +2,12 @@
 % Please edit documentation in R/nitrox.R
 \name{nitrox_maxdepth}
 \alias{nitrox_maxdepth}
+\alias{nitrox_mindepth}
 \title{nitrox_maxdepth}
 \usage{
 nitrox_maxdepth(ppo2 = 0.209, MOD = 1.6)
+
+nitrox_mindepth(ppo2 = 0.209, mOD = 0.18)
 }
 \arguments{
 \item{ppo2}{Partial pressure of dioxygen in bar. Default is 0.791 bar}

@@ -10,27 +10,6 @@ test_that("exp_is_desat", {
 #### Test tablecheck max_depth_time and no_deco_depth ####
 
 # Test for correct input
-test_that("err_tablecheck_depth", {
-  err <- "depth must be positive numeric value."
-  expect_error(tablecheck(-5, 40), err )
-  expect_error(tablecheck("20", 40), err )
-  expect_error(tablecheck(c(20, 30), 40), err )
-})
-
-test_that("err_max_depth_time_depth", {
-  err <- "depth must be positive numeric value."
-  expect_error(max_depth_time(-5), err )
-  expect_error(max_depth_time("20"), err )
-  expect_error(max_depth_time(c(20, 30)), err )
-})
-
-test_that("err_tablecheck_time", {
-  err <- "time must be positive numeric value."
-  expect_error(tablecheck(20, -40), err )
-  expect_error(tablecheck(20, "20"), err )
-  expect_error(tablecheck(20, c(20, 40)), err )
-})
-
 test_that("err_tablecheck_outtable", {
   err <- "Time or depth values are outside the mn90 table,
 depth must be not exceed 65 and time 3h \\(180 minutes\\)
@@ -87,36 +66,13 @@ test_that("err_desat_table_depth", {
   expect_error(desat_table(dtcurve), err )
 })
 
-test_that("err_desat_table_depth", {
-  dtcurve <- data.frame(depth = c(0, -20, 20, 0),
-                        time = c(0, 5, 40, 43))
-  err <- "depth must be positive numeric value."
-  expect_error(desat_table(dtcurve), err )
-  dtcurve$depth[2] <- "hello"
-  expect_error(desat_table(dtcurve), err )
-})
-
 test_that("err_desat_table_time", {
-  dtcurve <- data.frame(depth = c(0, 20, 20, 0),
-                        time = c(0, -5, 40, 43))
-  err <- "time must be positive numeric value."
-  expect_error(desat_table(dtcurve), err )
-  dtcurve$time[2] <- "hello"
-  expect_error(desat_table(dtcurve), err )
   dtcurve <- data.frame(depth = c(0, 20, 20, 0),
                         time = c(0, 50, 40, 43))
   err <- "time values need to be sorted, you don't own a subaquatic dolorean"
   expect_error(desat_table(dtcurve), err )
 })
 
-test_that("err_desat_table_maj", {
-  dtcurve <- data.frame(depth = c(0, 20, 20, 0),
-                        time = c(0, 5, 40, 43))
-  err <- "maj must be a single positive numeric value."
-  expect_error(desat_table(dtcurve, maj = -5), err )
-  expect_error(desat_table(dtcurve, maj = "hello"), err )
-  expect_error(desat_table(dtcurve, maj = c(0, 0)), err )
-})
 
 test_that("exp_desat_table_maj", {
   dtcurve <- init_dtcurve(20, 40)
@@ -141,10 +97,6 @@ test_that("exp_desat_table_maj", {
 
 # Test for correct input
 test_that("err_majoration_depth", {
-  err <- "depth must be positive numeric value."
-  expect_error(majoration(depth = -5, group = 'A', inter = 40), err )
-  expect_error(majoration(depth = "20", group = 'A', inter = 40), err )
-  expect_error(majoration(depth = c(20, 30), group = 'A', inter = 40), err )
   err <- "depth must be inferior or equal to 60."
   expect_error(majoration(depth = 65, group = 'A', inter = 40), err )
 })
@@ -154,13 +106,6 @@ test_that("err_majoration_group", {
   expect_error(majoration(depth = 40, group = 'a', inter = 40), err )
   expect_error(majoration(depth = 40, group = 2, inter = 40), err )
   expect_error(majoration(depth = 40, group = 'Q', inter = 40), err )
-})
-
-test_that("err_majoration_inter", {
-  err <- "inter must be positive numeric value above 15."
-  expect_error(majoration(depth = 40, group = 'A', inter = 10), err )
-  expect_error(majoration(depth = 40, group = 'A', inter = "10"), err )
-  expect_error(majoration(depth = 40, group = 'A', inter = c(10, 20)), err )
 })
 
 test_that("err_majoration_inter", {
@@ -191,19 +136,6 @@ test_that("err_ndive_dives", {
   expect_error(table_ndive(dive(20, 40), 
                            suppressMessages(dive(20, 40, desat_model = "other")), 
                            inter = 730), err )
-})
-
-test_that("err_ndive_inter", {
-  err <- "inter must be positive numeric value."
-  expect_error(table_ndive(dive(20, 40), dive(20, 40), inter = -10), err )
-  expect_error(table_ndive(dive(20, 40), dive(20, 40), inter = "10"), err )
-  expect_error(table_ndive(dive(20, 40), dive(20, 40), inter = c(10, 20)), err )
-})
-
-test_that("err_ndive_verbose", {
-  err <- "verbose must be TRUE or FALSE"
-  expect_error(table_ndive(dive(20, 40), dive(20, 40), verbose = "TRUE"), err )
-  expect_error(table_ndive(dive(20, 40), dive(20, 40), verbose = NA), err )
 })
 
 test_that("exp_no_conso_table_ndive_no_consec", {

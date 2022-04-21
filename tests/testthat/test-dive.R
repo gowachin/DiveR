@@ -2,47 +2,12 @@
 #### Test dive object ####
 
 # Test for correct input
-test_that("err_dive_depth", {
-  err <- "depth must be positive numeric value\\(s\\)."
-  expect_error(dive(-5, 40), err )
-  expect_error(dive("20", 40), err )
-})
-
-test_that("err_dive_time", {
-  err <- "time must be positive numeric value\\(s\\)."
-  expect_error(dive(20, -40), err )
-  expect_error(dive(20, "20"), err )
-})
-
-test_that("err_dive_secu", {
-  err <- "secu must be TRUE or FALSE"
-  expect_error(dive(20, 40, secu = "TRUE"), err )
-  expect_error(dive(20, 40, secu = NA), err )
-})
-
 test_that("err_dive_ascent", {
-  err <- "ascent_speed must be a single positive numeric value."
-  expect_error(dive(20, 40, ascent_speed = 0), err )
-  expect_error(dive(20, 40, ascent_speed = -5), err )
-  expect_error(dive(20, 40, ascent_speed = c(2,3)), err )
-  expect_error(dive(20, 40, ascent_speed = "10"), err )
   err <- "This is not the sport to do if you want to go to the moon"
   expect_error(dive(20, 40, ascent_speed = 150), err )
 })
 
-test_that("err_dive_maj", {
-  err <- "maj must be a single positive numeric value."
-  expect_error(dive(20, 40, maj = -5), err )
-  expect_error(dive(20, 40, maj = c(2,3)), err )
-  expect_error(dive(20, 40, maj = "10"), err )
-})
 
-test_that("err_dive_hour", {
-  err <- "hour must be a single positive numeric value in minute."
-  expect_error(dive(20, 40, hour = -5), err )
-  expect_error(dive(20, 40, hour = c(2,3)), err )
-  expect_error(dive(20, 40, hour = "10"), err )
-})
 
 test_that("war_init_dtcurve_ascent_sp", {
   war <- "Ascent speed is usually set between 10 and 20 m/min in most desaturation models. 
@@ -151,18 +116,6 @@ test_that("err_ndive_dives", {
   expect_error(ndive(dive(20, 40), "dive(20, 40)", inter = 730), err )
 })
 
-test_that("err_ndive_inter", {
-  err <- "inter must be positive numeric value."
-  expect_error(ndive(dive(20, 40), dive(20, 40), inter = -10), err )
-  expect_error(ndive(dive(20, 40), dive(20, 40), inter = "10"), err )
-  expect_error(ndive(dive(20, 40), dive(20, 40), inter = c(10, 20)), err )
-})
-
-test_that("err_ndive_verbose", {
-  err <- "verbose must be TRUE or FALSE"
-  expect_error(ndive(dive(20, 40), dive(20, 40), verbose = "TRUE"), err )
-  expect_error(ndive(dive(20, 40), dive(20, 40), verbose = NA), err )
-})
 
 test_that("err_ndive_model", {
   err <- "There is no other model yet"

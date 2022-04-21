@@ -2,29 +2,9 @@
 #### Test init_dtcurve ####
 
 # Test for correct input
-test_that("err_init_dtcurve_depth", {
-  err <- "depth must be positive numeric value\\(s\\)."
-  expect_error(init_dtcurve(-5, 40), err )
-  expect_error(init_dtcurve("20", 40), err )
-})
-
-test_that("err_init_dtcurve_time", {
-  err <- "time must be positive numeric value\\(s\\)."
-  expect_error(init_dtcurve(20, -40), err )
-  expect_error(init_dtcurve(20, "20"), err )
-})
-
 test_that("err_init_dtcurve_time_order", {
   err <- "time values need to be sorted, you don't own a subaquatic dolorean"
   expect_error(init_dtcurve(20, c(60,40)), err )
-})
-
-test_that("err_init_dtcurve_ascent_sp", {
-  err <- "ascent_speed must be a single positive numeric value\\(s\\)."
-  expect_error(init_dtcurve(20, 40, ascent_speed = 0), err )
-  expect_error(init_dtcurve(20, 40, ascent_speed = -5), err )
-  expect_error(init_dtcurve(20, 40, ascent_speed = c(2,3)), err )
-  expect_error(init_dtcurve(20, 40, ascent_speed = "10"), err )
 })
 
 test_that("err_init_dtcurve_depth_time", {
@@ -82,19 +62,6 @@ test_that("err_add_desat_format", {
   expect_error(add_desat(dtcurve, desat), err )
 })
 
-test_that("err_add_desat_depth", {
-  dtcurve <- data.frame(depth = c(0, -20, 20, 0),
-                        time = c(0, 5, 40, 43))
-  desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
-                                        hour = rep(NA, 3),
-                                        row.names = c("m9", "m6", "m3")),
-                group = "H")
-  class(desat) <- "desat"
-  err <- "depth must be positive numeric value."
-  expect_error(add_desat(dtcurve, desat), err )
-  dtcurve$depth[2] <- "hello"
-  expect_error(add_desat(dtcurve, desat), err )
-})
 
 test_that("err_add_desat_time", {
   dtcurve <- data.frame(depth = c(0, 20, 20, 0),
@@ -104,40 +71,10 @@ test_that("err_add_desat_time", {
                                         row.names = c("m9", "m6", "m3")),
                 group = "H")
   class(desat) <- "desat"
-  err <- "time must be positive numeric value."
-  expect_error(add_desat(dtcurve, desat), err )
-  dtcurve$time[2] <- "hello"
-  expect_error(add_desat(dtcurve, desat), err )
+
   dtcurve$time <- c(0,50,40, 43)
   err <- "time values need to be sorted, you don't own a subaquatic dolorean"
   expect_error(add_desat(dtcurve, desat), err )
-})
-
-test_that("err_add_desat_ascent_speed", {
-  dtcurve <- data.frame(depth = c(0, 20, 20, 0),
-                        time = c(0, 5, 40, 43))
-  desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
-                                        hour = rep(NA, 3),
-                                        row.names = c("m9", "m6", "m3")),
-                group = "H")
-  class(desat) <- "desat"
-  err <- "ascent_speed must be a single positive numeric value."
-  expect_error(add_desat(dtcurve, desat, ascent_speed = -5), err )
-  expect_error(add_desat(dtcurve, desat, ascent_speed = "hello"), err )
-  expect_error(add_desat(dtcurve, desat, ascent_speed = c(0, 0)), err )
-})
-
-test_that("err_add_desat_secu", {
-  dtcurve <- data.frame(depth = c(0, 20, 20, 0),
-                        time = c(0, 5, 40, 43))
-  desat <- list(desat_stop = data.frame(depth = c(9, 6, 3),time = c(0, 0, 0),
-                                        hour = rep(NA, 3),
-                                        row.names = c("m9", "m6", "m3")),
-                group = "H")
-  class(desat) <- "desat"
-  err <- "secu must be TRUE or FALSE"
-  expect_error(add_desat(dtcurve, desat, secu = "TRUE"), err )
-  expect_error(add_desat(dtcurve, desat, secu = NA), err )
 })
 
 test_that("err_add_desat_desat", {
@@ -176,24 +113,6 @@ test_that("exp_add_desat", {
 })
 
 #### minute_to_time ####
-
-test_that("err_minute_to_time", {
-  err <- "time must be positive numeric value."
-  expect_error(minute_to_time(- 130), err )
-  expect_error(minute_to_time("20"), err )
-})
-
-test_that("err_minute_to_time_sec", {
-  err <- "sec must be TRUE or FALSE"
-  expect_error(minute_to_time(130, sec = "TRUE"), err )
-  expect_error(minute_to_time(130, sec = NA), err )
-})
-
-test_that("err_minute_to_time_day", {
-  err <- "day must be TRUE or FALSE"
-  expect_error(minute_to_time(130, day = "TRUE"), err )
-  expect_error(minute_to_time(130, day = NA), err )
-})
 
 test_that("exp_minute_to_time", {
   expect_equal(minute_to_time(130.5, sec = TRUE), "02:10:30")

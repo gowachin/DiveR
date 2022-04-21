@@ -37,17 +37,15 @@ is.desat <- function(x){
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
+#' @import checkmate
+#' 
 #' @export
 tablecheck <- function(depth, time, force = FALSE) {
   #### LOAD DATA
   table <- DiveR::table
   #### IDIOT PROOF ####
-  if (any(depth < 0) | !is.numeric(depth) | length(depth) > 1 ) {
-    stop("depth must be positive numeric value.",call. = interactive())
-  }
-  if (any(time < 0) | !is.numeric(time) | length(time) > 1 ) {
-    stop("time must be positive numeric value.", call. = interactive())
-  }
+  assertNumber(depth, lower = 0)
+  assertNumber(time, lower = 0)
   # get table values
   depths <- as.numeric(rownames(table))
   times <- as.numeric(colnames(table))
@@ -92,15 +90,14 @@ please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
 #'  
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
+#' @import checkmate
 #' @rdname tablecheck
 #' @export
 max_depth_time <- function(depth, force = FALSE, no_deco = FALSE) {
   #### LOAD DATA
   table <- DiveR::table[, , 1]
   #### IDIOT PROOF ####
-  if (any(depth < 0) | !is.numeric(depth) | length(depth) > 1 ) {
-    stop("depth must be positive numeric value.", call. = interactive())
-  }
+  assertNumber(depth, lower = 0)
   
   depths <- as.numeric(rownames(table))
   # round to upper depths and times !
@@ -157,6 +154,7 @@ please read doc with ?tablecheck or help(tablecheck)", call. = interactive())
 #' last one. This is important as the last time value is expected to be the 
 #' time at which the diver reach surface.
 #' 
+#' @import checkmate
 #' @export
 desat_table <- function(dtcurve, maj = 0, altitude = 0, ppo2 = 0.209){
   #### LOAD DATA
@@ -168,20 +166,14 @@ desat_table <- function(dtcurve, maj = 0, altitude = 0, ppo2 = 0.209){
     stop(paste('dtcurve must be a data.frame with 2 columns named',
                'depth and time without any NA value'), call. = interactive())
   }
-  if (any(dtcurve$depth < 0) | !is.numeric(dtcurve$depth)) {
-    stop("depth must be positive numeric value(s).", call. = interactive())
-  }
-  if (any(dtcurve$time < 0) | !is.numeric(dtcurve$time)) {
-    stop("time must be positive numeric value(s).", call. = interactive())
-  }
+  assertNumeric(dtcurve$depth, lower = 0)
+  assertNumeric(dtcurve$time, lower = 0)
   if (any(dtcurve$time != sort(dtcurve$time))) {
     stop("time values need to be sorted, you don't own a subaquatic dolorean", 
          call. = interactive())
   }
+  assertNumber(maj, lower = 0)
   
-  if (any(maj < 0) | !is.numeric(maj) | length(maj) > 1) {
-    stop("maj must be a single positive numeric value.", call. = interactive())
-  }
   # extract values
   maxtime <- max(head(dtcurve$time, - 1)) + maj
   maxdepth <- max(head(dtcurve$depth, - 1)) # lst depth shld = 0 but we trim it.
@@ -232,19 +224,15 @@ desat <- list(
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
+#' @import checkmate
 #' @export
 majoration <- function(depth, group = "Z", inter = 16) {
   n2 <- DiveR::nitrogen
   tmaj <- DiveR::maj
   #### IDIOT PROOF ####
-  if (any(depth < 0) | !is.numeric(depth) | length(depth) > 1 ) {
-    stop("depth must be positive numeric value.", call. = interactive())
-  }
+  assertNumber(depth, lower = 0)
   if(depth > 60) stop('depth must be inferior or equal to 60.')
-  if (any(inter < 16) | !is.numeric(inter) | length(inter) > 1 ) {
-    stop("inter must be positive numeric value above 15.",
-         call. = interactive())
-  }
+  assertNumber(inter, lower = 0)
   if (!group %in% c(rownames(n2), "Z")) {
     stop("group must be a capital letter between A and P or Z",
          call. = interactive())
@@ -296,17 +284,14 @@ majoration <- function(depth, group = "Z", inter = 16) {
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
+#' @import checkmate
 #' @export
 table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
   #### IDIOT PROOF ####
   if (!is.dive(dive1)) stop("dive1 must be a dive object", call. = interactive())
   if (!is.dive(dive2)) stop("dive2 must be a dive object", call. = interactive())
-  if (any(inter < 0) | !is.numeric(inter) | length(inter) > 1 ) {
-    stop("inter must be positive numeric value.", call. = interactive())
-  }
-  if( !is.logical(verbose) | is.na(verbose) ){
-    stop('verbose must be TRUE or FALSE', call. = interactive())
-  }
+  assertNumber(inter, lower = 0)
+  assertLogical(verbose, any.missing = FALSE)
   if (dive2$desat$model != "table"){
     stop(paste0("This function is intended to use dive2 with the table",
                 " desaturation model"), call. = interactive())

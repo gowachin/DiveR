@@ -44,7 +44,8 @@ gas <- function(ppo2 = 0.209, ppn2 = 0.791, name = character(0)){
     name <- paste0("NX", ceiling(ppo2 * 100))
   }
   
-  res <- data.frame(ppo2 = ppo2, ppn2 = ppn2, oth = oth, name = name)
+  res <- data.frame(ppo2 = ppo2, ppn2 = ppn2, oth = oth, name = name, 
+                    stringsAsFactors = FALSE)
   class(res) <- c("gas", class(res))
   return(res)
 }

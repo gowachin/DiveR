@@ -10,12 +10,11 @@
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
 #' 
+#' @import checkmate
 #' @export
 depths_inf <- function(x, col = "black", only_desat = FALSE){
   # if (!is.dive(x)) stop("x must be a dive object",call. = interactive())
-  if( !is.logical(only_desat) | is.na(only_desat) ){
-    stop('only_desat must be TRUE or FALSE',call. = interactive())
-  }
+  assertLogical(only_desat, any.missing = FALSE)
   
   x$dtcurve <- simpl(x$dtcurve)
   
@@ -46,6 +45,8 @@ depths_inf <- function(x, col = "black", only_desat = FALSE){
 #' @param col a color value
 #' 
 #' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
+#' @import checkmate
 #' @rdname depths_inf
 #' @export
 times_inf <- function(x, col = "black"){
