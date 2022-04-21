@@ -44,16 +44,6 @@ test_that("err_dive_hour", {
   expect_error(dive(20, 40, hour = "10"), err )
 })
 
-test_that("err_dive_gas", {
-  err <- "gas must be a single string value."
-  expect_error(dive(20, 40, gas = 20), err )
-  expect_error(dive(20, 40, gas = c("AIR","NX30")), err )
-  err <- "gas must be a written as 'AIR' or 'NXy' where y is a number
-between 0 and 100"
-  expect_error(dive(20, 40, gas = "NX101"), err )
-  expect_error(dive(20, 40, gas = "NY40"), err )
-})
-
 test_that("war_init_dtcurve_ascent_sp", {
   war <- "Ascent speed is usually set between 10 and 20 m/min in most desaturation models. 
 6m/min is used between 6m and the surface"

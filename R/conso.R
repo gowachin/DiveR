@@ -91,7 +91,7 @@ tank <- function(vol, press, rules = list(
             call. = interactive())
   }
   # gas
-  gas <- match.arg(gas)
+  gas <- as.gas(gas)
   # stop("Only air is working at this moment")
   typ <- match.arg(typ)
 
@@ -141,7 +141,7 @@ tank <- function(vol, press, rules = list(
   carac <- c(vol, press, unlist(rules$rules))
   names(carac) <- c("vol", "press", "rule1", "rule2")
   # string vector
-  typo <- c(gas, typ, names(rules$rules), name)
+  typo <- c(gas$name[1], typ, names(rules$rules), name)
   names(typo) <- c("gas", "typ", "rule1", "rule2", "name")
 
   if (gas != "AIR") {
@@ -151,7 +151,7 @@ tank <- function(vol, press, rules = list(
     dmin <- (ppo2[1] * 70 / 1.47) - 10 # assimilé a ppo2 > 0.18
     # round them
     dmin <- ceiling(dmin)
-    dmax <- nitrox_maxdepth()
+    dmax <- nitrox_maxdepth(gas$ppo2)
   }
 
   limit <- c(dmin, dmax, limit)

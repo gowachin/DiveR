@@ -96,21 +96,7 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
     stop("gas must be a single string value.",
          call. = interactive())
   }
-  if (gas != 'AIR' & length(grep('^NX[[:digit:]]{1,3}$', gas)) != 1 ){
-    stop("gas must be a written as 'AIR' or 'NXy' where y is a number
-between 0 and 100",
-         call. = interactive())
-  }
-  if (gas == 'AIR'){
-    ppo2 <- 0.209
-  } else {
-    ppo2 <- as.numeric(sub('^(NX)([[:digit:]]{1,3})$', '\\2', gas) ) / 100
-  }
-  if (gas != 'AIR' & ppo2 > 1){
-    stop("gas must be a written as 'AIR' or 'NXy' where y is a number
-between 0 and 100",
-call. = interactive())
-  }
+  gas <- as.gas(gas)
   
   if (ascent_speed > 120){
     stop("This is not the sport to do if you want to go to the moon",
@@ -129,11 +115,11 @@ call. = interactive())
   
   if(desat_model == "table"){
     # time maj and tablecheck is done in desat_table
-    desat_stop <- desat_table(dtcurve = raw_dtcurve, maj = maj, ppo2 = ppo2)
+    desat_stop <- desat_table(dtcurve = raw_dtcurve, maj = maj, ppo2 = gas$ppo2)
   } else if(desat_model == "haldane"){
-    message("Not yet implemented")
+    message("Not yet fully implemented")
     desat_stop <- desat_haldane(dtcurve = raw_dtcurve, maj = maj,
-                                ppn2 = 1 - ppo2, ncomp = 12)
+                                ppn2 = gas$ppn2, ncomp = 12)
   } else {
     message("Not yet implemented")
     desat_stop <- list(desat_stop = data.frame(depth = 0, time = 0, hour = NA,
@@ -176,7 +162,8 @@ call. = interactive())
   
   # other_info
   params <- c(maj = maj, secu = secu, ascent_speed = ascent_speed, dtr = dtr,
-              ppo2 = ppo2)
+              ppo2 = gas$ppo2)
+  
 
   dive <- list(
     dtcurve = dtcurve, desat = desat_stop,

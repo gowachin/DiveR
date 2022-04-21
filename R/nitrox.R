@@ -17,12 +17,27 @@
 #' 
 #' @import checkmate
 #' 
+#' @rdname nitrox_limit
+#' 
 #' @export
 nitrox_maxdepth <- function(ppo2 = 0.209, MOD = 1.6){
   assertNumber(ppo2, lower = 0, upper = 1)
   assertNumber(MOD, lower = 0, upper = 1.6)
   
   MOD =  floor((10 * MOD / ppo2) - 10)
+  
+  return(MOD)
+}
+
+#' @rdname nitrox_limit
+#' 
+#' @export
+nitrox_mindepth <- function(ppo2 = 0.209, mOD = 0.18){
+  assertNumber(ppo2, lower = 0, upper = 1)
+  assertNumber(mOD, lower = 0.18, upper = 1.6)
+  
+  MOD =  floor((10 * mOD / ppo2) - 10)
+  ceiling((70 * ppo2 / 1.47) - 10)
   
   return(MOD)
 }
