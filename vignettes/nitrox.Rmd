@@ -120,7 +120,7 @@ nitrox_depth(20, ppo2 = 0.209) # depth with air
 nitrox_depth(20, ppo2 = 0.3) # percepted depth with NX30.
 ```
 
-This depth modification is important when desaturation stop begins to arise. For example below there is the comparison between two similar dives with only a gas modification.
+This depth modification is important when desaturation time start to rise. For example below there is the comparison between two similar dives with only a gas modification.
 
 ```{r dive_comp, fig.dim = c(5.3, 4)}
 dive_air <- dive(depth = 20, time = 50, gas = "AIR", secu = FALSE)
@@ -135,4 +135,17 @@ summary(dive_NX30)
 
 The dive with NITROX 30\% benefits an absent desaturation stop for the same time at maximum depth.
 
+This gas modification should also be taken into account when running consumption computation. You can modify a tank gas by setting the corresponding option.
+
+```{r tank}
+tk_NX30 <- tank(15, 200, gas = "NX30", name = "main NX30")
+```
+
+We can then compute the consumption of the diver.
+
+```{r NX30_conso}
+# Renvois une boucle infinie si on rencontre la rule2 ! Pour une conso de 15.
+cons_NX30 <- conso(dive = dive_NX30, tank = tk_NX30, cons = 14)
+plot(cons_NX30)
+```
 

@@ -9,7 +9,6 @@ test_that("exp_nitrox_maxdepth", {
   expect_equal(nitrox_maxdepth(1), 6)
 })
 
-
 # Test for correct input
  
 test_that("exp_MODcheck", {

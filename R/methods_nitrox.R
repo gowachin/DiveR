@@ -119,7 +119,7 @@ as.gas.character <- function(x){
   ppo2 <- as.numeric(
     sub("^([[:alpha:]]{2,3})([[:digit:]]{1,3})$", "\\2", x)
   ) / 100
-  
+
   res <- 
     return(
       gas(ppo2 = ppo2, ppn2 = 1-ppo2, name = x)

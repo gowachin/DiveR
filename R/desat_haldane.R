@@ -15,6 +15,10 @@
 #' @rdname half_life
 #' @export
 half_life <- function(period, time){
+  
+  assertNumeric(period, lower = 0, any.missing = FALSE)
+  assertNumeric(time, lower = 0, any.missing = FALSE)
+  
   return((1 - 2^(-time/period)) * 100)
   # # old version
   # return((1 - exp(-(log(2)/period) *time)) * 100)

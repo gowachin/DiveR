@@ -77,10 +77,7 @@ tank <- function(vol, press, rules = list(
   }
   # gas
   gas <- as.gas(gas)
-  # stop("Only air is working at this moment")
   typ <- match.arg(typ)
-
-  # TODO : limit vector of 2 positive numeric, negative value trigger warning !
   #### function ####
   # modify rules to bar !
   if (rules$sys == "%") {
@@ -123,21 +120,20 @@ tank <- function(vol, press, rules = list(
     name <- paste0(typ, vol)
   }
   # numeric vector
-  carac <- c(vol, press, unlist(rules$rules))
-  names(carac) <- c("vol", "press", "rule1", "rule2")
+  carac <- c(vol, press, unlist(rules$rules), gas$ppo2)
+  names(carac) <- c("vol", "press", "rule1", "rule2", "ppo2")
   # string vector
   typo <- c(gas$name[1], typ, names(rules$rules), name)
   names(typo) <- c("gas", "typ", "rule1", "rule2", "name")
 
-  # if (gas != "AIR") {
-    # TODO : imput other gas
-  # } else {
-    # ppo2 <- c(0.21, 1.6)
-    dmin <- (gas$ppo2[1] * 70 / 1.47) - 10 # assimilé a ppo2 > 0.18
-    # round them
-    dmin <- ceiling(dmin)
-    dmax <- nitrox_maxdepth(gas$ppo2)
-  # }
+  # Old system, don't know if it work fine...
+  # # ppo2 <- c(0.21, 1.6)
+  # dmin <- (gas$ppo2[1] * 70 / 1.47) - 10 # assimilé a ppo2 > 0.18
+  # # round them
+  # dmin <- ceiling(dmin)
+  
+  dmin <- nitrox_mindepth(gas$ppo2)
+  dmax <- nitrox_maxdepth(gas$ppo2)
 
   limit <- c(dmin, dmax, limit)
   names(limit) <- c("mind", "maxd", "t1", "t2")
@@ -370,6 +366,10 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
   
   assertNumber(cons, lower = 1e-6)
   assertCharacter(failure_label, any.missing = FALSE)
+  
+  if(tank$carac[["ppo2"]] != dive$params[["ppo2"]]){
+    stop("Conso require the same gas in tank and in dive.")
+  }
   
   
   # set variable to limite redondant call

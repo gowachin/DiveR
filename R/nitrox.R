@@ -21,8 +21,8 @@
 #' 
 #' @export
 nitrox_maxdepth <- function(ppo2 = 0.209, MOD = 1.6){
-  assertNumber(ppo2, lower = 0, upper = 1)
-  assertNumber(MOD, lower = 0, upper = 1.6)
+  assertNumeric(ppo2, lower = 0, upper = 1)
+  assertNumeric(MOD, lower = 0.18, upper = 1.6)
   
   MOD =  floor((10 * MOD / ppo2) - 10)
   
@@ -33,14 +33,19 @@ nitrox_maxdepth <- function(ppo2 = 0.209, MOD = 1.6){
 #' 
 #' @export
 nitrox_mindepth <- function(ppo2 = 0.209, mOD = 0.18){
-  assertNumber(ppo2, lower = 0, upper = 1)
-  assertNumber(mOD, lower = 0.18, upper = 1.6)
+  assertNumeric(ppo2, lower = 0, upper = 1)
+  assertNumeric(mOD, lower = 0.18, upper = 1.6)
   
-  MOD =  floor((10 * mOD / ppo2) - 10)
-  ceiling((70 * ppo2 / 1.47) - 10)
+  MOD =  ceiling((10 * mOD / ppo2) - 10)
+  
+  # TODO : temporary set for sea level conso
+  if(MOD < 0){
+    MOD <- 0
+  }
   
   return(MOD)
 }
+
 
 # TODO nitrox_bestmix <- function(depth, MOD = 1.6){
   # res <- MOD / (depth / 10 + 1)
