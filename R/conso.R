@@ -354,7 +354,7 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
   #### IDIOT PROOF ####
   
   if(class(tank) != 'tank' & !(
-    class(tank) == "list" & all(unique(unlist(lapply(tank, class))) == "tank")
+    inherits(tank, "list") & all(unique(unlist(lapply(tank, class))) == "tank")
   )){
     stop('tank must be a single tank object or a list of tanks',
          call. = interactive())
@@ -367,9 +367,16 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
   assertNumber(cons, lower = 1e-6)
   assertCharacter(failure_label, any.missing = FALSE)
   
-  if(tank$carac[["ppo2"]] != dive$params[["ppo2"]]){
-    stop("Conso require the same gas in tank and in dive.")
+  if(inherits(tank, "list")){
+    if(any(unlist(lapply(tank, function(x) x$carac[["ppo2"]])) != ppo2(dive))){
+      stop("Conso require the same gas in tank and in dive.")
+    }
+  } else {
+    if(tank$carac[["ppo2"]] != dive$params[["ppo2"]]){
+      stop("Conso require the same gas in tank and in dive.")
+    }
   }
+  
   
   
   # set variable to limite redondant call
@@ -411,7 +418,9 @@ conso <- function(dive, tank, cons = 20, failure_label = "AF") {
     depths = dive$dtcurve$depths
   ), point))
   dtcurve <- dtcurve[order(dtcurve$times), ]
-  dtcurve$pressure <- dtcurve$depths / 10 + 1
+  # compute surface pressure
+  surf_pressure <- altitude_pressure(altitude(dive))
+  dtcurve$pressure <- dtcurve$depths / 10 + surf_pressure
   rm(point)
 
   #### Loop in cuted dive ####

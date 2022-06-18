@@ -21,6 +21,30 @@ test_that("exp_depth_ndive", {
   expect_equal(depth(nd), c(20,30))
 })
 
+test_that("exp_altitude_dive", {
+  d <- dive(20, 40)
+  expect_equal(altitude(d), 0)
+  d <- dive(20, 40, altitude = 500)
+  expect_equal(altitude(d), 500)
+})
+
+test_that("exp_altitude_ndive", {
+  d1 <- dive(20,40, altitude = 500)
+  d2 <- dive(30,40, altitude = 450)
+  nd <- ndive(d1, d2, inter = 721)
+  expect_equal(altitude(nd), c(500,450))
+})
+
+test_that("exp_altitude_pressure",{
+  expect_equal(altitude_pressure(0), 1)
+  expect_equal(altitude_pressure(1e3), 0.9)
+})
+
+test_that("exp_altitude_depth",{
+  expect_equal(altitude_depth(depth = 20), 20)
+  expect_equal(altitude_depth(depth = 24, altitude = 2000), 30)
+})
+
 test_that("exp_dtime_dive", {
   d <- dive(20,40)
   expect_equal(dtime(d), 40)

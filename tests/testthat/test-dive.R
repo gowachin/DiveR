@@ -28,7 +28,27 @@ test_that("dive_square_output", {
                                          row.names = paste0("m", c(9,6,3))),
                  group = "J", model = "table"),
     hour = c(0, 50.3),
-    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 28.3, ppo2 = 0.209)
+    params = c(maj = 0, altitude = 0, secu = 1, ascent_speed = 10, 
+               dtr = 28.3, ppo2 = 0.209)
+  )
+  class(exp) <- "dive"
+  class(exp$desat) <- "desat"
+  expect_equal(d, exp)
+  
+  d <- dive(depth = 24, time = 40, altitude = 2000, secu = FALSE, 
+            ascent_speed = 10)
+  
+  exp <- list(
+    dtcurve = data.frame(depths = c(0, 24, 24, 2.4, 2.4, 0), 
+                         times = c(0, 0, 40, 42.16, 66.16, 66.56)),
+    desat = list(desat_stop = data.frame(depth = c(7.2, 4.8, 2.4), 
+                                         time = c(0, 0, 24),
+                                         hour = c(NA, NA, 42.16), 
+                                         row.names = paste0("m", c(9,6,3))),
+                 group = "K", model = "table"),
+    hour = c(0, 66.56),
+    params = c(maj = 0, altitude = 2000, secu = 0, ascent_speed = 10, 
+               dtr = 26.560, ppo2 = 0.209)
   )
   class(exp) <- "dive"
   class(exp$desat) <- "desat"
@@ -43,7 +63,8 @@ test_that("dive_square_output", {
                                          row.names = paste0("m", c(0,3))),
                  group = "Z", model = "other"),
     hour = c(0, 45.2),
-    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 5.2, ppo2 = 0.209)
+    params = c(maj = 0, altitude = 0, secu = 1, ascent_speed = 10, 
+               dtr = 5.2, ppo2 = 0.209)
   )
   class(exp) <- "dive"
   class(exp$desat) <- "desat"
@@ -61,7 +82,8 @@ test_that("dive_curve_output", {
                                          row.names = paste0("m", c(9,6,3))),
                  group = "H", model = "table"),
     hour = c(0, 43.9),
-    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 3.9, ppo2 = 0.209)
+    params = c(maj = 0, altitude = 0, secu = 1, ascent_speed = 10, 
+               dtr = 3.9, ppo2 = 0.209)
   )
   class(exp) <- "dive"
   class(exp$desat) <- "desat"
@@ -87,7 +109,8 @@ test_that("dive_curve_output", {
                                          row.names = paste0("m", c(9,6,3))),
                  group = "J", model = "table"),
     hour = c(0, 47.1),
-    params = c(maj = 0, secu = 1, ascent_speed = 10, dtr = 25.1, ppo2 = 0.209)
+    params = c(maj = 0, altitude = 0, secu = 1, ascent_speed = 10, 
+               dtr = 25.1, ppo2 = 0.209)
   )
   class(exp) <- "dive"
   class(exp$desat) <- "desat"

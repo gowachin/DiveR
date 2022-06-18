@@ -136,6 +136,10 @@ test_that("err_ndive_dives", {
   expect_error(table_ndive(dive(20, 40), 
                            suppressMessages(dive(20, 40, desat_model = "other")), 
                            inter = 730), err )
+  err <- paste0("It not possible to dive at higher altitude after a first dive",
+                " under a 24h surface interval.")
+  expect_error(table_ndive(dive(20, 40), dive(20, 40, altitude = 1000), 
+                           inter = 730), err )
 })
 
 test_that("exp_no_conso_table_ndive_no_consec", {
@@ -200,6 +204,10 @@ test_that("exp_no_conso_table_ndive_consec", {
             as different dives.'
   w <- capture_warnings(res <- table_ndive(dive1, dive2, inter = 1))
   expect_match(w, war1, all = FALSE)
-  expect_equal(res, exp)
+  
+  war2 <- "How did you do change altitude so fast .!"
+  w <- capture_warnings(res <- table_ndive(dive1 = dive(20, 10, altitude = 500), 
+                                           dive2 = dive(20, 10, altitude = 0), 
+                                           inter = 10))
+  expect_match(w[[2]], war2, all = FALSE)
 })
-

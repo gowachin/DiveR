@@ -173,10 +173,13 @@ desat_table <- function(dtcurve, maj = 0, altitude = 0, ppo2 = 0.209){
          call. = interactive())
   }
   assertNumber(maj, lower = 0)
+  assertNumber(altitude, lower = 0)
   
   # extract values
   maxtime <- max(head(dtcurve$time, - 1)) + maj
   maxdepth <- max(head(dtcurve$depth, - 1)) # lst depth shld = 0 but we trim it.
+  # modify depth with altitude
+  maxdepth <- altitude_depth(maxdepth, altitude)
   # modify depth with N2
   maxdepth <- nitrox_depth(maxdepth, ppo2)
   # get table values
@@ -192,6 +195,11 @@ desat_table <- function(dtcurve, maj = 0, altitude = 0, ppo2 = 0.209){
   desat_depth <- rev(as.numeric(gsub('m', '', unlist(dimnames(table)[3]))))
   grup <- grp[depths == rdepth, times == rtime, ]
   # remove the NA check because it's done in tablecheck
+  
+  # modify deco stop with altitude.
+  desat_depth <- desat_depth * (altitude_pressure(altitude) / 1)
+  
+  
 desat <- list(
   desat_stop = data.frame(
     depth = desat_depth,
@@ -296,6 +304,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
     stop(paste0("This function is intended to use dive2 with the table",
                 " desaturation model"), call. = interactive())
   }
+
   # # modify dive1 residual N2 to group
   # if (dive1$desat$model != "table"){
   #   
@@ -304,11 +313,25 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
   # retrieve some data avout dive2
   time2 <- dtime(dive2)
   depth2 <- depth(dive2)
+  altitude2 <- altitude(dive2)
   ppo2 <- ppo2(dive2)
+  # altitude depth modif
+  depth2 <- altitude_depth(depth2, altitude2)
+  # nitrox depth modif
   depth2 <- nitrox_depth(depth = depth2, ppo2 = ppo2)
+  
+  depth1 <- nitrox_depth(altitude_depth(depth(dive1), 
+                                        altitude(dive1)), 
+                         ppo2(dive1))
+  
   secu2 <- as.logical(dive2$params["secu"])
   speed2 <- unname(dive2$params["ascent_speed"])
   raw_dive2 <- rm_desat(dive2)
+  
+  if (altitude2 > altitude(dive1) & inter <= 1440){
+    stop(paste0("It not possible to dive at higher altitude after a first dive",
+                " under a 24h surface interval."))
+  }
   
   if (ppo2 == 0.209){
     gas <- 'AIR'
@@ -344,7 +367,7 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
       # compute second dive
       suc_dive <- dive(
         depth = raw_dive2$dtcurve$depths, time = raw_dive2$dtcurve$times,
-        maj = maj, secu = secu2, ascent_speed = speed2, 
+        maj = maj, altitude = altitude2, secu = secu2, ascent_speed = speed2, 
         hour = dive1$hour[2] + inter, desat_model = "table", gas = gas
       )
       ndive <- list(
@@ -362,22 +385,37 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
       )
     }
   } else {
-    # consecutiv dives 
+    # consecutive dives 
     warning("A minimum of 15 minutes is requiered between dives to consider them
             as different dives.", call. = FALSE)
+    
+    
+    time1 <- dtime(dive1)
+    depth1 <- depth(dive1)
+    altitude1 <- altitude(dive1)
+    ppo2_1 <- ppo2(dive1)
+    # altitude depth modif
+    depth1 <- altitude_depth(depth1, altitude1)
+    # nitrox depth modif
+    depth1 <- nitrox_depth(depth = depth1, ppo2 = ppo2_1)
+    
+    # altitude
+    if (altitude2 != altitude1){
+      warning("How did you do change altitude so fast ?!")
+    }
     # total time of dive
-    time <- dtime(dive1) + dive1$params["dtr"] + time2
+    time <- time1 + dive1$params["dtr"] + time2
     # total depth
-    depth <- max(depth(dive1), depth2)
+    depth <- max(depth1, depth2)
     if (max_depth_time(depth) >= time) { # check if second dive possible 
-      time1 <- dtime(dive1) + unname(dive1$params["dtr"])
+      time1 <- time1 + unname(dive1$params["dtr"])
       
       raw_dive2$dtcurve$times <- raw_dive2$dtcurve$times + time1
       res <- rbind(dive1$dtcurve, raw_dive2$dtcurve)
       res <- res[!duplicated(res),]
       
       res <- dive(res$depths, res$times, ascent_speed = speed2, secu = secu2, 
-                  hour = dive1$hour[1], gas = gas)
+                  hour = dive1$hour[1], gas = gas, altitude = altitude2)
       
       res$dtcurve <- res$dtcurve[! (res$dtcurve$times %in% 
                                       head(dive1$dtcurve$times, -1)),]

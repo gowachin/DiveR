@@ -60,6 +60,116 @@ depth.ndive <- function(object) {
   return(c(d1,d2))
 }
 
+#' altitude
+#'
+#' \code{altitude} retrieve the altitude of a singular or multiple dive 
+#' sequence.
+#'
+#' @param object is a DiveR object. There are methods for 
+#' \code{\link[DiveR]{dive}} and \code{\link[DiveR]{ndive}} objects.
+#' 
+#' @return It returns a numeric with the altitude of the dive. 
+#' Is a vector if working on \code{\link[DiveR]{ndive}} object
+#' 
+#' @examples 
+#' # Simple dive
+#' altitude(dive(20,40, altitude = 1500))
+#' # Multiple dives
+#' altitude(ndive(dive(20,40, altitude = 1000), dive(15, 80), inter = 540))
+#'
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#'
+#' @export
+altitude <- function(object) {
+  UseMethod("altitude")
+}
+
+#' @rdname altitude
+#' 
+#' @export
+altitude.dive <- function(object) {
+  return(max(object$params["altitude"]))
+}
+
+#' @rdname altitude
+#' 
+#' @export
+altitude.ndive <- function(object) {
+  d1 <- altitude(object$dive1)
+  d2 <- altitude(object$dive2)
+  return(c(d1,d2))
+}
+
+
+#' altitude_depth
+#'
+#' Compute atmospherique pressure at altitude.
+#' 
+#' @param altitude Heigth in meter from sea level, it will impact desaturation
+#' process and ascen_speed. Default is sea level (0m).
+#' 
+#' @return The equivalent depth in meter when diving at altitude.
+#' 
+#' @details 
+#' Altitude pressure is :
+#' sea level pressure - ( altitude (m) / 1e4 )
+#' 
+#' Sea level pressure = 1 bar.
+#' 
+#' Value is rounded to upper value (so to lower equivalent depth).
+#'  
+#'  @examples 
+#'  altitude_pressure(0)
+#'  altitude_pressure(1000)
+#'  
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
+#' @export
+altitude_pressure <- function(altitude = 0){
+  assertNumber(altitude, lower = 0)
+  
+  alt_pressure <- 1 - altitude / 1e4 
+  
+  return(alt_pressure)
+}
+
+#' altitude_depth
+#'
+#' Compute equivalent depth when diving at altitude.
+#' 
+#' @param depth Depth of the dive in meter. Need to be positive values.
+#' @param altitude Heigth in meter from sea level, it will impact desaturation
+#' process and ascen_speed. Default is sea level (0m).
+#' 
+#' @return The equivalent depth in meter when diving at altitude.
+#' 
+#' @details 
+#' Computation is below :
+#' Equivalent depth = depth * (sea level pressure / altitude pressure)
+#' 
+#' Altitude pressure is defines in \code{\link[DiveR]{altitude_pressure}}
+#' 
+#' Sea level pressure = 1 bar.
+#' 
+#' Value is rounded to upper value (so to lower equivalent depth).
+#'  
+#'  @examples 
+#'  altitude_depth(depth = 20)
+#'  altitude_depth(depth = 24, altitude = 2000)
+#'  
+#' @author Jaunatre Maxime <maxime.jaunatre@yahoo.fr>
+#' 
+#' @export
+altitude_depth <- function(depth, altitude = 0){
+  assertNumber(depth, lower = 0)
+  assertNumber(altitude, lower = 0)
+  
+  alt_depth <- depth * (1 / altitude_pressure(altitude) )
+  alt_depth <- ceiling(alt_depth)
+    
+  return(alt_depth)
+}
+
 
 #' dtime
 #'

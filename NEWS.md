@@ -1,3 +1,9 @@
+# DiveR 0.5.0
+
+## Major improvements
+
+* Altitude is now implemented for table modele.
+
 # DiveR 0.4.0
 
 ## Major improvements

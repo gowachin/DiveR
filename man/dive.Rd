@@ -10,6 +10,7 @@ dive(
   secu = TRUE,
   ascent_speed = 10,
   maj = 0,
+  altitude = 0,
   desat_model = c("table", "other"),
   hour = 0,
   way = c("OW", "WB"),
@@ -32,6 +33,9 @@ Most dive table advice to limite this speed to 20M/min maximum.}
 
 \item{maj}{Time majoration for the dive. 
 Only used by table decompression model.}
+
+\item{altitude}{Heigth in meter from sea level, it will impact desaturation
+process and ascen_speed.. Default is sea level (0m).}
 
 \item{desat_model}{Which desaturation model is used to compute desaturation
 stops during ascent, to eliminate nitrogen. Default is tables as only

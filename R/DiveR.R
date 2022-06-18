@@ -30,6 +30,8 @@ NULL
 #' Most dive table advice to limite this speed to 20M/min maximum.
 #' @param maj Time majoration for the dive. 
 #' Only used by table decompression model.
+#' @param altitude Heigth in meter from sea level, it will impact desaturation
+#' process and ascen_speed.. Default is sea level (0m).
 #' @param desat_model Which desaturation model is used to compute desaturation
 #' stops during ascent, to eliminate nitrogen. Default is tables as only
 #' this one works today.
@@ -59,6 +61,7 @@ NULL
 #' @export
 dive <- function(depth = 20, time = 40, secu = TRUE,
                  ascent_speed = 10, maj = 0, 
+                 altitude = 0,
                  desat_model = c('table', 'other'),
                  hour = 0, way = c('OW','WB'), 
                  gas = 'AIR'
@@ -70,6 +73,8 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   assertNumber(ascent_speed, lower = 1e-6)
   
   assertNumber(maj, lower = 0)
+  assertNumber(altitude, lower = 0)
+  
   desat_model <- match.arg(desat_model)
   
   assertNumber(hour, lower = -1e-6)
@@ -90,13 +95,15 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
       "\n6m/min is used between 6m and the surface"
     ),call. = interactive())
   }
+  
   # draw raw dtcurve
   raw_dtcurve <- init_dtcurve(depth, time, ascent_speed, way)
   
   
   if(desat_model == "table"){
     # time maj and tablecheck is done in desat_table
-    desat_stop <- desat_table(dtcurve = raw_dtcurve, maj = maj, ppo2 = gas$ppo2)
+    desat_stop <- desat_table(dtcurve = raw_dtcurve, maj = maj, 
+                              altitude = altitude, ppo2 = gas$ppo2)
   } else if(desat_model == "haldane"){
     message("Not yet fully implemented")
     desat_stop <- desat_haldane(dtcurve = raw_dtcurve, maj = maj,
@@ -142,8 +149,8 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   hour <- c(hour, hour + tail(dtcurve$time,1))
   
   # other_info
-  params <- c(maj = maj, secu = secu, ascent_speed = ascent_speed, dtr = dtr,
-              ppo2 = gas$ppo2)
+  params <- c(maj = maj, altitude = altitude, secu = secu, 
+              ascent_speed = ascent_speed, dtr = dtr, ppo2 = gas$ppo2)
   
 
   dive <- list(
