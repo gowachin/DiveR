@@ -4,7 +4,7 @@
 \alias{add_desat}
 \title{add_desat}
 \usage{
-add_desat(dtcurve, desat, ascent_speed = 10, secu = FALSE)
+add_desat(dtcurve, desat, ascent_speed = 10, altitude = 0)
 }
 \arguments{
 \item{dtcurve}{a depth time curve in a data.frame with 2 columns depth and 
@@ -15,7 +15,8 @@ time. Depths values are meters (positive values) and time is in minute.}
 \item{ascent_speed}{Ascent_speed in meter/minute. 10 m/min by default. 
 Most dive table advice to limite this speed to 20M/min maximum.}
 
-\item{secu}{security decompression stop of 3 min at 3 m. FALSE by default.}
+\item{altitude}{Heigth in meter from sea level, it will impact desaturation
+process and ascetn_speed.. Default is sea level (0m).}
 }
 \value{
 a dtcurve data.frame with the same format, but desaturation stop have

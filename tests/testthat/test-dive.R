@@ -13,7 +13,7 @@ test_that("war_init_dtcurve_ascent_sp", {
   war <- "Ascent speed is usually set between 10 and 20 m/min in most desaturation models. 
 6m/min is used between 6m and the surface"
   expect_warning(dive(20, 40, ascent_speed = 7), war )
-  expect_warning(dive(20, 40, ascent_speed = 16), war )
+  expect_warning(dive(20, 40, ascent_speed = 18), war )
 })
 
 # Test for correct output
@@ -40,15 +40,15 @@ test_that("dive_square_output", {
   
   exp <- list(
     dtcurve = data.frame(depths = c(0, 24, 24, 2.4, 2.4, 0), 
-                         times = c(0, 0, 40, 42.16, 66.16, 66.56)),
+                         times = c(0, 0, 40, 42.7, 66.7, 67.3)),
     desat = list(desat_stop = data.frame(depth = c(7.2, 4.8, 2.4), 
                                          time = c(0, 0, 24),
-                                         hour = c(NA, NA, 42.16), 
+                                         hour = c(NA, NA, 42.7), 
                                          row.names = paste0("m", c(9,6,3))),
                  group = "K", model = "table"),
-    hour = c(0, 66.56),
-    params = c(maj = 0, altitude = 2000, secu = 0, ascent_speed = 10, 
-               dtr = 26.560, ppo2 = 0.209)
+    hour = c(0, 67.3),
+    params = c(maj = 0, altitude = 2000, secu = 0, ascent_speed = 8, 
+               dtr = 27.3, ppo2 = 0.209)
   )
   class(exp) <- "dive"
   class(exp$desat) <- "desat"

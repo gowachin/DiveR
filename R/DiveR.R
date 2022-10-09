@@ -31,7 +31,7 @@ NULL
 #' @param maj Time majoration for the dive. 
 #' Only used by table decompression model.
 #' @param altitude Heigth in meter from sea level, it will impact desaturation
-#' process and ascen_speed.. Default is sea level (0m).
+#' process and ascetn_speed.. Default is sea level (0m).
 #' @param desat_model Which desaturation model is used to compute desaturation
 #' stops during ascent, to eliminate nitrogen. Default is tables as only
 #' this one works today.
@@ -84,11 +84,22 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
   assertCharacter(gas)
   gas <- as.gas(gas)
   
+  low_sp <- 10
+  high_sp <- 17
+  
+  if(altitude > 0){
+    ratio <- altitude_pressure(altitude) / altitude_pressure()
+    ascent_speed <- ascent_speed * ratio
+    low_sp <- floor(low_sp * ratio)
+    high_sp <- floor(high_sp * ratio)
+  }
+  
+  
   if (ascent_speed > 120){
     stop("This is not the sport to do if you want to go to the moon",
             call. = interactive())
   }
-  if (ascent_speed < 10 | ascent_speed > 15) {
+  if (ascent_speed < low_sp | ascent_speed > high_sp) {
     warning(paste( 
       "Ascent speed is usually set between 10 and 20 m/min in",
       "most desaturation models.",
@@ -115,8 +126,6 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
                        group = 'Z', model = "other")
     class(desat_stop) <- "desat"
   }
-  desat_dtcurve <- add_desat(raw_dtcurve, desat_stop, ascent_speed, secu)
-  dtr <- max(desat_dtcurve$time) - tail(raw_dtcurve$time, 2)[1]
   
   # adding secu stop to desat_stop object.
   # TODO : same code as in dive_utils, consider function !
@@ -130,6 +139,11 @@ dive <- function(depth = 20, time = 40, secu = TRUE,
                                                      hour = NA))
     }
   }
+  
+  desat_dtcurve <- add_desat(raw_dtcurve, desat_stop, ascent_speed, altitude)
+  dtr <- max(desat_dtcurve$time) - tail(raw_dtcurve$time, 2)[1]
+  
+
   
   # retrieve hour of desat
   for ( i in 1:nrow(desat_stop$desat_stop)){

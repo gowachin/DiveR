@@ -80,8 +80,9 @@ init_dtcurve <- function(depth, time, ascent_speed = 10, way = c("OW", "WB")) {
 #' @param desat a desat object that contain the desaturation stops of given dive
 #' @param ascent_speed Ascent_speed in meter/minute. 10 m/min by default. 
 #' Most dive table advice to limite this speed to 20M/min maximum.
-#' @param secu security decompression stop of 3 min at 3 m. FALSE by default.
-#'
+#' @param altitude Heigth in meter from sea level, it will impact desaturation
+#' process and ascetn_speed.. Default is sea level (0m).
+#' 
 #' @return a dtcurve data.frame with the same format, but desaturation stop have
 #' been rbinded at the end.
 #'
@@ -89,7 +90,7 @@ init_dtcurve <- function(depth, time, ascent_speed = 10, way = c("OW", "WB")) {
 #'
 #' @import checkmate
 #' @export
-add_desat <- function(dtcurve, desat, ascent_speed = 10, secu = FALSE) {
+add_desat <- function(dtcurve, desat, ascent_speed = 10, altitude = 0) {
   #### IDIOT PROOF ####
   if (!inherits(dtcurve, 'data.frame') | any(is.na(dtcurve)) | 
       any(colnames(dtcurve) != c('depth', 'time'))){
@@ -107,21 +108,9 @@ add_desat <- function(dtcurve, desat, ascent_speed = 10, secu = FALSE) {
   }
   
   assertNumber(ascent_speed, lower = 1e-6)
-  assertLogical(secu, any.missing = FALSE)
+  assertNumber(altitude, lower = 0)
   
-  # adding security desat
-  if(secu){
-    depths <- desat$desat_stop$depth
-    if(3 %in% depths){
-      desat$desat_stop$time[depths==3] <- desat$desat_stop$time[depths==3] + 3
-    } else {
-      desat$desat_stop <- rbind(desat$desat_stop, m3 = data.frame(depth = 3, time = 3, 
-                                                  hour = NA))
-    }
-  }
-  
-  
-  
+
   # if(all(is.na(desat$desat_table))){ # in case time specified
   dtcurve <- dtcurve[-nrow(dtcurve),]
   for(i in 1:nrow(desat$desat_stop)){
@@ -133,6 +122,11 @@ add_desat <- function(dtcurve, desat, ascent_speed = 10, secu = FALSE) {
       # now ascent_speed restricted to 6m.
       if(ascent_speed > 6){
         ascent_speed <- 6
+      }
+      if(altitude > 0){
+        ascent_speed <- floor(
+          ascent_speed * altitude_pressure(altitude) / altitude_pressure()
+        )
       }
       # add desat stop
       dtcurve <- rbind(dtcurve, data.frame(depth = c(beg_depth, end_depth),

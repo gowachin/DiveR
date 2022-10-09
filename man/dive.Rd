@@ -35,7 +35,7 @@ Most dive table advice to limite this speed to 20M/min maximum.}
 Only used by table decompression model.}
 
 \item{altitude}{Heigth in meter from sea level, it will impact desaturation
-process and ascen_speed.. Default is sea level (0m).}
+process and ascetn_speed.. Default is sea level (0m).}
 
 \item{desat_model}{Which desaturation model is used to compute desaturation
 stops during ascent, to eliminate nitrogen. Default is tables as only

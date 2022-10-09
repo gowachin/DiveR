@@ -1,4 +1,3 @@
-
 # Run all tests
 rm(list = ls())
 devtools::document('.')

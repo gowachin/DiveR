@@ -319,14 +319,18 @@ table_ndive <- function(dive1, dive2, inter = 16, verbose = FALSE){
   depth2 <- altitude_depth(depth2, altitude2)
   # nitrox depth modif
   depth2 <- nitrox_depth(depth = depth2, ppo2 = ppo2)
-  
-  depth1 <- nitrox_depth(altitude_depth(depth(dive1), 
-                                        altitude(dive1)), 
+
+  depth1 <- nitrox_depth(altitude_depth(depth(dive1),
+                                        altitude(dive1)),
                          ppo2(dive1))
   
   secu2 <- as.logical(dive2$params["secu"])
   speed2 <- unname(dive2$params["ascent_speed"])
   raw_dive2 <- rm_desat(dive2)
+  
+  if(altitude2 > 0){
+    speed2 * altitude_pressure() / altitude_pressure(altitude2)
+  }
   
   if (altitude2 > altitude(dive1) & inter <= 1440){
     stop(paste0("It not possible to dive at higher altitude after a first dive",

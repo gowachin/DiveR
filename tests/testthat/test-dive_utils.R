@@ -104,12 +104,14 @@ test_that("exp_add_desat", {
   expect_identical(add_desat(dtcurve, desat), exp)
   exp <- data.frame(depth = c(0, 20,20, 3, 3, 0), 
                     time = c(0, 0, 40, 41.7, 44.7, 45.2))
-  expect_identical(add_desat(dtcurve, desat, secu = TRUE), exp)
-  desat <- list(desat_stop = data.frame(depth = 5,time = 0, hour = NA,
-                                        row.names = "m5"),
+  
+  desat$desat_stop$time[3] <- 3 
+  expect_identical(add_desat(dtcurve, desat), exp)
+  desat <- list(desat_stop = data.frame(depth = c(5, 3),time = c(0, 3), hour = NA,
+                                        row.names = c("m5", "m3")),
                 group = "H")
   class(desat) <- "desat"
-  expect_identical(add_desat(dtcurve, desat, secu = TRUE), exp)
+  expect_identical(add_desat(dtcurve, desat), exp)
 })
 
 #### minute_to_time ####
